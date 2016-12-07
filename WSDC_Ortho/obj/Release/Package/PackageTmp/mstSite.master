@@ -1,0 +1,140 @@
+﻿<%@ Master Language="VB" AutoEventWireup="false" CodeBehind="mstSite.master.vb" Inherits="WSDC_Ortho.mstSite" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="WSDC Ortho" />
+    <meta name="keywords" content="" />
+    <meta name="robots" content="index, follow" />
+    <meta name="distribution" content="Global" />
+    <meta name="country" content="United States" />
+    <meta name="state" content="NC" />
+    <meta name="city" content="" />
+    <meta name="zipcode" content="" />
+
+    <title>WSDC Ortho</title>
+
+    <%--10/2/15 CS Read an article that said jquery ui and bootstrap css conflict and should not be used together.--%>
+    <%--<link href="Common/jquery-ui-1.11.4.custom/jquery-ui.min.css" rel="stylesheet" />--%>
+
+    <!--Site Common Code Requirements-->
+    <!--bootstrap-->
+    <link href="Common/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+    <!--form validation css-->
+    <link href="Common/formValidation/css/formValidation.min.css" rel="stylesheet" />    
+    <!--t3 common code css-->
+    <link href="Common/css/siteCommon.css" rel="stylesheet" />
+    
+    <!--site customization-->
+    <link href="Content/css/site.css" rel="stylesheet" />
+
+    <!--Datepicker-->
+    <link href="Content/bootstrap-datetimepicker.css" rel="stylesheet" />
+    <link href="Content/bootstrap-validator.min.css" rel="stylesheet" />
+    <link href="Common/datepicker/css/datepicker.css" rel="stylesheet" />
+    <link href="Scripts/datepicker/css/datepicker.css" rel="stylesheet" /> 
+
+    <asp:PlaceHolder ID="PlaceHolder1" runat="server">
+        <link href="/Images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <script src="<%: ResolveUrl("~/Common/js/modernizr-2.6.2.js")%>"></script>
+    </asp:PlaceHolder>
+
+    <asp:ContentPlaceHolder runat="server" ID="HeaderContent" />
+    
+</head>
+<body id="adminBody" >
+    <div id="pageCover">
+        <!--Navigation-->
+        <div id="divHeader">
+            <div id="divNavbarTop" class="navbar navbar-inverse navbar-fixed-top " role="navigation" style="z-index: 999999">
+                <div id="divNavbar" style="margin-right:20px;">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" <asp:Literal ID="litNavHome" runat="server"></asp:Literal>><i class="glyphicon glyphicon-home"></i> <asp:Literal ID="litNavbarBrand" runat="server"></asp:Literal></a>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <asp:Literal ID="litNavigation" runat="server"></asp:Literal>
+                        <asp:Literal ID="litHeaderGreeting" runat="server"></asp:Literal>
+                    </div>
+                    <!--/.navbar-collapse -->
+                </div>
+            </div>
+        </div>
+        <!--navbar-->
+        <!--<div class="container">-->
+        <!--<div style="margin-left: auto; margin-right: auto; width:100%;">-->
+            <div id="mainContent">
+                <!--02/04/15 cpb provide a way to determine our content page-->
+                <span id="spnSourcePage" style="display:none"><asp:Literal ID="litPageSource" runat="server"></asp:Literal></span>
+                <asp:ContentPlaceHolder ID="MainContent" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+        <%--</div>--%>
+        <!--</div>-->
+    </div>
+    <!--pagecover-->
+    
+    <div id="divFooter" class="navbar-fixed-bottom navbar-inverse">
+        <span style="color:white; float:none; margin:0 auto; display: table; table-layout:fixed; padding: 15px 15px;">
+            <asp:Literal ID="litCompanyName" runat="server"></asp:Literal>
+        </span>
+        <div id="divFooterBottom" style="height: 1px;"></div>
+    </div>
+    
+    <!-- Standard Scripts Placed at the end of the document so the pages load faster -->
+    <!--Site Common Code Requirements-->
+    <script src="Common/js/jquery-1.11.3.min.js"></script>
+
+    <%--10/2/15 CS Read an article that said jquery ui and bootstrap css conflict and should not be used together.--%>
+    <%--<script src="Common/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>--%>
+    
+    <%-- Session Timeout--%>
+    <!--#include file="Common/inc/getSessionTimeout.inc"-->  
+    
+    <script src="Common/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+    
+    <!--For IE 8--->
+    <script src="Common/js/respond.js"></script>
+    
+    <!--formValidation plugin-->
+    <script src="Common/formValidation/js/formValidation.min.js"></script>
+    <script src="Common/formValidation/js/framework/bootstrap.min.js"></script>
+
+    <!--Common site master js-->
+    <script src="Common/js/mstSite.js"></script>
+
+    <!--Site Common Code Requirements/End-->
+
+    <!--FLM Custom Scripts & Data Entry Form Scripts-->
+    <script src="Content/js/FLMcustomLinks.js"></script>
+
+     <!--Custom Site Scripts needing reference from SiteMaster (5/10/16 T3)-->
+    <script src="Common/js/mstSiteCustom.js"></script>
+
+    <!--Scripts needed for data entry forms-->
+    <script src="Common/ScrollToTop/js/jquery.scrollToTop.min.js"></script>
+    <script src="Common/js/jquery.mask.min.js"></script>
+    <script src="Common/autoNumeric-1.9.26/autoNumeric.js"></script>
+    <script src="Common/js/bootstrap-datepicker.min.js"></script>
+    <script src="Common/js/moment.min.js"></script>
+    <script src="Common/js/bootstrap-datetimepicker.min.js"></script>
+        
+    <!-- scripts built from VB -->
+    <asp:Literal ID="litScripts" runat="server"></asp:Literal>
+
+    <!--Site Master js/End-->
+    <asp:ContentPlaceHolder ID="pageJavaScripts" runat="server">
+    </asp:ContentPlaceHolder>
+
+</body>
+</html>
+
