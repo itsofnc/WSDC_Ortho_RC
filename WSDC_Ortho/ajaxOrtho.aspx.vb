@@ -159,7 +159,7 @@
 
                             ' 01/29/2016 CS Automatically create a Secondary Insurance Claim when the Primary Insurance payment received
                             '11/29/2016 CS make sure this contract has secondary insurance, with an open balance
-                            strSQL = "select SecondaryRemainingBalance from contracts where chartNumber = '" & row("ChartNumber") & "' and SecondaryRemainingBalance > 0"
+                            strSQL = "select SecondaryRemainingBalance from contracts where recid = '" & row("Contract_RECID") & "' and SecondaryRemainingBalance > 0"
                             Dim tblSecInsurance As DataTable = g_IO_Execute_SQL(strSQL, False)
                             If tblSecInsurance.Rows.Count > 0 Then
                                 ' get procedure date from claim that was just paid
@@ -170,7 +170,7 @@
                                     dteProcedureDate = Format(tblClaimInfo("procedure_date"), "YYYY-mm-dd")
                                 End If
                                 ' 11/11/16 Make sure we do not already have a secondary claim processed for this procedure date (maybe done manually)
-                                strSQL = "select ClaimNumber From Claims where chartNumber = '" & row("ChartNumber") & "' And procedure_date = '" & Format(dteProcedureDate, "YYYY-mm-dd") & "' and type = 1"
+                                strSQL = "select ClaimNumber From Claims where contracts_recid = '" & row("Contract_RECID") & "' And procedure_date = '" & Format(dteProcedureDate, "YYYY-mm-dd") & "' and type = 1"
                                 Dim tblSecClaim As DataTable = g_IO_Execute_SQL(strSQL, False)
                                 If tblSecClaim.Rows.Count = 0 Then
                                     Dim tblClaims As DataTable = CreateInsuranceClaims(row("ChartNumber"), False, "Secondary", dteProcedureDate)
@@ -207,27 +207,19 @@
                                     AttachClaimPayments(row("Contract_RECID"), row("ClaimNumber"), 1, intLastPaymentRecid)
                                 End If
                             Else
-                                ' 01/29/2016 CS Automatically create a Secondary Insurance Claim when a secondary payment is received and no claim exists to attach it to
-                                Dim dteProcedureDate As String = Format(Today(), "YYYY-mm-dd")
-                                If row("ClaimNumber") = "-1" Then
-                                    Dim tblClaims As DataTable = CreateInsuranceClaims(row("ChartNumber"), False, "Secondary", dteProcedureDate)
-                                    If tblClaims.Rows.Count > 0 Then
-                                        ' email insurance distribution group that a claim has been processed and needs to be printed
-                                        Dim strEmailTo As String = IIf(IsNothing(ConfigurationManager.AppSettings("emailAutomatedClaimTo")), "", ConfigurationManager.AppSettings("emailAutomatedClaimTo"))
-                                        Dim strEmailMessage As String = "A Secondary insurance claim was processed as the result of receiving payment from the Secondary insurance provider and no claim was available or selected to apply the payment to." & vbCrLf
-                                        strEmailMessage &= " Insurance Provider: " & tblClaims.Rows(0)("other_insurancecompanyname") & vbCrLf
-                                        strEmailMessage &= " Patient Chart #: " & tblClaims.Rows(0)("chartNumber") & vbCrLf
-                                        strEmailMessage &= " Claim No: " & tblClaims.Rows(0)("claimNumber") & vbCrLf
-                                        strEmailMessage &= " Procedure Date: " & dteProcedureDate
-                                        g_sendEmail(strEmailTo, "Secondary Claim Processed via Payment Entry", strEmailMessage)
-                                    End If
-                                End If
+                                ' 01/29/2016 CS Notify WSDC that they need to process a Secondary Insurance Claim b/c a secondary payment was received and no claim exists to attach it to
+                                ' email insurance distribution group that a claim has been processed and needs to be printed
+                                Dim strEmailTo As String = IIf(IsNothing(ConfigurationManager.AppSettings("emailAutomatedClaimTo")), "", ConfigurationManager.AppSettings("emailAutomatedClaimTo"))
+                                Dim strEmailMessage As String = "A Secondary insurance claim needs to be processed as the result of receiving payment from the Secondary insurance provider " & vbCrLf
+                                strEmailMessage &= " and no claim was available, or was not selected by the user, to apply the payment to." & vbCrLf
+                                strEmailMessage &= " Patient Chart #: " & row("ChartNumber") & vbCrLf
+                                g_sendEmail(strEmailTo, "Secondary Claim Needs To Be Processed", strEmailMessage)
                             End If
                         End If
-                        End If
-                        'reset last & orgi payment recid- finished with processing payment
-                        intLastPaymentRecid = -1
-                        intOrigPaymentRecid = -1
+                    End If
+                    'reset last & orgi payment recid- finished with processing payment
+                    intLastPaymentRecid = -1
+                    intOrigPaymentRecid = -1
                 Next
                 'Delete PaymentsTemp records
                 strSQL = "Delete from PaymentsTemp" & IIf(IsNothing(strWhereUser), "", " where Sys_Users_RECID = '" & strWhereUser & "'")

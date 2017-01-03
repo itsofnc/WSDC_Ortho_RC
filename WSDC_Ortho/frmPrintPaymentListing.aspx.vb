@@ -12,7 +12,12 @@
         Dim strWhereClause As String = " where DatePosted >= '" & dateFrom & "  00:00:00  ' and DatePosted <= '" & dateTo & " 23:59:59' "
         Dim strOrderBy As String = " order by patientname "
 
-        Dim strSql As String = "select * from MonthEndPaymentListing_vw " & strWhereClause & strOrderBy
+        Dim strSql As String = ""
+        ' 12/29/16 CS update payments with doctor recid (will eventually be fixed in payment entry...)
+        strSql = "update payments set doctors_vw = (select doctors_vw from contracts where recid = payments.contract_recid) where doctors_vw = -1 and dateposted >= '2016-12-01 00:00:00';"
+        g_IO_Execute_SQL(strSql, False)
+
+        strSql = "select * from MonthEndPaymentListing_vw " & strWhereClause & strOrderBy
         Dim tblReportData As DataTable = g_IO_Execute_SQL(strSql, False)
         'dowload/print invoice
         If tblReportData.Rows.Count > 0 Then

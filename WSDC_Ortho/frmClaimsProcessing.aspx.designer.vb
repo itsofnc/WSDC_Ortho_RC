@@ -12,7 +12,7 @@ Option Explicit On
 
 
 Partial Public Class frmClaimsProcessing
-
+    
     '''<summary>
     '''frmPrintProcessClaims control.
     '''</summary>
@@ -21,7 +21,7 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents frmPrintProcessClaims As Global.System.Web.UI.HtmlControls.HtmlForm
-
+    
     '''<summary>
     '''btnHidden control.
     '''</summary>
@@ -30,7 +30,7 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnHidden As Global.System.Web.UI.WebControls.Button
-
+    
     '''<summary>
     '''hidInitialcontract control.
     '''</summary>
@@ -39,7 +39,7 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents hidInitialcontract As Global.System.Web.UI.WebControls.HiddenField
-
+    
     '''<summary>
     '''hidClaimTypeSelected control.
     '''</summary>
@@ -48,7 +48,7 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents hidClaimTypeSelected As Global.System.Web.UI.WebControls.HiddenField
-
+    
     '''<summary>
     '''lblMessage control.
     '''</summary>
@@ -57,7 +57,7 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lblMessage As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''btnPrint control.
     '''</summary>
@@ -66,7 +66,7 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnPrint As Global.System.Web.UI.WebControls.Button
-
+    
     '''<summary>
     '''btnPreviewInvoice control.
     '''</summary>
@@ -75,7 +75,7 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnPreviewInvoice As Global.System.Web.UI.WebControls.Button
-
+    
     '''<summary>
     '''btnClaimPrimary control.
     '''</summary>
@@ -84,7 +84,7 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnClaimPrimary As Global.System.Web.UI.WebControls.Button
-
+    
     '''<summary>
     '''btnPreviewClaimPrimary control.
     '''</summary>
@@ -93,7 +93,7 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnPreviewClaimPrimary As Global.System.Web.UI.WebControls.Button
-
+    
     '''<summary>
     '''btnClaimSecondary control.
     '''</summary>
@@ -102,7 +102,7 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnClaimSecondary As Global.System.Web.UI.WebControls.Button
-
+    
     '''<summary>
     '''btnPreviewClaimSecondary control.
     '''</summary>
@@ -111,7 +111,16 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnPreviewClaimSecondary As Global.System.Web.UI.WebControls.Button
-
+    
+    '''<summary>
+    '''btnManualClaim control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnManualClaim As Global.System.Web.UI.WebControls.Button
+    
     '''<summary>
     '''litFrameCall control.
     '''</summary>
@@ -120,7 +129,7 @@ Partial Public Class frmClaimsProcessing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents litFrameCall As Global.System.Web.UI.WebControls.Literal
-
+    
     '''<summary>
     '''litScripts control.
     '''</summary>

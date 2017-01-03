@@ -757,7 +757,7 @@
         If strEditForm = "" Then
             'Popup window
             'btnAdd.Attributes.Add("onclick", "getDataRow(-1,'" & strTableSelected & "','" & strTableAddTitle & "', 'add', '" & m_sessionPerm.ToString & "'); return false")
-            litBtnAdd.Text = "onclick=""getDataRow(-1,'" & strTableSelected & "','" & strTableAddTitle & "', 'add', '" & m_sessionPerm.ToString & "'); return false"" "
+            litBtnAdd.Text = "onclick=""getDataRow(-1,'" & strTableSelected.Replace("'", "\'") & "','" & strTableAddTitle & "', 'add', '" & m_sessionPerm.ToString & "'); return false"" "
         Else
             'Send to another form, name of form is sent via url in the parameter "add"
             ' 2/25/16 T3 Changed to literal on btnAdd to use window.open to control the target location from ext properties
@@ -1389,14 +1389,14 @@
                 Else
                     If strEditForm = "" Then
                         ' 1/9/15 cpb 
-                        strOnclickView = "getDataRow(" & rowList("recid") & ",'" & TableName & "','" & strViewTitle & "', 'view', '" & m_sessionPerm.ToString & "');"
-                        strOnclickEdit = "getDataRow(" & rowList("recid") & ",'" & TableName & "','" & strEditTitle & "', 'edit', '" & m_sessionPerm.ToString & "');"
+                        strOnclickView = "getDataRow(" & rowList("recid") & ",'" & TableName.Replace("'", "\'") & "','" & strViewTitle & "', 'view', '" & m_sessionPerm.ToString & "');"
+                        strOnclickEdit = "getDataRow(" & rowList("recid") & ",'" & TableName.Replace("'", "\'") & "','" & strEditTitle & "', 'edit', '" & m_sessionPerm.ToString & "');"
 
                     Else
                         strOnclickView = "redirectDataRow(" & rowList("recid") & ",'" & strEditForm & "','" & strEditTarget & "', 'view','" & strEditIframe & "', '" & hidSessionsPrefix.Value & "');"
                         strOnclickEdit = "redirectDataRow(" & rowList("recid") & ",'" & strEditForm & "','" & strEditTarget & "', 'edit','" & strEditIframe & "', '" & hidSessionsPrefix.Value & "');"
                         'strOnclickDelete = "deleteDataRow(" & rowList("recid") & ");"
-                        'strOnclickDelete = "deleteDataRow(" & rowList("recid") & ",'" & TableName & "');"
+                        'strOnclickDelete = "deleteDataRow(" & rowList("recid") & ",'" & TableName.Replace("'", "\'")  & "');"
                     End If
                     Dim strDeleteShowColumn As String = ""
                     If strDeleteDisplayColumn = "" Then
@@ -1410,7 +1410,7 @@
                         Next
                     End If
 
-                    strOnclickDelete = "deleteDataRow(" & rowList("recid") & ",'" & TableName & "','" & strDeleteDisplayText & "','" & strDeleteShowColumn & "');"
+                    strOnclickDelete = "deleteDataRow(" & rowList("recid") & ",'" & TableName.Replace("'", "\'") & "','" & strDeleteDisplayText & "','" & strDeleteShowColumn & "');"
 
                     'Build Edit/View/Delete column 7/9/14 cpb build view/edit/delete based on how edit form loads
                     ' 2/2/15 cpb Build size of column based on options avail 50 for just view, 150 for all 3

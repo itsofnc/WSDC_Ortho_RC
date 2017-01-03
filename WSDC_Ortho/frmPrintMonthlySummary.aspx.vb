@@ -15,23 +15,28 @@
         Dim dateTo As String = Format(CType(dteEndDate.Text, Date), "yyyy-MM-dd")
         Dim dteCloseDate As String = DateAdd("d", -1, dteBeginDate.Text)
 
-        Dim strSQL As String = "Select ar_lastCloseDate, ar_previousBal, (0 - ISNULL" & _
-            "((SELECT        SUM(ISNULL(orig_payment, 0)) AS Expr1 " & _
-            "    FROM            dbo.Payments p" & _
-            "	 LEFT OUTER JOIN dbo.DropDownList__PaymentType pt ON p.paymentType = pt.recid" & _
-            "    WHERE        (p.DatePosted >= '" & dateFrom & "') AND (p.DatePosted <= '" & dateTo & " 23:59:59') " & _
-            "	 AND (pt.adjustment = 1) AND (p.recid = p.baseRecid)), 0)) AS ttlAdjustments, (ISNULL" & _
-            "((SELECT        SUM(ISNULL(AmountDue, 0)) AS Expr1" & _
-            "    FROM            dbo.Invoices " & _
-            "    WHERE        (PostDate >= '" & dateFrom & "') AND (PostDate <= '" & dateTo & " 23:59:59')), 0) + ISNULL " & _
-            "((SELECT        SUM(ISNULL(procedure_amount, 0)) AS Expr1 " & _
-            "    FROM            dbo.Claims " & _
-            "    WHERE        (DateProcessed >= '" & dateFrom & "') AND (DateProcessed <= '" & dateTo & " 23:59:59')), 0)) AS invAmount, (0 - ISNULL" & _
-            "((SELECT        SUM(ISNULL(p.orig_payment, 0)) AS Expr1 " & _
-            "    FROM            dbo.Payments p" & _
-            "	 LEFT OUTER JOIN dbo.DropDownList__PaymentType pt ON p.paymentType = pt.recid" & _
-            "    WHERE        (p.DatePosted >= '" & dateFrom & "') AND (p.DatePosted <= '" & dateTo & " 23:59:59') " & _
-            "    AND (pt.adjustment = 0) AND (p.recid = p.baseRecid)), 0)) AS payAmount " & _
+        Dim strSQL As String = ""
+        ' 12/29/16 CS update payments with doctor recid (will eventually be fixed in payment entry...)
+        strSQL = "update payments set doctors_vw = (select doctors_vw from contracts where recid = payments.contract_recid) where doctors_vw = -1 and dateposted >= '2016-12-01 00:00:00';"
+        g_IO_Execute_SQL(strSQL, False)
+
+        strSQL = "Select ar_lastCloseDate, ar_previousBal, (0 - ISNULL" &
+            "((SELECT        SUM(ISNULL(orig_payment, 0)) AS Expr1 " &
+            "    FROM            dbo.Payments p" &
+            "	 LEFT OUTER JOIN dbo.DropDownList__PaymentType pt ON p.paymentType = pt.recid" &
+            "    WHERE        (p.DatePosted >= '" & dateFrom & "') AND (p.DatePosted <= '" & dateTo & " 23:59:59') " &
+            "	 AND (pt.adjustment = 1) AND (p.recid = p.baseRecid)), 0)) AS ttlAdjustments, (ISNULL" &
+            "((SELECT        SUM(ISNULL(AmountDue, 0)) AS Expr1" &
+            "    FROM            dbo.Invoices " &
+            "    WHERE        (PostDate >= '" & dateFrom & "') AND (PostDate <= '" & dateTo & " 23:59:59')), 0) + ISNULL " &
+            "((SELECT        SUM(ISNULL(procedure_amount, 0)) AS Expr1 " &
+            "    FROM            dbo.Claims " &
+            "    WHERE        (DateProcessed >= '" & dateFrom & "') AND (DateProcessed <= '" & dateTo & " 23:59:59')), 0)) AS invAmount, (0 - ISNULL" &
+            "((SELECT        SUM(ISNULL(p.orig_payment, 0)) AS Expr1 " &
+            "    FROM            dbo.Payments p" &
+            "	 LEFT OUTER JOIN dbo.DropDownList__PaymentType pt ON p.paymentType = pt.recid" &
+            "    WHERE        (p.DatePosted >= '" & dateFrom & "') AND (p.DatePosted <= '" & dateTo & " 23:59:59') " &
+            "    AND (pt.adjustment = 0) AND (p.recid = p.baseRecid)), 0)) AS payAmount " &
             " FROM rptAR_MonthlySummary_vw where ar_lastCloseDate = '" & dteCloseDate & "'"
 
         Dim tblReportData As DataTable = g_IO_Execute_SQL(strSQL, False)

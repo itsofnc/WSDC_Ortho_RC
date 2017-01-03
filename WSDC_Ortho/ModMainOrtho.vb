@@ -296,9 +296,8 @@ Module ModMainOrtho
         For Each rowClaims As DataRow In tblClaims.Rows
 
             Dim tblPayments As DataTable = g_IO_Execute_SQL("Select * from payments where contract_recid = '" & rowClaims("contracts_recid") & "'" &
-                                                    IIf(PaymentRecid = -1, " and claimnumber = '-1' and ApplyToClaim <> 0 and PaymentSelection = " &
-                                                    IIf(ClaimType = 0, "'PrimaryAmount'", "'SecondaryAmount'"), " and recid = " & PaymentRecid) &
-                                                    "  order by case when " & IIf(ClaimType = 0, "PrimaryAmount", "SecondaryAmount") & " >= 0 then 1 else 0 end, DatePosted desc", False)
+                IIf(PaymentRecid = -1, " and claimnumber = '-1' and ApplyToClaim <> 0 and PaymentSelection = " & IIf(ClaimType = 0, "'PrimaryAmount'", "'SecondaryAmount'"), " and recid = " & PaymentRecid) &
+                "  order by case when " & IIf(ClaimType = 0, "PrimaryAmount", "SecondaryAmount") & " >= 0 then 1 else 0 end, DatePosted desc", False)
 
             Dim strClaimStatus As String = "O"
             Dim decClaimAmtPaid As Decimal = rowClaims("AmountPaid")
@@ -318,8 +317,13 @@ Module ModMainOrtho
                     decOverpaymentAmount = decPaymentAmount - decClaimAmtNeeded  ' this is the amount that will be posted to a sister payment record about to be created and tied to this payment record
                     ' 12/2/15 allow full amount to show as amount 'paid' on claim, even when payment is more than needed
                     'decPaymentAmount = decClaimAmtNeeded  ' reduce the payment amount on this payment record to the amount that will be posted to this claim and tie this payment to this claim
+                    ' 12/15/16 CS Not sure why we removed this code last year, and set amount paid to the full claim amount??
+                    ' but we do need to set the payment amount to what is actually being applied to the claim with this payment, not the full claim amount
+                    'decClaimAmtPaid = rowClaims("procedure_amount")
+                    decPaymentAmount = decClaimAmtNeeded
+                    '12/15/16 CS update total amount paid on claim (not sure why this wasn't being set at this point in the logic??)
+                    decClaimAmtPaid += decPaymentAmount
                     strClaimStatus = "C"
-                    decClaimAmtPaid = rowClaims("procedure_amount")
                 Else
                     ' Claim is partially paid by this payment
                     strClaimStatus = "O"
@@ -379,8 +383,14 @@ Module ModMainOrtho
                     strSQL = "update Payments set BaseRecid = " & intLastPaymentRecid & " where recid=" & intLastPaymentRecid
 
                     g_IO_Execute_SQL(strSQL, False)
-
+                Else
+                    ' 12/15/16 CS Need to reduce claim amount needed so that when possibly loop to another payment found, it will handle the amount that is NOW remaining after this payment above just posted to the claim...
+                    decClaimAmtNeeded -= decClaimAmtPaid
+                    If decClaimAmtNeeded < 0 Then
+                        decClaimAmtNeeded = 0
+                    End If
                 End If
+
 
 
                 If decOverpaymentAmount > 0 Then
@@ -577,12 +587,12 @@ Module ModMainOrtho
         Return strReturnName
     End Function
 
-    Public Sub g_ReverseInvoicePayment(ByVal Payments_Base_Recid As Integer, ByVal PaymentType As String, ByRef intNewPaymentsBaseRecid As Integer)
+    Public Sub g_ReverseInvoicePayment(ByVal Payments_Recid As Integer, ByVal PaymentType As String, ByRef intNewPaymentsBaseRecid As Integer)
 
 
         Dim strSQL = "select recid, invoices_recid, DatePosted,applytocurrentinvoice,applyToPastDue, ApplyToPrinciple, applytonextinvoice, sys_users_recid, patientNumber, ChartNumber, PatientAmount, " &
          "PaymentType, PaymentReference, Contract_recid, baserecid, payername, paymentselection, orig_payment, Comments, PaymentFor, Doctors_vw " &
-         "from payments where baserecid = " & Payments_Base_Recid & " order by recid"
+         "from payments where recid = " & Payments_Recid & " order by recid"
 
         Dim tblInvoicePayment As DataTable = g_IO_Execute_SQL(strSQL, False)
 
@@ -602,7 +612,7 @@ Module ModMainOrtho
 
                 Else
                     'reopen the invoice and adjust payment made
-                    g_IO_Execute_SQL("update invoices set status = 'O', AmountPaid = AmountPaid - " & rowPayment("applytocurrentinvoice") & " - " & rowPayment("applyToPastDue") & " where recid = " & rowPayment("invoices_recid"), False)
+                    g_IO_Execute_SQL("update invoices set status = 'O', current_due = current_due + " & rowPayment("applytocurrentinvoice") & ", Total_Due = Total_Due + " & rowPayment("applytocurrentinvoice") & ", AmountPaid = AmountPaid - " & rowPayment("applytocurrentinvoice") & " - " & rowPayment("applyToPastDue") & " where recid = " & rowPayment("invoices_recid"), False)
                 End If
                 ' set Apply To quantity's to reversed amounts
                 rowPayment("PatientAmount") = 0 - rowPayment("PatientAmount")
@@ -633,17 +643,18 @@ Module ModMainOrtho
                             "'" & rowPayment("payername").replace("'", "''") & "'," &
                             "'" & rowPayment("paymentselection") & "'" & "," &
                             -decOrigPaymentAmt & "," &
-                            "'" & rowPayment("Comments").replace("'", "''") & "'," &
+                            "'" & rowPayment("Comments").replace("'", "''") & " (reversed by " & System.Web.HttpContext.Current.Session("user_name").replace("'", "''") & ")'," &
                             "'" & rowPayment("PaymentFor") & "'," &
                             rowPayment("doctors_vw") &
                             ")"
                 g_IO_Execute_SQL(strSQL, False)
 
                 intNewPaymentsBaseRecid = g_IO_GetLastRecId()
-                g_IO_Execute_SQL("Update payments set baserecid = " & intNewPaymentsBaseRecid & " where recid =" & intNewPaymentsBaseRecid, False)
+                ' rlo 2016-12-21 - this new record should remain a part of the original payment stream
+                '    g_IO_Execute_SQL("Update payments set baserecid = " & intNewPaymentsBaseRecid & " where recid =" & intNewPaymentsBaseRecid, False)
 
                 ' tie the two payment records together
-                g_IO_Execute_SQL("update payments set ReversedBy_recid = " & intNewPaymentsBaseRecid & " where recid = " & Payments_Base_Recid, False)
+                g_IO_Execute_SQL("update payments set ReversedBy_recid = " & intNewPaymentsBaseRecid & " where recid = " & Payments_Recid, False)
             Next
         End If
 
@@ -800,14 +811,14 @@ Module ModMainOrtho
         Return strNewInvoiceNumber
     End Function
 
-    Public Sub g_generate_invoice_history(ByRef tblContracts As DataTable, ByVal TableRowIndex As Integer)
-        g_generate_invoice_history(tblContracts, TableRowIndex, Nothing, False)
+    Public Sub g_generate_invoice_history(ByRef tblContracts As DataTable, ByVal TableRowIndex As Integer, ByVal InvoiceDate As Date)
+        g_generate_invoice_history(tblContracts, TableRowIndex, Nothing, False, InvoiceDate)
     End Sub
-    Public Sub g_generate_invoice_history(ByRef tblContracts As DataTable, ByVal TableRowIndex As Integer, ByRef tblPreviewPaymentHistory As DataTable, ByVal Preview As Boolean)
+    Public Sub g_generate_invoice_history(ByRef tblContracts As DataTable, ByVal TableRowIndex As Integer, ByRef tblPreviewPaymentHistory As DataTable, ByVal Preview As Boolean, ByVal InvoiceDate As Date)
         ' prepare Invoice history
-        Dim strSQL = "Select * from invoices where contracts_recid = " & tblContracts.Rows(TableRowIndex)("recid") & _
-                " and (recid >= (select min(recid) from Invoices where contracts_recid = " & tblContracts.Rows(TableRowIndex)("recid") & " and Status = 'O' )" & _
-                " or recid = " & tblContracts.Rows(TableRowIndex)("NewInvoiceRecid") & ")" & _
+        Dim strSQL = "Select * from invoices where contracts_recid = " & tblContracts.Rows(TableRowIndex)("recid") &
+                " and (recid >= (select min(recid) from Invoices where contracts_recid = " & tblContracts.Rows(TableRowIndex)("recid") & " and Status = 'O' )" &
+                " or recid = " & tblContracts.Rows(TableRowIndex)("NewInvoiceRecid") & ") and postdate <= '" & Format(InvoiceDate, "yyyy-MM-dd") & "' " &
                 " order by postDate"
 
         Dim tblHistory As DataTable = g_IO_Execute_SQL(strSQL, False)
@@ -842,6 +853,7 @@ Module ModMainOrtho
                 rowHistoryDetail("Address_line2") = tblContracts.Rows(TableRowIndex)("Address_line2")
                 rowHistoryDetail("Address_line3") = tblContracts.Rows(TableRowIndex)("Address_line3")
                 rowHistoryDetail("Total_Due") = tblContracts.Rows(TableRowIndex)("Total_Due")
+                rowHistoryDetail("Statement_Date") = Format(InvoiceDate, "MM/dd/yyyy")
 
                 Select Case tblContracts.Rows(TableRowIndex)("Total_due")
                     Case 0
@@ -856,16 +868,16 @@ Module ModMainOrtho
                 ' record the history displayed on this invoice to facilitate reprinting
                 If Preview Then
                 Else
-                    strSQL = "INSERT INTO Invoices_HistoryDetail" & _
-                        "([Invoices_recid],[ChartNumber],[Bill_Date],[AmountDue],[amountPaid],[Descr],[InvoiceNo])" & _
-                    " VALUES (" & _
-                    tblContracts.Rows(TableRowIndex)("NewInvoiceRecid") & _
-                    ",'" & rowHistoryDetail("chartnumber") & "'" & _
-                    ",'" & Format(rowHistoryDetail("bill_date"), "yyyy-MM-dd") & "'" & _
-                    "," & rowHistoryDetail("AmountDue") & _
-                    "," & rowHistoryDetail("AmountPaid") & _
+                    strSQL = "INSERT INTO Invoices_HistoryDetail" &
+                        "([Invoices_recid],[ChartNumber],[Bill_Date],[AmountDue],[amountPaid],[Descr],[InvoiceNo])" &
+                    " VALUES (" &
+                    tblContracts.Rows(TableRowIndex)("NewInvoiceRecid") &
+                    ",'" & rowHistoryDetail("chartnumber") & "'" &
+                    ",'" & Format(rowHistoryDetail("bill_date"), "yyyy-MM-dd") & "'" &
+                    "," & rowHistoryDetail("AmountDue") &
+                    "," & rowHistoryDetail("AmountPaid") &
                     ",'" & rowHistoryDetail("descr") & "'" &
-                    ",'" & rowHistoryDetail("InvoiceNo") & "'" & _
+                    ",'" & rowHistoryDetail("InvoiceNo") & "'" &
                     ")"
                     g_IO_Execute_SQL(strSQL, False)
                 End If
@@ -961,16 +973,16 @@ Module ModMainOrtho
             ' record the history displayed on this invoice to facilitate reprinting
             If Preview Then
             Else
-                strSQL = "INSERT INTO Invoices_HistoryDetail" & _
-                    "([Invoices_recid],[ChartNumber],[Bill_Date],[AmountDue],[AmountPaid],[Descr],[InvoiceNo])" & _
-                " VALUES (" & _
-                tblContracts.Rows(TableRowIndex)("NewInvoiceRecid") & _
-                ",'" & rowPaymentHistoryDetail("chartnumber") & "'" & _
-                ",'" & Format(rowPaymentHistoryDetail("bill_date"), "yyyy-MM-dd") & "'" & _
-                "," & rowPaymentHistoryDetail("AmountDue") & _
-                "," & rowPaymentHistoryDetail("AmountPaid") & _
+                strSQL = "INSERT INTO Invoices_HistoryDetail" &
+                    "([Invoices_recid],[ChartNumber],[Bill_Date],[AmountDue],[AmountPaid],[Descr],[InvoiceNo])" &
+                " VALUES (" &
+                tblContracts.Rows(TableRowIndex)("NewInvoiceRecid") &
+                ",'" & rowPaymentHistoryDetail("chartnumber") & "'" &
+                ",'" & Format(rowPaymentHistoryDetail("bill_date"), "yyyy-MM-dd") & "'" &
+                "," & rowPaymentHistoryDetail("AmountDue") &
+                "," & rowPaymentHistoryDetail("AmountPaid") &
                 ",'" & rowPaymentHistoryDetail("descr").replace("'", "''") & "'" &
-                ",'" & rowPaymentHistoryDetail("InvoiceNo") & "'" & _
+                ",'" & rowPaymentHistoryDetail("InvoiceNo") & "'" &
                 ")"
 
                 g_IO_Execute_SQL(strSQL, False)
@@ -993,25 +1005,48 @@ Module ModMainOrtho
         Return tblPatientContractAging.Rows(0)("Patients_recid")
     End Function
 
+    Public Function g_getInvoiceDelingquences(ByRef Contract As DataRow, ByVal InvoiceDate As Date) As Integer
+        ' use the view to extract the payment aging info for this invoice
+        Dim strSQL = "select contracts_recid as recid, * from PatientInvoiceAging_fn('" & Format(InvoiceDate, "yyyy/MM/dd") & "'," & Contract("recid") & ")"
+        Dim tblPatientContractAging As DataTable = g_IO_Execute_SQL(strSQL, False)
+
+        Contract("PastDueLessThan30") = tblPatientContractAging.Rows(0)("amount_delinquent_01_30")
+        Contract("PastDue30") = tblPatientContractAging.Rows(0)("amount_delinquent_31_60")
+        Contract("PastDueOver30") = tblPatientContractAging.Rows(0)("amount_delinquent_61_90") + tblPatientContractAging.Rows(0)("amount_delinquent_91_Plus")
+
+        Return tblPatientContractAging.Rows(0)("Patients_recid")
+    End Function
+
+
     Public Function g_createInvoice(ByVal SQLQuery As String, ByVal InvoiceType As String) As String
-        Return g_createInvoice(SQLQuery, InvoiceType, 0, False)
+        Return g_createInvoice(SQLQuery, InvoiceType, 0, False, Nothing)
     End Function
 
     Public Function g_createInvoice(ByVal SQLQuery As String, ByVal InvoiceType As String, ByVal AmountDue As Decimal) As String
-        ' override to allow system to create a misc invoice (ie. Reverse Payment, Close Claim)
-        Return g_createInvoice(SQLQuery, InvoiceType, AmountDue, False)
+        ' override to allow system to create a misc invoice (ie. Reverse Payment, Close Claim, Nothing)
+        Return g_createInvoice(SQLQuery, InvoiceType, AmountDue, False, Nothing)
     End Function
-    Public Function g_createInvoice(ByVal SQLQuery As String, ByVal InvoiceType As String, ByVal AmountDue As Decimal, ByVal Preview As Boolean) As String
+
+    Public Function g_createInvoice(ByVal SQLQuery As String, ByVal InvoiceType As String, ByVal AmountDue As Decimal, ByVal OverrideDate As Date) As String
+        ' override to allow system to create a misc invoice (ie. Reverse Payment, Close Claim, OverrideDate)
+        Return g_createInvoice(SQLQuery, InvoiceType, AmountDue, False, OverrideDate)
+    End Function
+
+    Public Function g_createInvoice(ByVal SQLQuery As String, ByVal InvoiceType As String, ByVal AmountDue As Decimal, ByVal Preview As Boolean, ByVal InvoiceDate As Date) As String
         Dim rptReport = New rptInvoice
         Dim strMinDocumentNumber As String = ""
         Dim strMaxDocumentNumber As String = ""
+        If IsDate(InvoiceDate) Then
+        Else
+            InvoiceDate = Date.Now
+        End If
 
         Dim strSQL = SQLQuery.Substring(UCase(SQLQuery).IndexOf(" FROM CONTRACTS "))
 
         ' build the Select clause to tack to the table and where clause just built  (add some fields that will be needed to print the invoice
         ' 10/7/16 CS Added new field to invoices, doctors_vw, and need to populate it from the contract
         strSQL = "SELECT recid, PrimaryInsurancePlans_vw, SecondaryInsurancePlans_vw, PatientNumber, PatientFirstPay, ChartNumber, Doctors_vw " &
-                ",CONVERT(VARCHAR(10), contractdate,101) as ContractDate, '' as InvoiceNo, Account_ID as account_no, getdate() as bill_date " &
+                ",CONVERT(VARCHAR(10), contractdate,101) as ContractDate, '' as InvoiceNo, Account_ID as account_no, cast('" & Format(InvoiceDate, "yyyy-MM-dd") & " 00:00:00' as datetime) as bill_date " &
                 ",'Payment due on receipt of invoice.' as terms" &
                 ",'' as name" &
                 ",' ' as co_Name" &
@@ -1034,6 +1069,7 @@ Module ModMainOrtho
                 ", PatientREmainingBalance as RemainingBalance" &
                 ", 'INITIAL ORTHO TX INSTALLMENT' as descr_init" &
                 ", 'PERIOD ORTHO TX INSTALLMENT' as descr" &
+                ", '" & Format(InvoiceDate, "MM/dd/yyyy") & "' as Statement_Date" &
                  " " & strSQL
 
         Dim tblContracts = g_IO_Execute_SQL(strSQL, False)
@@ -1064,7 +1100,7 @@ Module ModMainOrtho
                 rowContract("Bill_date") = Date.Now
             Else
 
-                ' has there already been an invoice made against this contract?
+                ' has there already been an invoice made against this contract? if not then this is the first invoice
                 strSQL = "Select cast(count(*) as tinyint) as invoicedAlready from invoices where InvoiceType = 'I' and Contracts_recid = " & rowContract("recid")
                 Dim tblInvoices As DataTable = g_IO_Execute_SQL(strSQL, False)
                 If tblInvoices.Rows(0)("InvoicedAlready") Or rowContract("RemainingBalance") < rowContract("PatientInitialBalance") Then
@@ -1080,10 +1116,10 @@ Module ModMainOrtho
                 ' is there already an invoice posted for this month (double check - should have been weeded out in the display grid)
                 Dim intPaymentRecordForThisInvoice As Integer = -1
 
-                strSQL = "Select cast(count(*) as tinyint) as invoicedAlready from invoices where InvoiceType = 'I' and Contracts_recid = " & rowContract("recid") & _
-                            " and postdate between " & _
-                            "CONVERT(VARCHAR(25),DATEADD(dd,-(DAY(getdate())-1),getdate()),101) and " & _
-                            "dateadd(day,1,CONVERT(VARCHAR(25),DATEADD(dd,-(DAY(DATEADD(mm,1,getdate()))),DATEADD(mm,1,getdate())),101))"
+                strSQL = "Select cast(count(*) as tinyint) as invoicedAlready from invoices where InvoiceType = 'I' and Contracts_recid = " & rowContract("recid") &
+                            " and postdate between " &
+                            "CONVERT(VARCHAR(25),DATEADD(dd,-(DAY('" & Format(InvoiceDate, "yyy-MM-dd") & "')-1),'" & Format(InvoiceDate, "yyy-MM-dd") & "'),101) and " &
+                            "dateadd(day,1,CONVERT(VARCHAR(25),DATEADD(dd,-(DAY(DATEADD(mm,1,'" & Format(InvoiceDate, "yyyy-MM-dd") & "'))),DATEADD(mm,1,'" & Format(InvoiceDate, "yyyy-MM-dd") & "')),101))"
 
                 tblInvoices = g_IO_Execute_SQL(strSQL, False)
                 If tblInvoices.Rows(0)("InvoicedAlready") Then
@@ -1094,9 +1130,9 @@ Module ModMainOrtho
 
 
             ' extract patients name and address
-            strSQL = "Select RTrim(name_first) + ' ' + LTrim(RTrim(substring(isnull(name_mid,' ') + ' ',1,1))) + ' ' + Name_Last as Name," & _
-                " isnull(addr_other,'') as address1, addr_street as address2," & _
-                "isnull(RTrim(addr_city) + ', ' + rtrim(addr_state) + '  ' + addr_zip,'') as address3" & _
+            strSQL = "Select RTrim(name_first) + ' ' + LTrim(RTrim(substring(isnull(name_mid,' ') + ' ',1,1))) + ' ' + Name_Last as Name," &
+                " isnull(addr_other,'') as address1, addr_street as address2," &
+                "isnull(RTrim(addr_city) + ', ' + rtrim(addr_state) + '  ' + addr_zip,'') as address3" &
                 " from Patients where Chart_number = '" & rowContract("ChartNumber") & "'"
             Dim tblPatient As DataTable = g_IO_Execute_SQL(strSQL, False)
             If tblPatient.Rows.Count = 0 Then
@@ -1120,13 +1156,13 @@ Module ModMainOrtho
 
 
                 ' use the view to extract the payment aging info for this invoice
-                Dim intPatients_recid = g_getInvoiceDelingquences(rowContract)
+                Dim intPatients_recid = g_getInvoiceDelingquences(rowContract, InvoiceDate)
 
                 ' get any payment setting out there designated to post to next invoice (from a pre-payment or overpayment)
-                strSQL = "select recid, DatePosted, applytonextinvoice, sys_users_recid, patientNumber, ChartNumber, PatientAmount, " & _
-                         "PaymentType, PaymentReference, Comments,PaymentFor, Contract_recid, baserecid, payername, paymentselection, orig_payment " & _
-                         "from payments where ChartNumber = " & rowContract("ChartNumber") & _
-                         " and invoices_recid = -1  and applytonextinvoice <> 0 and PaymentSelection = 'PatientAmount' " & _
+                strSQL = "select recid, DatePosted, applytonextinvoice, sys_users_recid, patientNumber, ChartNumber, PatientAmount, " &
+                         "PaymentType, PaymentReference, Comments,PaymentFor, Contract_recid, baserecid, payername, paymentselection, orig_payment " &
+                         "from payments where ChartNumber = " & rowContract("ChartNumber") &
+                         " and invoices_recid = -1  and applytonextinvoice <> 0 and PaymentSelection = 'PatientAmount' " &
                          " order by case when PatientAmount >= 0 then 1 else 0 end, DatePosted desc"
                 Dim tblPendingInvoicePayment As DataTable = g_IO_Execute_SQL(strSQL, False)
 
@@ -1164,7 +1200,7 @@ Module ModMainOrtho
                                 System.Web.HttpContext.Current.Session("user_link_id") & "," &
                                 "'" & rowContract("ChartNumber") & "'," &
                                 "'" & rowContract("account_no") & "'," &
-                                "'" & rowContract("bill_date") & "'," &
+                                "'" & Format(InvoiceDate, "yyyy-MM-dd") & "'," &
                                 "'" & rowContract("terms").replace("'", "''") & "'," &
                                 "'" & rowContract("name").replace("'", "''") & "'," &
                                 "'" & rowContract("address_line1").replace("'", "''") & "'," &
@@ -1181,9 +1217,9 @@ Module ModMainOrtho
 
                     If AmountDue > 0 Then
                     Else
-                        g_IO_Execute_SQL("update contracts set PatientRemainingMonths = PatientRemainingMonths - 1" & _
-                                         ",PatientRemainingBalance = PatientRemainingBalance - " & rowContract("AmountDue") & _
-                                        ",PatientAmountBilled = PatientAmountBilled + " & rowContract("AmountDue") & _
+                        g_IO_Execute_SQL("update contracts set PatientRemainingMonths = PatientRemainingMonths - 1" &
+                                         ",PatientRemainingBalance = PatientRemainingBalance - " & rowContract("AmountDue") &
+                                        ",PatientAmountBilled = PatientAmountBilled + " & rowContract("AmountDue") &
                                         " where recid = " & rowContract("recid"), False)
                     End If
 
@@ -1198,6 +1234,7 @@ Module ModMainOrtho
                 If tblPendingInvoicePayment.Rows.Count > 0 And AmountDue = 0 Then
                     Dim rowPayment As DataRow = Nothing
                     For Each rowPayment In tblPendingInvoicePayment.Rows
+                        'If rowPayment("DatePosted") > InvoiceDate Then
                         Dim decOrigPaymentAmt As Decimal = rowPayment("orig_payment")
                         rowContract("AmountPaid") += rowPayment("applytonextinvoice") ' must be flagged as going to next invoice (accumulate if multiple payment records are used against this invoice)
 
@@ -1233,12 +1270,12 @@ Module ModMainOrtho
 
                             Else
 
-                                strSQL = "update payments set " & _
-                                            "invoices_recid=" & intNewInvoiceRecid & _
-                                            ",contract_recid=" & rowContract("recid") & _
-                                            ",applyToCurrentInvoice=" & rowContract("AmountDue") & _
-                                            ",OverPaymentPassedToNextInvoice = " & rowContract("AmountPaid") - rowContract("AmountDue") & _
-                                            ",applytonextinvoice = 0" & _
+                                strSQL = "update payments set " &
+                                            "invoices_recid=" & intNewInvoiceRecid &
+                                            ",contract_recid=" & rowContract("recid") &
+                                            ",applyToCurrentInvoice=" & rowContract("AmountDue") &
+                                            ",OverPaymentPassedToNextInvoice = " & rowContract("AmountPaid") - rowContract("AmountDue") &
+                                            ",applytonextinvoice = 0" &
                                             " where recid = " & rowPayment("recid")
 
                                 g_IO_Execute_SQL(strSQL, False)
@@ -1305,16 +1342,18 @@ Module ModMainOrtho
                                 tblPaymentsPreview.Rows.Add(rowPreviewPaymentsHolding)
 
                             Else
-                                strSQL = "update payments set " & _
-                                            "invoices_recid=" & intNewInvoiceRecid & _
-                                            ",contract_recid=" & rowContract("recid") & _
-                                            ",applyToCurrentInvoice=" & rowPayment("applytonextinvoice") & _
-                                            ",applytonextinvoice = 0" & _
+                                strSQL = "update payments set " &
+                                            "invoices_recid=" & intNewInvoiceRecid &
+                                            ",contract_recid=" & rowContract("recid") &
+                                            ",applyToCurrentInvoice=" & rowPayment("applytonextinvoice") &
+                                            ",applytonextinvoice = 0" &
                                             " where recid = " & rowPayment("recid")
 
                                 g_IO_Execute_SQL(strSQL, False)
                             End If
                         End If
+
+                        'End If
                     Next
                 End If
 
@@ -1343,10 +1382,10 @@ Module ModMainOrtho
                 rowContract("Adjusted") = 0
                 If Preview Then
                 Else
-                    strSQL = "update invoices set InvoiceNo = " & strNewInvoiceNumber & " ,amountPaid=" & rowContract("AmountPaid") & _
-                            ",status='" & IIf(rowContract("AmountPaid") = rowContract("AmountDue"), "C", "O") & "',credit=" & rowContract("Overpaid") & _
-                            ",current_due=" & rowContract("current_Due") & ",total_due=" & rowContract("total_due") & _
-                            ",adjusted=" & rowContract("adjusted") & ",amountdue=" & rowContract("amountdue") & _
+                    strSQL = "update invoices set InvoiceNo = " & strNewInvoiceNumber & " ,amountPaid=" & rowContract("AmountPaid") &
+                            ",status='" & IIf(rowContract("AmountPaid") = rowContract("AmountDue"), "C", "O") & "',credit=" & rowContract("Overpaid") &
+                            ",current_due=" & rowContract("current_Due") & ",total_due=" & rowContract("total_due") &
+                            ",adjusted=" & rowContract("adjusted") & ",amountdue=" & rowContract("amountdue") &
                             " where recid = " & intNewInvoiceRecid
 
                     g_IO_Execute_SQL(strSQL, False)
@@ -1373,9 +1412,9 @@ Module ModMainOrtho
 
                 'generate history records for this invoice, used by report writer to print history detail
                 If Preview Then
-                    g_generate_invoice_history(tblContracts, i, tblPaymentsPreview, True)
+                    g_generate_invoice_history(tblContracts, i, tblPaymentsPreview, True, InvoiceDate)
                 Else
-                    g_generate_invoice_history(tblContracts, i)
+                    g_generate_invoice_history(tblContracts, i, InvoiceDate)
                 End If
 
 
@@ -1409,7 +1448,7 @@ Module ModMainOrtho
         Return ""
     End Function
 
-    Public Function CreateInsuranceClaims(ByRef strContractID As String, ByRef blnPreview As Boolean, ByRef strClaimType As String, ByRef dteProcedureDate As String)
+    Public Function CreateInsuranceClaims(ByRef strContractID As String, ByRef blnPreview As Boolean, ByRef strClaimType As String, ByRef strProcedureDate As String)
         ' 11/29/16 CS Changed ByRef ChartNumber to Contract Recid and all references in code below
         ' Also updated anywhere this function was called to send contract recid instead of chartnumber bc there can be more than 1 contract per chartnumber
 
@@ -1417,6 +1456,7 @@ Module ModMainOrtho
         Dim blnProcessPrimaryClaim As Boolean = False
         Dim blnProcessSecondaryClaim As Boolean = False
         Dim intMonthsSinceContractPaymentsStarted As Integer = 0
+        Dim dteProcessDate As Date = Date.Now
 
         Dim strSQL As String = ""
         Dim strWhere As String = ""
@@ -1435,11 +1475,29 @@ Module ModMainOrtho
             strWhere = " where contracts_recid = " & strContractID
         End If
         strWhere &= ")"
-        If strClaimType = "Primary" Then
-            strSQL = "Select *, cast(0.00 as money) as claim_amount, Procedure_Date as FirstClaimDate, '' as claimNumber from UnprocessedPrimaryInsuranceClaimsCurrentMonth_vw" & strWhere & " order by insurance_name"
+
+        ' rodneys codde
+        Dim strViewName As String = "Unprocessed" & strClaimType & "InsuranceClaimsCurrentMonth_vw"
+
+        'RLO 10/25/16 - let user override the date processed on the claims selected ----------------------
+
+        If IsDate(strProcedureDate) Then
+            ' we need to extract the view and replace GETDATE with the override date
+            dteProcessDate = strProcedureDate
+            strProcedureDate = Format(dteProcessDate, "MM/dd/yyyy")
+
+            'get the actual SELECT from the VIEW
+            Dim strViewTSQL = g_IO_Execute_SQL("select definition as ViewSQL from sys.objects o join sys.sql_modules m on m.object_id = o.object_id " &
+                                               "where o.object_id = object_id( '" & strViewName & "') and o.type = 'V'", False).Rows(0)("ViewSQL")
+            strViewTSQL = Mid(strViewTSQL, UCase(strViewTSQL).IndexOf("SELECT") + 1)
+
+            strViewName = "(" & strViewTSQL.replace("GETDATE()", "'" & strProcedureDate & "'") & ") as temp "
         Else
-            strSQL = "Select *, cast(0.00 as money) as claim_amount,  Procedure_Date as FirstClaimDate, '' as claimNumber from UnprocessedSecondaryInsuranceClaimsCurrentMonth_vw" & strWhere & " order by insurance_name"
+            strProcedureDate = Format(Date.Now, "MM/dd/yyyy")
         End If
+        strSQL = "Select *, cast(0.00 As money) As claim_amount, Procedure_Date As FirstClaimDate, '' as claimNumber from " & strViewName & " " & strWhere & " order by insurance_name"
+
+        'RLO 10/25/16  ----------------------
 
         Dim tblClaims As DataTable = g_IO_Execute_SQL(strSQL, False)
         Dim strColumnNames As String = ""
@@ -1463,11 +1521,11 @@ Module ModMainOrtho
             If IsDBNull(rowClaims("contract_date")) Then
                 ' 11/18/15 make sure we have a contract date (should never be empty but somehow a contract got saved without a date)
                 intMonthsSinceContractPaymentsStarted = -1
-            ElseIf rowClaims("contract_date") > Format(CType(Date.Now, Date), "yyyy-MM-dd") And strContractID = "" Then
+            ElseIf rowClaims("contract_date") > Format(CType(strProcedureDate, Date), "yyyy-MM-dd") And strContractID = "" Then
                 ' 12/21/15 Rebecca wants to ignore any contracts beyond this current date, during batch processing of claims (no specific chart number sent in)
                 intMonthsSinceContractPaymentsStarted = -1
             Else
-                intMonthsSinceContractPaymentsStarted = DateDiff(DateInterval.Month, rowClaims("contract_date"), Date.Now)
+                intMonthsSinceContractPaymentsStarted = DateDiff(DateInterval.Month, rowClaims("contract_date"), dteProcessDate)
             End If
 
             ' 7/30/15 do not process claims where contract date is in the future (beyond current month) 
@@ -1477,7 +1535,7 @@ Module ModMainOrtho
 
                 If rowClaims("Type") = 0 Then
                     ' this is a primary claim
-                    Dim strCurrMonth As String = CType(Month(Date.Now), String)
+                    Dim strCurrMonth As String = CType(Month(CDate(strProcedureDate)), String)
                     strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("contracts_recid") &
                         " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and type = 0 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
                     Dim tblClaimsProcessed As DataTable = g_IO_Execute_SQL(strSQL, False)
@@ -1512,8 +1570,8 @@ Module ModMainOrtho
                         ' set date to current date (required by insurance)
                         rowClaims("procedure_date") = Format(Date.Now, "MM/dd/yyyy")
                         ' sending in procedure date from payment entry (to match secondary claim to primary claim's procedure date)
-                        If dteProcedureDate <> "" Then
-                            rowClaims("procedure_date") = dteProcedureDate
+                        If IsDate(strProcedureDate) Then
+                            rowClaims("procedure_date") = Format(CDate(strProcedureDate), "MM/dd/yyyy")
                         End If
 
                         Select Case rowClaims("PrimaryBillingFrequency_vw")
@@ -1539,12 +1597,8 @@ Module ModMainOrtho
                     ' this is a secondary claim
                     ' 11/29/2016 Need to use procedure date sent in, if provided
                     'Dim strCurrMonth As String = CType(Month(Date.Now), String)
-                    Dim strCurrMonth As String = ""
-                    If dteProcedureDate = "" Then
-                        strCurrMonth = CType(Month(Date.Now), String)
-                    Else
-                        strCurrMonth = CType(Month(dteProcedureDate), String)
-                    End If
+                    Dim strCurrMonth As String = CType(Month(CDate(strProcedureDate)), String)
+
                     strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("contracts_recid") &
                         " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and type = 1 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
                     Dim tblClaimsProcessed As DataTable = g_IO_Execute_SQL(strSQL, False)
@@ -1578,10 +1632,10 @@ Module ModMainOrtho
                         rowClaims("Claim_amount") = rowClaims("SecondaryClaim_amount_Installment")
                         rowClaims("FirstClaimDate") = Split(CStr(rowClaims("contract_date")), " ")(0)
                         ' set date to current date (required by insurance)
-                        rowClaims("procedure_date") = Format(Date.Now, "MM/dd/yyyy")
+                        rowClaims("procedure_date") = Format(CDate(strProcedureDate), "MM/dd/yyyy")
                         ' sending in procedure date from payment entry (to match secondary claim to primary claim's procedure date)
-                        If dteProcedureDate <> "" Then
-                            rowClaims("procedure_date") = dteProcedureDate
+                        If IsDate(strProcedureDate) Then
+                            rowClaims("procedure_date") = Format(CDate(strProcedureDate), "MM/dd/yyyy")
                         End If
 
                         Select Case rowClaims("SecondaryBillingFrequency_vw")
@@ -1691,13 +1745,13 @@ Module ModMainOrtho
                 If blnProcessPrimaryClaim Then
                     ' save  primary claim info processed in the CLAIMS table, save the claim type as 0 -- primary
                     If blnPreview Then
-                        strClaimNumber = Format(Date.Now, "yy") & "PREVIEW"
+                        strClaimNumber = Format(CDate(strProcedureDate), "yy") & "PREVIEW"
                     Else
                         strInsert = "insert into claims (" & strColumnNames & ",sys_users_recid) " & "Select " & strColumnNames & "," & System.Web.HttpContext.Current.Session("user_link_id") & " as sys_users_recid from UnprocessedPrimaryInsuranceClaimsCurrentMonth_vw where contracts_recid = " & rowClaims("contracts_recid")
                         g_IO_Execute_SQL(strInsert, False)
 
                         strClaimRecid = g_IO_GetLastRecId()
-                        strClaimNumber = Format(Date.Now, "yy") & Right(Trim(strClaimRecid), 4).PadLeft(4, "0")
+                        strClaimNumber = Format(CDate(strProcedureDate), "yy") & Right(Trim(strClaimRecid), 4).PadLeft(4, "0")
 
                         g_IO_Execute_SQL("update claims set FirstClaimDate='" & rowClaims("FirstClaimDate") & "', procedure_date='" & rowClaims("procedure_date") & "', Claim_Amount=" & rowClaims("Claim_Amount") & "," &
                                          "procedure_amount = " & rowClaims("procedure_amount") & ", procedure_desc = '" & rowClaims("procedure_desc") & "', procedure_code = '" & rowClaims("procedure_code") & "'" &
@@ -1730,7 +1784,7 @@ Module ModMainOrtho
                 ElseIf blnProcessSecondaryClaim Then
 
                     If blnPreview Then
-                        strClaimNumber = Format(Date.Now, "yy") & "PREVIEW"
+                        strClaimNumber = Format(CDate(strProcedureDate), "yy") & "PREVIEW"
                     Else
                         strInsert = "insert into claims (" & strColumnNames & ",sys_users_recid) " &
                                 "Select " & strColumnNames & "," & System.Web.HttpContext.Current.Session("user_link_id") & " as sys_users_recid " &
@@ -1738,7 +1792,7 @@ Module ModMainOrtho
                         g_IO_Execute_SQL(strInsert, False)
 
                         strClaimRecid = g_IO_GetLastRecId()
-                        strClaimNumber = Format(Date.Now, "yy") & Right(Trim(strClaimRecid), 4).PadLeft(4, "0")
+                        strClaimNumber = Format(CDate(strProcedureDate), "yy") & Right(Trim(strClaimRecid), 4).PadLeft(4, "0")
 
                         g_IO_Execute_SQL("update claims set FirstClaimDate='" & rowClaims("FirstClaimDate") & "', " &
                                          "procedure_date='" & rowClaims("procedure_date") & "', " &

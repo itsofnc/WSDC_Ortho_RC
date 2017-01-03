@@ -414,8 +414,8 @@ Module ModIO
         ' 01/06/15 T3 moved check for table/view to common function, used in multiple locations
         Dim strJoinTo As String = determineViewOrTable(TableName, False)
 
-        Dim strSQL As String = "select p.value, p.name from sys.extended_properties p inner join " & strJoinTo & " t on p.major_id = t.object_id where class = 1 and " & _
-                    "t.name = '" & TableName & "' and p.name = '" & extPropertyName & "'"
+        Dim strSQL As String = "select p.value, p.name from sys.extended_properties p inner join " & strJoinTo & " t on p.major_id = t.object_id where class = 1 and " &
+                    "t.name = '" & TableName.Replace("'", "''") & "' and p.name = '" & extPropertyName & "'"
         If extPropertyName = "link" Then
             strSQL = strSQL.Replace("p.name = ", "p.name like ").Replace(extPropertyName, extPropertyName & "%")
         End If
@@ -550,7 +550,7 @@ Module ModIO
                               "inner join sys.columns sc on st.object_id = sc.object_id " &
                               "left join sys.extended_properties sep on st.object_id = sep.major_id and sc.column_id = sep.minor_id " &
                               "left outer join INFORMATION_SCHEMA.COLUMNS as ic on ic.TABLE_NAME = st.name and ic.COLUMN_NAME = sc.name " &
-                              "Where st.name = '" & tableName & "'"
+                              "Where st.name = '" & tableName.Replace("'", "''") & "'"
 
 
         Dim tblColumns = g_IO_Execute_SQL(strSQL, False)
@@ -1731,7 +1731,7 @@ Module ModIO
 
     Private Function determineViewOrTable(ByVal tableName As String, ByRef blnIsView As Boolean) As String
         Dim strJoinTo As String = "sys.tables"
-        Dim strSQL As String = "SELECT CAST(count(*) as tinyint) as isView FROM sys.views where name = '" & tableName & "'"
+        Dim strSQL As String = "SELECT CAST(count(*) as tinyint) as isView FROM sys.views where name = '" & tableName.Replace("'", "''") & "'"
         blnIsView = g_IO_Execute_SQL(strSQL, False).Rows(0)("isView")
         If blnIsView Then
             strJoinTo = "sys.views"
