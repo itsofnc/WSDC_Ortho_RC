@@ -121,7 +121,7 @@
                             <span class="requiredFieldIndicator">*</span> Banding Date:
                             <span class="dateContainer" >
                                 <span class="input-group input-append date" id="dtpContractDate">                                
-                                    <asp:TextBox ID="dteContractDate" name="dteContractDate" CssClass="DB form-control" placeholder="mm/dd/yyyy" runat="server"></asp:TextBox>
+                                    <asp:TextBox ID="dteContractDate" name="dteContractDate" CssClass="DB form-control" onFocus="verifyContractSelected();"  placeholder="mm/dd/yyyy" runat="server"></asp:TextBox>
                                     <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
                                 </span>
                             </span>                            
@@ -1101,6 +1101,13 @@
             }
         };
 
+        function verifyContractSelected() {
+            recid = jQuery('#<%=txtRecID.ClientID %>').val();
+            if (recid == '') {
+                return false;
+            }
+        }
+
         // numeric initializations
         jQuery('#<%=dolAmount.ClientID%>').autoNumeric('init', {aSep: ',', aDec: '.'});
         jQuery('#<%=dolPatientInitialBalance.ClientID%>').autoNumeric('init', {aSep: ',', aDec: '.'});
@@ -1228,12 +1235,12 @@
         function getPatNameCID(obj) {          
             cid = obj.value;
             jQuery('#btnPopupCancel').click();
-            window.location.href("ContractEntry.aspx?cid=" + cid + "&mid=view")
+            window.open("ContractEntry.aspx?cid=" + cid + "&mid=view", "_self")
         }
 
             function goToExistingContract() {
                 strID = jQuery('#intCID')[0].innerHTML;
-                window.location.href("ContractEntry.aspx?cid=" + cid + "&mid=view")
+                window.open("ContractEntry.aspx?cid=" + strID + "&mid=view", "_self")
             }
 
             function keepdata(obj) {
