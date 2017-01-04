@@ -139,7 +139,7 @@
                             "<li id=""#Payments"" class=""dropdown"">" &
                             "    <a href=""#"" class=""dropdown-toggle"" data-toggle=""dropdown"" role=""button"" aria-expanded=""false"">Payments<span class=""caret""></span></a>" &
                             "    <ul class=""dropdown-menu scrollable-menu"" role=""menu"">" &
-                            "        <li><a href=""frmListManager.aspx?id=PaymentsPosted_vw&vo=true&perm=1001&add=PaymentPosting.aspx"" onclick=""setListSession('');"">Payment History</a></li>" &
+                            "        <li><a href=""frmListManager.aspx?id=PaymentsPostedWithLinkToReverse_vw&vo=true&perm=1001&add=PaymentPosting.aspx"" onclick=""setListSession('');"">Payment History</a></li>" &
                             "        <li id=""#PaymentPosting""><a href=""PaymentPosting.aspx"" onclick=""setListSession('');"">Payment Entry</a></li>" &
                             "    </ul>" &
                             "</li>" &
@@ -155,7 +155,7 @@
                             "        <li id=""#PaymentReceipt""><a href=""frmPrintPaymentReceipts.aspx"" onclick=""setListSession('');"">Payment Receipt</a></li>" &
                             "        <li id=""#PaymentsRecord""><a href=""frmPrintPaymentsRecord.aspx"" onclick=""setListSession('');"">Payments Record</a></li>" &
                             "        <li id=""#PaymentSummary""><a href=""frmPaymentEntrySummary.aspx"" onclick=""setListSession('');"">Payment Summary</a></li>" &
-                            "        <li><a href=""frmListManager.aspx?id=PaymentsPosted_vw&vo=true&perm=1001&add=PaymentPosting.aspx"">Posted Payments</a></li>" &
+                            "        <li><a href=""frmListManager.aspx?id=PaymentsPostedWithLinkToReverse_vw&vo=true&perm=1001&add=PaymentPosting.aspx"">Posted Payments</a></li>" &
                             "        <li><a href=""frmPrintPaymentAllocationReport.aspx"">Payment Allocation Report</a></li>" &
                             "        <li><a href=""frmListManager.aspx?id=PatientPaymentsApplied_vw&vo=true&perm=1000"" onclick=""setListSession('');"">Patient Payments Applied</a></li>" &
                             "        <li><a href=""frmListManager.aspx?id=InsurancePaymentsApplied_vw&vo=true&perm=1000"" onclick=""setListSession('');"">Insurance Payments Applied</a></li>" &
@@ -196,41 +196,41 @@
                         "</ul>"
         Else
             'User Nav
-            arrNavigation(0) &= _
-                            "<li id=""#Contracts"" class=""active dropdown"">" & _
-                            "    <a href=""#"" class=""dropdown-toggle"" data-toggle=""dropdown"" role=""button"" aria-expanded=""false"">Contracts<span class=""caret""></span></a>" & _
-                            "    <ul class=""dropdown-menu"" role=""menu"">" & _
-                            "        <li><a href=""frmListManager.aspx?id=Contracts_vw&perm=1000&mid=Contracts&add=ContractEntry.aspx"" onclick=""setListSession('contracts');"">Contract History</a></li>" & _
-                            "        <li class=""divider""></li>" & _
-                            "        <li id=""#ContractEntry"" class=""sr-only""><a href=""ContractEntry.aspx?vo=true"" onclick=""setListSession('');"">Contract Entry</a></li>" & _
-                            "    </ul>" & _
-                            "</li>" & _
-                            "<li id=""#Payments"" class=""dropdown"">" & _
-                            "    <a href=""#"" class=""dropdown-toggle"" data-toggle=""dropdown"" role=""button"" aria-expanded=""false"">Payments<span class=""caret""></span></a>" & _
-                            "    <ul class=""dropdown-menu"" role=""menu"">" & _
-                            "        <li><a href=""frmListManager.aspx?id=PaymentsPosted_vw&vo=true&perm=1001&add=PaymentPosting.aspx"" onclick=""setListSession('');"">Payment History</a></li>" & _
-                            "        <li class=""divider""></li>" & _
-                            "        <li id=""#PaymentPosting""><a href=""PaymentPosting.aspx"" onclick=""setListSession('');"">Payment Entry</a></li>" & _
-                            "    </ul>" & _
-                            "</li>" & _
-                            "<li id=""#Reports"" class=""dropdown"">" & _
-                            "    <a href=""#"" class=""dropdown-toggle"" data-toggle=""dropdown"" role=""button"" aria-expanded=""false"">Reports<span class=""caret""></span></a>" & _
-                            "    <ul class=""dropdown-menu"" role=""menu"">" & _
-                            "        <li id=""#ContractPostingReport""><a href=""frmPrintContractPosting.aspx"">Contract Posting Report</a></li>" & _
-                            "        <li id=""#ContractStatus""><a href=""ContractStatus.aspx"" onclick=""setListSession('');"">Contract Status View</a></li>" & _
-                            "        <li id=""#InsuranceTracking""><a href=""frmPrintInsuranceTrackingReport.aspx"" onclick=""setListSession('');"">Insurance Tracking Report</a></li>" & _
-                            "        <li id=""#OpenRecvRpt""><a href=""frmPrintOpenReceivables.aspx"" onclick=""setListSession('');"">Open Receivables by Patient Report</a></li>" & _
-                            "        <li class=""divider""><a href=""#"">-------------</a></li>" & _
-                            "        <li id=""#PaymentReceipt""><a href=""frmPrintPaymentReceipts.aspx"" onclick=""setListSession('');"">Payment Receipt</a></li>" & _
-                            "        <li id=""#PaymentsRecord""><a href=""frmPrintPaymentsRecord.aspx"" onclick=""setListSession('');"">Payments Record</a></li>" & _
-                            "        <li id=""#PaymentSummary""><a href=""frmPaymentEntrySummary.aspx"" onclick=""setListSession('');"">Payment Summary</a></li>" & _
-                            "        <li><a href=""frmListManager.aspx?id=PaymentsPosted_vw&vo=true&perm=1001&add=PaymentPosting.aspx"">Posted Payments</a></li>" & _
-                            "        <li><a href=""frmListManager.aspx?id=PatientPaymentsApplied_vw&vo=true&perm=1000"" onclick=""setListSession('');"">Patient Payments Applied</a></li>" & _
-                            "        <li><a href=""frmListManager.aspx?id=InsurancePaymentsApplied_vw&vo=true&perm=1000"" onclick=""setListSession('');"">Insurance Payments Applied</a></li>" & _
-                            "        <li><a href=""frmListManager.aspx?id=PaymentsReversed_vw&vo=true&perm=1000"">Reversed Payments</a></li>" & _
-                            "        <li><a href=""frmListManager.aspx?id=PaymentsUnposted_vw&vo=true&perm=1000"">Un-Posted Payments</a></li>" & _
-                            "    </ul>" & _
-                            "</li>" & _
+            arrNavigation(0) &=
+                            "<li id=""#Contracts"" class=""active dropdown"">" &
+                            "    <a href=""#"" class=""dropdown-toggle"" data-toggle=""dropdown"" role=""button"" aria-expanded=""false"">Contracts<span class=""caret""></span></a>" &
+                            "    <ul class=""dropdown-menu"" role=""menu"">" &
+                            "        <li><a href=""frmListManager.aspx?id=Contracts_vw&perm=1000&mid=Contracts&add=ContractEntry.aspx"" onclick=""setListSession('contracts');"">Contract History</a></li>" &
+                            "        <li class=""divider""></li>" &
+                            "        <li id=""#ContractEntry"" class=""sr-only""><a href=""ContractEntry.aspx?vo=true"" onclick=""setListSession('');"">Contract Entry</a></li>" &
+                            "    </ul>" &
+                            "</li>" &
+                            "<li id=""#Payments"" class=""dropdown"">" &
+                            "    <a href=""#"" class=""dropdown-toggle"" data-toggle=""dropdown"" role=""button"" aria-expanded=""false"">Payments<span class=""caret""></span></a>" &
+                            "    <ul class=""dropdown-menu"" role=""menu"">" &
+                            "        <li><a href=""frmListManager.aspx?id=PaymentsPostedWithLinkToReverse_vw&vo=true&perm=1001&add=PaymentPosting.aspx"" onclick=""setListSession('');"">Payment History</a></li>" &
+                            "        <li class=""divider""></li>" &
+                            "        <li id=""#PaymentPosting""><a href=""PaymentPosting.aspx"" onclick=""setListSession('');"">Payment Entry</a></li>" &
+                            "    </ul>" &
+                            "</li>" &
+                            "<li id=""#Reports"" class=""dropdown"">" &
+                            "    <a href=""#"" class=""dropdown-toggle"" data-toggle=""dropdown"" role=""button"" aria-expanded=""false"">Reports<span class=""caret""></span></a>" &
+                            "    <ul class=""dropdown-menu"" role=""menu"">" &
+                            "        <li id=""#ContractPostingReport""><a href=""frmPrintContractPosting.aspx"">Contract Posting Report</a></li>" &
+                            "        <li id=""#ContractStatus""><a href=""ContractStatus.aspx"" onclick=""setListSession('');"">Contract Status View</a></li>" &
+                            "        <li id=""#InsuranceTracking""><a href=""frmPrintInsuranceTrackingReport.aspx"" onclick=""setListSession('');"">Insurance Tracking Report</a></li>" &
+                            "        <li id=""#OpenRecvRpt""><a href=""frmPrintOpenReceivables.aspx"" onclick=""setListSession('');"">Open Receivables by Patient Report</a></li>" &
+                            "        <li class=""divider""><a href=""#"">-------------</a></li>" &
+                            "        <li id=""#PaymentReceipt""><a href=""frmPrintPaymentReceipts.aspx"" onclick=""setListSession('');"">Payment Receipt</a></li>" &
+                            "        <li id=""#PaymentsRecord""><a href=""frmPrintPaymentsRecord.aspx"" onclick=""setListSession('');"">Payments Record</a></li>" &
+                            "        <li id=""#PaymentSummary""><a href=""frmPaymentEntrySummary.aspx"" onclick=""setListSession('');"">Payment Summary</a></li>" &
+                            "        <li><a href=""frmListManager.aspx?id=PaymentsPostedWithLinkToReverse_vw&vo=true&perm=1001&add=PaymentPosting.aspx"">Posted Payments</a></li>" &
+                            "        <li><a href=""frmListManager.aspx?id=PatientPaymentsApplied_vw&vo=true&perm=1000"" onclick=""setListSession('');"">Patient Payments Applied</a></li>" &
+                            "        <li><a href=""frmListManager.aspx?id=InsurancePaymentsApplied_vw&vo=true&perm=1000"" onclick=""setListSession('');"">Insurance Payments Applied</a></li>" &
+                            "        <li><a href=""frmListManager.aspx?id=PaymentsReversed_vw&vo=true&perm=1000"">Reversed Payments</a></li>" &
+                            "        <li><a href=""frmListManager.aspx?id=PaymentsUnposted_vw&vo=true&perm=1000"">Un-Posted Payments</a></li>" &
+                            "    </ul>" &
+                            "</li>" &
                         "</ul>"
         End If
         arrNavigation(0) &= "</ul>"

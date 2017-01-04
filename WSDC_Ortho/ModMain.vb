@@ -531,7 +531,12 @@ Module ModMain
                 System.Web.HttpContext.Current.Session("user_role") = tblUser.Rows(0)("user_role")
             End Try
             Try
-                System.Web.HttpContext.Current.Session("user_name") = tblUser.Rows(0)("firstName")
+                ' 1/4/17 CS added check for dbNull b/c the session variable does get set to null without errroring out
+                If IsDBNull(tblUser.Rows(0)("firstName")) Then
+                    System.Web.HttpContext.Current.Session("user_name") = tblUser.Rows(0)(g_userIdField)
+                Else
+                    System.Web.HttpContext.Current.Session("user_name") = tblUser.Rows(0)("firstName")
+                End If
             Catch ex As Exception
                 System.Web.HttpContext.Current.Session("user_name") = tblUser.Rows(0)(g_userIdField)
             End Try

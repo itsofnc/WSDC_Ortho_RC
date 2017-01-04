@@ -18,7 +18,7 @@
                         <a href="frmListManager.aspx?id=Contracts_vw&add=ContractEntry.aspx&perm=1101">
                             <img src="images/viewContracts.png" /></a>
                         &nbsp;&nbsp;&nbsp;
-                        <a href="frmListManager.aspx?id=PaymentsPosted_vw&add=PaymentPosting.aspx&vo=true&perm=1001">
+                        <a href="frmListManager.aspx?id=PaymentsPostedWithLinkToReverse_vw&add=PaymentPosting.aspx&vo=true&perm=1001">
                             <img src="images/receivePayments.png"  /></a>
                         &nbsp;&nbsp;&nbsp;
                         <a href="frmClaimsProcessing.aspx?i=1">
@@ -40,7 +40,7 @@
                     <a href="frmListManager.aspx?id=Contracts_vw&vo=true&perm=1001">
                         <img src="images/viewContracts.png"/></a>
                     &nbsp;&nbsp;&nbsp;
-                    <a href="frmListManager.aspx?id=PaymentsPosted_vw&add=PaymentPosting.aspx&vo=true&perm=1001">
+                    <a href="frmListManager.aspx?id=PaymentsPostedWithLinkToReverse_vw&add=PaymentPosting.aspx&vo=true&perm=1001">
                         <img src="images/receivePayments.png"/></a>
                 </div>
             </div>             

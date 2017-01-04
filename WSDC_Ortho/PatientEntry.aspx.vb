@@ -144,7 +144,7 @@
     End Sub
 
     Private Sub btnPaymentHistory_Click(sender As Object, e As EventArgs) Handles btnPaymentHistory.Click
-        Response.Redirect("frmPaymentHistory.aspx?id=PaymentsPosted_vw&add=PaymentPosting.aspx&search=" & txtChart_Number.Text)
+        Response.Redirect("frmPaymentHistory.aspx?id=PaymentsPostedWithLinkToReverse_vw&add=PaymentPosting.aspx&search=" & txtChart_Number.Text)
     End Sub
 
     Private Sub btnCancelNew_Click(sender As Object, e As EventArgs) Handles btnCancelNew.Click

@@ -19,7 +19,7 @@
         ' 12/29/16 CS update payments with doctor recid (will eventually be fixed in payment entry...)
         strSQL = "update payments set doctors_vw = (select doctors_vw from contracts where recid = payments.contract_recid) where doctors_vw = -1 and dateposted >= '2016-12-01 00:00:00';"
         g_IO_Execute_SQL(strSQL, False)
-
+        ' 1/4/17 CS Need to pull invoices based on 'DateProcessed', b/c 'PostDate' (ie invoice date) can now be backdated on invoices by user
         strSQL = "Select ar_lastCloseDate, ar_previousBal, (0 - ISNULL" &
             "((SELECT        SUM(ISNULL(orig_payment, 0)) AS Expr1 " &
             "    FROM            dbo.Payments p" &
@@ -28,7 +28,7 @@
             "	 AND (pt.adjustment = 1) AND (p.recid = p.baseRecid)), 0)) AS ttlAdjustments, (ISNULL" &
             "((SELECT        SUM(ISNULL(AmountDue, 0)) AS Expr1" &
             "    FROM            dbo.Invoices " &
-            "    WHERE        (PostDate >= '" & dateFrom & "') AND (PostDate <= '" & dateTo & " 23:59:59')), 0) + ISNULL " &
+            "    WHERE        (DateProcessed >= '" & dateFrom & "') AND (DateProcessed <= '" & dateTo & " 23:59:59')), 0) + ISNULL " &
             "((SELECT        SUM(ISNULL(procedure_amount, 0)) AS Expr1 " &
             "    FROM            dbo.Claims " &
             "    WHERE        (DateProcessed >= '" & dateFrom & "') AND (DateProcessed <= '" & dateTo & " 23:59:59')), 0)) AS invAmount, (0 - ISNULL" &

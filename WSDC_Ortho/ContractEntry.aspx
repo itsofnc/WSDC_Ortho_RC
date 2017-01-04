@@ -1225,10 +1225,7 @@
 
         }
 
-        function getPatNameCID(obj) {
-            //11/21/16 Added this function to allow the user to select from an existing contract (same patient may have more than 1 contract)
-            //obj is the ddl to select from existing contracts (value is the contract recid)
-            //txtBox hardcoded as 'con' on ddl OnChange event that calls this function
+        function getPatNameCID(obj) {          
             cid = obj.value;
             jQuery('#btnPopupCancel').click();
             window.location.href("ContractEntry.aspx?cid=" + cid + "&mid=view")
@@ -1236,7 +1233,7 @@
 
             function goToExistingContract() {
                 strID = jQuery('#intCID')[0].innerHTML;
-                window.open("ContractEntry.aspx?cid=" + strID + "&mid=view");
+                window.location.href("ContractEntry.aspx?cid=" + cid + "&mid=view")
             }
 
             function keepdata(obj) {

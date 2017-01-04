@@ -587,12 +587,12 @@ Module ModMainOrtho
         Return strReturnName
     End Function
 
-    Public Sub g_ReverseInvoicePayment(ByVal Payments_Recid As Integer, ByVal PaymentType As String, ByRef intNewPaymentsBaseRecid As Integer)
+    Public Sub g_ReverseInvoicePayment(ByVal Payments_Recid As String, ByVal PaymentType As String, ByVal ReversalComment As String, ByRef intNewPaymentsBaseRecid As Integer)
 
 
         Dim strSQL = "select recid, invoices_recid, DatePosted,applytocurrentinvoice,applyToPastDue, ApplyToPrinciple, applytonextinvoice, sys_users_recid, patientNumber, ChartNumber, PatientAmount, " &
          "PaymentType, PaymentReference, Contract_recid, baserecid, payername, paymentselection, orig_payment, Comments, PaymentFor, Doctors_vw " &
-         "from payments where recid = " & Payments_Recid & " order by recid"
+         "from payments where BaseRecid = " & Payments_Recid & " order by recid"
 
         Dim tblInvoicePayment As DataTable = g_IO_Execute_SQL(strSQL, False)
 
@@ -608,11 +608,12 @@ Module ModMainOrtho
                     rowPayment("invoices_recid") = -99
                     g_IO_Execute_SQL("update payments set invoices_recid = -99 where recid = " & rowPayment("recid"), False)
                 ElseIf rowPayment("invoices_recid") = -99 Then
-                    ' this payment was applied to principle, so adjust contract remaining balance
-
+                    ' this payment was applied to principle, so adjust contract remaining balance back to what it was before payment was applied
+                    strSQL = "update contracts set PatientRemainingBalance = PatientRemainingBalance + " & rowPayment("PatientAmount") & " where recid = '" & rowPayment("contract_recid") & "'"
+                    g_IO_Execute_SQL(strSQL, False)
                 Else
                     'reopen the invoice and adjust payment made
-                    g_IO_Execute_SQL("update invoices set status = 'O', current_due = current_due + " & rowPayment("applytocurrentinvoice") & ", Total_Due = Total_Due + " & rowPayment("applytocurrentinvoice") & ", AmountPaid = AmountPaid - " & rowPayment("applytocurrentinvoice") & " - " & rowPayment("applyToPastDue") & " where recid = " & rowPayment("invoices_recid"), False)
+                    g_IO_Execute_SQL("update invoices set status = 'O', current_due = current_due + " & rowPayment("applytocurrentinvoice") & ", Total_Due = Total_Due + " & rowPayment("applytocurrentinvoice") & " + " & rowPayment("applyToPastDue") & ", AmountPaid = AmountPaid - " & rowPayment("applytocurrentinvoice") & " - " & rowPayment("applyToPastDue") & " where recid = " & rowPayment("invoices_recid"), False)
                 End If
                 ' set Apply To quantity's to reversed amounts
                 rowPayment("PatientAmount") = 0 - rowPayment("PatientAmount")
@@ -643,25 +644,29 @@ Module ModMainOrtho
                             "'" & rowPayment("payername").replace("'", "''") & "'," &
                             "'" & rowPayment("paymentselection") & "'" & "," &
                             -decOrigPaymentAmt & "," &
-                            "'" & rowPayment("Comments").replace("'", "''") & " (reversed by " & System.Web.HttpContext.Current.Session("user_name").replace("'", "''") & ")'," &
+                            "'" & ReversalComment.Replace("'", "''") & "'," &
                             "'" & rowPayment("PaymentFor") & "'," &
                             rowPayment("doctors_vw") &
                             ")"
                 g_IO_Execute_SQL(strSQL, False)
 
                 intNewPaymentsBaseRecid = g_IO_GetLastRecId()
+
                 ' rlo 2016-12-21 - this new record should remain a part of the original payment stream
                 '    g_IO_Execute_SQL("Update payments set baserecid = " & intNewPaymentsBaseRecid & " where recid =" & intNewPaymentsBaseRecid, False)
 
-                ' tie the two payment records together
-                g_IO_Execute_SQL("update payments set ReversedBy_recid = " & intNewPaymentsBaseRecid & " where recid = " & Payments_Recid, False)
+                ' 1/4/17 CS not sure why this was commented out, above by rlo, this IS a new stream of payments today so that it shows up on reports this day/month
+                g_IO_Execute_SQL("update payments set baserecid = " & intNewPaymentsBaseRecid & " where recid = " & intNewPaymentsBaseRecid, False)
+
+                ' tie the two payment records together (original payment and the reversal of it)
+                g_IO_Execute_SQL("update payments set ReversedBy_recid = " & intNewPaymentsBaseRecid & " where recid = " & rowPayment("recid"), False)
             Next
         End If
 
 
     End Sub
 
-    Public Sub g_ReverseClaimPayment(ByVal Payments_Base_Recid As Integer, ByVal PaymentType As String, ByRef intNewPaymentsBaseRecid As Integer, ByVal OriginalPaymentType As String)
+    Public Sub g_ReverseClaimPayment(ByVal Payments_Base_Recid As Integer, ByVal PaymentType As String, ByVal ReversalComment As String, ByRef intNewPaymentsBaseRecid As Integer, ByVal OriginalPaymentType As String)
 
         Dim strSQL = "select recid, claimNumber, DatePosted,applytoclaim, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, " &
          "PaymentType, PaymentReference, Contract_recid, baserecid, payername, paymentselection, orig_payment, Comments, PaymentFor, Doctors_vw " &
@@ -674,10 +679,14 @@ Module ModMainOrtho
             For Each rowPayment In tblClaimPayment.Rows
                 Dim decOrigPaymentAmt As Decimal = rowPayment("orig_payment")
 
-                If Trim(rowPayment("ClaimNumber")) = "" Then
+                If Trim(rowPayment("ClaimNumber")) = "" Or Trim(rowPayment("ClaimNumber")) = "-1" Then
                     ' if this payment has not been applied to a claim yet, flag it so that it never does
                     rowPayment("ClaimNumber") = -99
                     g_IO_Execute_SQL("update payments set ClaimNumber = -99 where recid = " & rowPayment("recid"), False)
+                ElseIf rowPayment("ClaimNumber") = "-99" Then
+                    ' this is a payment that was applied to the insurance account balance, so add the amount back to their balance
+                    strSQL = "update contracts set " & rowPayment("PaymentSelection").Replace("Amount", "") & "RemainingBalance = " & rowPayment("PaymentSelection").Replace("Amount", "") & "RemainingBalance + " & rowPayment("PatientAmount") & " where recid = '" & rowPayment("contract_recid") & "'"
+                    g_IO_Execute_SQL(strSQL, False)
                 Else
                     'reopen the claim and adjust payment made
                     If OriginalPaymentType = "14" Then
@@ -706,7 +715,7 @@ Module ModMainOrtho
                             "'" & rowPayment("payername").replace("'", "''") & "'," &
                             "'" & rowPayment("paymentselection") & "'" & "," &
                             -decOrigPaymentAmt & "," &
-                            "'" & rowPayment("Comments").replace("'", "''") & "'," &
+                            "'" & ReversalComment.Replace("'", "''") & "'," &
                             "'" & rowPayment("PaymentFor") & "'," &
                             rowPayment("doctors_vw") &
                             ")"
@@ -1128,7 +1137,6 @@ Module ModMainOrtho
                 End If
             End If
 
-
             ' extract patients name and address
             strSQL = "Select RTrim(name_first) + ' ' + LTrim(RTrim(substring(isnull(name_mid,' ') + ' ',1,1))) + ' ' + Name_Last as Name," &
                 " isnull(addr_other,'') as address1, addr_street as address2," &
@@ -1184,12 +1192,14 @@ Module ModMainOrtho
 
                     ' go ahead and create new invoice record which will audit this invoice and show that this invoice has been processed this month
                     ' 10/7/16 CS Added new field, doctors_vw, to store the doctor assigned to contract at time of this transaction
-                    strSQL = "insert into Invoices (Contracts_recid,AmountDue,PastDueLessThan30,PastDue30,PastDueOver30,InvoiceType,status, patients_recid,Descr,sys_users_recid," &
+                    ' 1/4/17 CS Need to populate PostDate with the date sent in b/c the user can now change the date of the invoice (visible on invoice and some reports).
+                    strSQL = "insert into Invoices (Contracts_recid,AmountDue,PostDate,PastDueLessThan30,PastDue30,PastDueOver30,InvoiceType,status, patients_recid,Descr,sys_users_recid," &
                              "chartNumber,account_no,bill_date,terms,name,address_line1,address_line2,address_line3,current_due,Total_Due, Doctors_vw" &
                              ")" &
                                 " values (" &
                                 "'" & rowContract("recid") & "'," &
                                 rowContract("AmountDue") & "," &
+                                "'" & Format(InvoiceDate, "yyyy-MM-dd") & "'," &
                                 rowContract("PastDueLessThan30") & "," &
                                 rowContract("PastDue30") & "," &
                                 rowContract("PastDueOver30") & "," &
@@ -1273,6 +1283,7 @@ Module ModMainOrtho
                                 strSQL = "update payments set " &
                                             "invoices_recid=" & intNewInvoiceRecid &
                                             ",contract_recid=" & rowContract("recid") &
+                                            ",PatientAmount=" & rowContract("AmountDue") &
                                             ",applyToCurrentInvoice=" & rowContract("AmountDue") &
                                             ",OverPaymentPassedToNextInvoice = " & rowContract("AmountPaid") - rowContract("AmountDue") &
                                             ",applytonextinvoice = 0" &
