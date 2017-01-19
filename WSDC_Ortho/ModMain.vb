@@ -541,6 +541,12 @@ Module ModMain
                 System.Web.HttpContext.Current.Session("user_name") = tblUser.Rows(0)(g_userIdField)
             End Try
 
+            Try
+                System.Web.HttpContext.Current.Session("user_name") = tblUser.Rows(0)("firstName")
+            Catch ex As Exception
+                System.Web.HttpContext.Current.Session("user_name") = tblUser.Rows(0)(g_userIdField)
+            End Try
+
             ' 1/20/16 cpb put these in try for backward compatible with databaess
             Try
                 System.Web.HttpContext.Current.Session("AccountPasswords") = tblUser.Rows(0)("AccountPasswords")

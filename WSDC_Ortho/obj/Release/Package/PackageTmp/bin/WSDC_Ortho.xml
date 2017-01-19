@@ -1842,6 +1842,15 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
+<member name="F:WSDC_Ortho.frmClaimsProcessing._btnManualClaim">
+<summary>
+btnManualClaim control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
 <member name="F:WSDC_Ortho.frmClaimsProcessing._litFrameCall">
 <summary>
 litFrameCall control.
@@ -5737,6 +5746,15 @@ To modify move field declaration from designer file to code-behind file.
 <member name="F:WSDC_Ortho.PaymentPosting._litViewOnly">
 <summary>
 litViewOnly control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._txtDoctors_vw">
+<summary>
+txtDoctors_vw control.
 </summary>
 <remarks>
 Auto-generated field.

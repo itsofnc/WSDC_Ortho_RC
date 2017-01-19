@@ -1842,6 +1842,15 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
+<member name="F:WSDC_Ortho.frmClaimsProcessing._btnManualClaim">
+<summary>
+btnManualClaim control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
 <member name="F:WSDC_Ortho.frmClaimsProcessing._litFrameCall">
 <summary>
 litFrameCall control.
@@ -5680,27 +5689,9 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._txtSessions">
+<member name="F:WSDC_Ortho.PaymentPosting._txtDoctors_vw">
 <summary>
-txtSessions control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._txtPaymentID">
-<summary>
-txtPaymentID control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._txtContract_RECID">
-<summary>
-txtContract_RECID control.
+txtDoctors_vw control.
 </summary>
 <remarks>
 Auto-generated field.
@@ -5716,36 +5707,18 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._dolOrig_Payment">
+<member name="F:WSDC_Ortho.PaymentPosting._txtPatientContractRecId">
 <summary>
-dolOrig_Payment control.
+txtPatientContractRecId control.
 </summary>
 <remarks>
 Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._intCurInvoice">
+<member name="F:WSDC_Ortho.PaymentPosting._divViewOptions">
 <summary>
-intCurInvoice control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._litViewOnly">
-<summary>
-litViewOnly control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._txtDoctors_vw">
-<summary>
-txtDoctors_vw control.
+divViewOptions control.
 </summary>
 <remarks>
 Auto-generated field.
@@ -5761,27 +5734,18 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._lblPatientName">
+<member name="F:WSDC_Ortho.PaymentPosting._lblPatientHeader">
 <summary>
-lblPatientName control.
+lblPatientHeader control.
 </summary>
 <remarks>
 Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._lblInsurance">
+<member name="F:WSDC_Ortho.PaymentPosting._h6PatientSearch">
 <summary>
-lblInsurance control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._dtePaymentDate">
-<summary>
-dtePaymentDate control.
+h6PatientSearch control.
 </summary>
 <remarks>
 Auto-generated field.
@@ -5806,15 +5770,6 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._txtPatientNumber">
-<summary>
-txtPatientNumber control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
 <member name="F:WSDC_Ortho.PaymentPosting._txtChartNumber">
 <summary>
 txtChartNumber control.
@@ -5824,126 +5779,54 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._dolPatientAmount">
+<member name="F:WSDC_Ortho.PaymentPosting._btnSearch">
 <summary>
-dolPatientAmount control.
+btnSearch control.
 </summary>
 <remarks>
 Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._dolPrimaryAmount">
+<member name="F:WSDC_Ortho.PaymentPosting._btnClear">
 <summary>
-dolPrimaryAmount control.
+btnClear control.
 </summary>
 <remarks>
 Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._dolSecondaryAmount">
+<member name="F:WSDC_Ortho.PaymentPosting._txtPatientNumber">
 <summary>
-dolSecondaryAmount control.
+txtPatientNumber control.
 </summary>
 <remarks>
 Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._lblCurrentInvoiceBal">
+<member name="F:WSDC_Ortho.PaymentPosting._divPaymentCollectionArea">
 <summary>
-lblCurrentInvoiceBal control.
+divPaymentCollectionArea control.
 </summary>
 <remarks>
 Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._intCurrentInvoiceBal">
+<member name="F:WSDC_Ortho.PaymentPosting._divPatientInfo">
 <summary>
-intCurrentInvoiceBal control.
+divPatientInfo control.
 </summary>
 <remarks>
 Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._dolApplyToCurrentInvoice">
+<member name="F:WSDC_Ortho.PaymentPosting._ddlPaymentFrom">
 <summary>
-dolApplyToCurrentInvoice control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._lblPastDueBal">
-<summary>
-lblPastDueBal control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._intPastDueBal">
-<summary>
-intPastDueBal control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._dolApplyToPastDue">
-<summary>
-dolApplyToPastDue control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._lblRemainingAmt">
-<summary>
-lblRemainingAmt control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._lblPatRemaniningBal">
-<summary>
-lblPatRemaniningBal control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._intPatRemaniningBal">
-<summary>
-intPatRemaniningBal control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._dolApplyToPrinciple">
-<summary>
-dolApplyToPrinciple control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._dolApplyToNextInvoice">
-<summary>
-dolApplyToNextInvoice control.
+ddlPaymentFrom control.
 </summary>
 <remarks>
 Auto-generated field.
@@ -5959,36 +5842,18 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._ddlClaimNumber">
+<member name="F:WSDC_Ortho.PaymentPosting._ddlPatPaymentType">
 <summary>
-ddlClaimNumber control.
+ddlPatPaymentType control.
 </summary>
 <remarks>
 Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._txtClaimNumber">
+<member name="F:WSDC_Ortho.PaymentPosting._ddlInsPaymentType">
 <summary>
-txtClaimNumber control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._txtClaimIndex">
-<summary>
-txtClaimIndex control.
-</summary>
-<remarks>
-Auto-generated field.
-To modify move field declaration from designer file to code-behind file.
-</remarks>
-</member>
-<member name="F:WSDC_Ortho.PaymentPosting._ddlPaymentType">
-<summary>
-ddlPaymentType control.
+ddlInsPaymentType control.
 </summary>
 <remarks>
 Auto-generated field.
@@ -5998,6 +5863,231 @@ To modify move field declaration from designer file to code-behind file.
 <member name="F:WSDC_Ortho.PaymentPosting._txtPaymentReference">
 <summary>
 txtPaymentReference control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._divPaymentInfo">
+<summary>
+divPaymentInfo control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolPaymentAmount">
+<summary>
+dolPaymentAmount control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolApplyRemaining">
+<summary>
+dolApplyRemaining control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolOverPayment">
+<summary>
+dolOverPayment control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolOverPaymentPrimary">
+<summary>
+dolOverPaymentPrimary control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolOverPaymentSecondary">
+<summary>
+dolOverPaymentSecondary control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._divPatientPaymentsApply">
+<summary>
+divPatientPaymentsApply control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._lblPatientCurrent">
+<summary>
+lblPatientCurrent control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._lblPatientCurrentPend">
+<summary>
+lblPatientCurrentPend control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolPatientCurrent">
+<summary>
+dolPatientCurrent control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._lblPatientPastDue">
+<summary>
+lblPatientPastDue control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._lblPatientPastDuePend">
+<summary>
+lblPatientPastDuePend control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolPatientPastDue">
+<summary>
+dolPatientPastDue control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._lblPatientNext">
+<summary>
+lblPatientNext control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._lblPatientNextPend">
+<summary>
+lblPatientNextPend control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolPatientNext">
+<summary>
+dolPatientNext control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._lblPatientBalance">
+<summary>
+lblPatientBalance control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._lblPatientBalancePend">
+<summary>
+lblPatientBalancePend control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolPatientBalance">
+<summary>
+dolPatientBalance control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._divInsurancePaymentsApply">
+<summary>
+divInsurancePaymentsApply control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._litInsuranceClaimsTable">
+<summary>
+litInsuranceClaimsTable control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._divInsurancePaymentApplySecondary">
+<summary>
+divInsurancePaymentApplySecondary control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._litInsuranceClaimsTableSecondary">
+<summary>
+litInsuranceClaimsTableSecondary control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._divPatientInvoiceDetail">
+<summary>
+divPatientInvoiceDetail control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._litPatientInvoiceTable">
+<summary>
+litPatientInvoiceTable control.
 </summary>
 <remarks>
 Auto-generated field.
@@ -6022,18 +6112,27 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._btnAdd">
+<member name="F:WSDC_Ortho.PaymentPosting._divPaymentButtons">
 <summary>
-btnAdd control.
+divPaymentButtons control.
 </summary>
 <remarks>
 Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
-<member name="F:WSDC_Ortho.PaymentPosting._btnSave">
+<member name="F:WSDC_Ortho.PaymentPosting._divBtnOptions">
 <summary>
-btnSave control.
+divBtnOptions control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._btnAdd">
+<summary>
+btnAdd control.
 </summary>
 <remarks>
 Auto-generated field.
@@ -6049,9 +6148,63 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
+<member name="F:WSDC_Ortho.PaymentPosting._divBtnEditOptions">
+<summary>
+divBtnEditOptions control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._btnSave">
+<summary>
+btnSave control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
 <member name="F:WSDC_Ortho.PaymentPosting._btnDelete">
 <summary>
 btnDelete control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._btnCancelEdit">
+<summary>
+btnCancelEdit control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._divBtnViewOptions">
+<summary>
+divBtnViewOptions control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._btnClose">
+<summary>
+btnClose control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._divPendingPayments">
+<summary>
+divPendingPayments control.
 </summary>
 <remarks>
 Auto-generated field.
@@ -6076,9 +6229,342 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
+<member name="F:WSDC_Ortho.PaymentPosting._txtSessions">
+<summary>
+txtSessions control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidFocusField">
+<summary>
+hidFocusField control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidPrimaryInsurance">
+<summary>
+hidPrimaryInsurance control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidPrimaryInsuranceBalance">
+<summary>
+hidPrimaryInsuranceBalance control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidPrimaryInsurancePlanId">
+<summary>
+hidPrimaryInsurancePlanId control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidSecondaryInsurance">
+<summary>
+hidSecondaryInsurance control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidSecondaryInsuranceBalance">
+<summary>
+hidSecondaryInsuranceBalance control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidSecondaryInsurancePlanId">
+<summary>
+hidSecondaryInsurancePlanId control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidInsCount">
+<summary>
+hidInsCount control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidInsRefList">
+<summary>
+hidInsRefList control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidDefaultPaymentFor">
+<summary>
+hidDefaultPaymentFor control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidMode">
+<summary>
+hidMode control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidUnloadWarning">
+<summary>
+hidUnloadWarning control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidPatientCurrent">
+<summary>
+hidPatientCurrent control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidPatientCurrentPend">
+<summary>
+hidPatientCurrentPend control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidPatientPastDue">
+<summary>
+hidPatientPastDue control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidPatientPastDuePend">
+<summary>
+hidPatientPastDuePend control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidPatientNext">
+<summary>
+hidPatientNext control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidPatientNextPend">
+<summary>
+hidPatientNextPend control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidPatientBalance">
+<summary>
+hidPatientBalance control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._hidPatientBalancePend">
+<summary>
+hidPatientBalancePend control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dtePaymentDate">
+<summary>
+dtePaymentDate control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._ddlPaymentType">
+<summary>
+ddlPaymentType control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._txtContract_RECID">
+<summary>
+txtContract_RECID control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolOrig_Payment">
+<summary>
+dolOrig_Payment control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolPatientAmount">
+<summary>
+dolPatientAmount control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolApplyToCurrentInvoice">
+<summary>
+dolApplyToCurrentInvoice control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolApplyToPastDue">
+<summary>
+dolApplyToPastDue control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolApplyToNextInvoice">
+<summary>
+dolApplyToNextInvoice control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolApplyToPrinciple">
+<summary>
+dolApplyToPrinciple control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolPrimaryAmount">
+<summary>
+dolPrimaryAmount control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._dolSecondaryAmount">
+<summary>
+dolSecondaryAmount control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._txtClaimNumber">
+<summary>
+txtClaimNumber control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._litOptions">
+<summary>
+litOptions control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._litContractOptions">
+<summary>
+litContractOptions control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._litPaymentUsers">
+<summary>
+litPaymentUsers control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
 <member name="F:WSDC_Ortho.PaymentPosting._litScripts">
 <summary>
 litScripts control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.PaymentPosting._litInsurnaceScript">
+<summary>
+litInsurnaceScript control.
 </summary>
 <remarks>
 Auto-generated field.

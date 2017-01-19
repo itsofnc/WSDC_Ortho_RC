@@ -32,31 +32,13 @@ Partial Public Class PaymentPosting
     Protected WithEvents btnHidden As Global.System.Web.UI.WebControls.Button
     
     '''<summary>
-    '''txtSessions control.
+    '''txtDoctors_vw control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtSessions As Global.System.Web.UI.WebControls.HiddenField
-    
-    '''<summary>
-    '''txtPaymentID control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents txtPaymentID As Global.System.Web.UI.WebControls.TextBox
-    
-    '''<summary>
-    '''txtContract_RECID control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents txtContract_RECID As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents txtDoctors_vw As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
     '''txtPaymentSelection control.
@@ -68,40 +50,22 @@ Partial Public Class PaymentPosting
     Protected WithEvents txtPaymentSelection As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''dolOrig_Payment control.
+    '''txtPatientContractRecId control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents dolOrig_Payment As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents txtPatientContractRecId As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''intCurInvoice control.
+    '''divViewOptions control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents intCurInvoice As Global.System.Web.UI.WebControls.TextBox
-    
-    '''<summary>
-    '''litViewOnly control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents litViewOnly As Global.System.Web.UI.WebControls.Literal
-    
-    '''<summary>
-    '''txtDoctors_vw control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents txtDoctors_vw As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents divViewOptions As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
     '''litHeader control.
@@ -113,31 +77,22 @@ Partial Public Class PaymentPosting
     Protected WithEvents litHeader As Global.System.Web.UI.WebControls.Literal
     
     '''<summary>
-    '''lblPatientName control.
+    '''lblPatientHeader control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblPatientName As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents lblPatientHeader As Global.System.Web.UI.WebControls.Label
     
     '''<summary>
-    '''lblInsurance control.
+    '''h6PatientSearch control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblInsurance As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
-    '''dtePaymentDate control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents dtePaymentDate As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents h6PatientSearch As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
     '''txtFirstName control.
@@ -158,15 +113,6 @@ Partial Public Class PaymentPosting
     Protected WithEvents txtLastName As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''txtPatientNumber control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents txtPatientNumber As Global.System.Web.UI.WebControls.TextBox
-    
-    '''<summary>
     '''txtChartNumber control.
     '''</summary>
     '''<remarks>
@@ -176,130 +122,58 @@ Partial Public Class PaymentPosting
     Protected WithEvents txtChartNumber As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''dolPatientAmount control.
+    '''btnSearch control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents dolPatientAmount As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents btnSearch As Global.System.Web.UI.WebControls.Button
     
     '''<summary>
-    '''dolPrimaryAmount control.
+    '''btnClear control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents dolPrimaryAmount As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents btnClear As Global.System.Web.UI.WebControls.Button
     
     '''<summary>
-    '''dolSecondaryAmount control.
+    '''txtPatientNumber control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents dolSecondaryAmount As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents txtPatientNumber As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''lblCurrentInvoiceBal control.
+    '''divPaymentCollectionArea control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents lblCurrentInvoiceBal As Global.System.Web.UI.WebControls.Label
+    Protected WithEvents divPaymentCollectionArea As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
-    '''intCurrentInvoiceBal control.
+    '''divPatientInfo control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents intCurrentInvoiceBal As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents divPatientInfo As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
-    '''dolApplyToCurrentInvoice control.
+    '''ddlPaymentFrom control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents dolApplyToCurrentInvoice As Global.System.Web.UI.WebControls.TextBox
-    
-    '''<summary>
-    '''lblPastDueBal control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblPastDueBal As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
-    '''intPastDueBal control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents intPastDueBal As Global.System.Web.UI.WebControls.TextBox
-    
-    '''<summary>
-    '''dolApplyToPastDue control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents dolApplyToPastDue As Global.System.Web.UI.WebControls.TextBox
-    
-    '''<summary>
-    '''lblRemainingAmt control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblRemainingAmt As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
-    '''lblPatRemaniningBal control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents lblPatRemaniningBal As Global.System.Web.UI.WebControls.Label
-    
-    '''<summary>
-    '''intPatRemaniningBal control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents intPatRemaniningBal As Global.System.Web.UI.WebControls.TextBox
-    
-    '''<summary>
-    '''dolApplyToPrinciple control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents dolApplyToPrinciple As Global.System.Web.UI.WebControls.TextBox
-    
-    '''<summary>
-    '''dolApplyToNextInvoice control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents dolApplyToNextInvoice As Global.System.Web.UI.WebControls.TextBox
+    Protected WithEvents ddlPaymentFrom As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
     '''txtPayerName control.
@@ -311,40 +185,22 @@ Partial Public Class PaymentPosting
     Protected WithEvents txtPayerName As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
-    '''ddlClaimNumber control.
+    '''ddlPatPaymentType control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents ddlClaimNumber As Global.System.Web.UI.WebControls.DropDownList
+    Protected WithEvents ddlPatPaymentType As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
-    '''txtClaimNumber control.
+    '''ddlInsPaymentType control.
     '''</summary>
     '''<remarks>
     '''Auto-generated field.
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
-    Protected WithEvents txtClaimNumber As Global.System.Web.UI.WebControls.TextBox
-    
-    '''<summary>
-    '''txtClaimIndex control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents txtClaimIndex As Global.System.Web.UI.WebControls.TextBox
-    
-    '''<summary>
-    '''ddlPaymentType control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents ddlPaymentType As Global.System.Web.UI.WebControls.DropDownList
+    Protected WithEvents ddlInsPaymentType As Global.System.Web.UI.WebControls.DropDownList
     
     '''<summary>
     '''txtPaymentReference control.
@@ -354,6 +210,231 @@ Partial Public Class PaymentPosting
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents txtPaymentReference As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''divPaymentInfo control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents divPaymentInfo As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''dolPaymentAmount control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolPaymentAmount As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolApplyRemaining control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolApplyRemaining As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolOverPayment control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolOverPayment As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolOverPaymentPrimary control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolOverPaymentPrimary As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolOverPaymentSecondary control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolOverPaymentSecondary As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''divPatientPaymentsApply control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents divPatientPaymentsApply As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''lblPatientCurrent control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblPatientCurrent As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''lblPatientCurrentPend control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblPatientCurrentPend As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''dolPatientCurrent control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolPatientCurrent As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''lblPatientPastDue control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblPatientPastDue As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''lblPatientPastDuePend control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblPatientPastDuePend As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''dolPatientPastDue control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolPatientPastDue As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''lblPatientNext control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblPatientNext As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''lblPatientNextPend control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblPatientNextPend As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''dolPatientNext control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolPatientNext As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''lblPatientBalance control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblPatientBalance As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''lblPatientBalancePend control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lblPatientBalancePend As Global.System.Web.UI.WebControls.Label
+    
+    '''<summary>
+    '''dolPatientBalance control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolPatientBalance As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''divInsurancePaymentsApply control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents divInsurancePaymentsApply As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''litInsuranceClaimsTable control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents litInsuranceClaimsTable As Global.System.Web.UI.WebControls.Literal
+    
+    '''<summary>
+    '''divInsurancePaymentApplySecondary control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents divInsurancePaymentApplySecondary As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''litInsuranceClaimsTableSecondary control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents litInsuranceClaimsTableSecondary As Global.System.Web.UI.WebControls.Literal
+    
+    '''<summary>
+    '''divPatientInvoiceDetail control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents divPatientInvoiceDetail As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''litPatientInvoiceTable control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents litPatientInvoiceTable As Global.System.Web.UI.WebControls.Literal
     
     '''<summary>
     '''ddlPaymentFor control.
@@ -374,6 +455,24 @@ Partial Public Class PaymentPosting
     Protected WithEvents txtComments As Global.System.Web.UI.WebControls.TextBox
     
     '''<summary>
+    '''divPaymentButtons control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents divPaymentButtons As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''divBtnOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents divBtnOptions As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
     '''btnAdd control.
     '''</summary>
     '''<remarks>
@@ -381,15 +480,6 @@ Partial Public Class PaymentPosting
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnAdd As Global.System.Web.UI.WebControls.Button
-    
-    '''<summary>
-    '''btnSave control.
-    '''</summary>
-    '''<remarks>
-    '''Auto-generated field.
-    '''To modify move field declaration from designer file to code-behind file.
-    '''</remarks>
-    Protected WithEvents btnSave As Global.System.Web.UI.WebControls.Button
     
     '''<summary>
     '''btnCancel control.
@@ -401,6 +491,24 @@ Partial Public Class PaymentPosting
     Protected WithEvents btnCancel As Global.System.Web.UI.WebControls.Button
     
     '''<summary>
+    '''divBtnEditOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents divBtnEditOptions As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''btnSave control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnSave As Global.System.Web.UI.WebControls.Button
+    
+    '''<summary>
     '''btnDelete control.
     '''</summary>
     '''<remarks>
@@ -408,6 +516,42 @@ Partial Public Class PaymentPosting
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnDelete As Global.System.Web.UI.WebControls.Button
+    
+    '''<summary>
+    '''btnCancelEdit control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnCancelEdit As Global.System.Web.UI.WebControls.Button
+    
+    '''<summary>
+    '''divBtnViewOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents divBtnViewOptions As Global.System.Web.UI.HtmlControls.HtmlGenericControl
+    
+    '''<summary>
+    '''btnClose control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents btnClose As Global.System.Web.UI.WebControls.Button
+    
+    '''<summary>
+    '''divPendingPayments control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents divPendingPayments As Global.System.Web.UI.HtmlControls.HtmlGenericControl
     
     '''<summary>
     '''litNoData control.
@@ -428,6 +572,330 @@ Partial Public Class PaymentPosting
     Protected WithEvents btnPost As Global.System.Web.UI.WebControls.Button
     
     '''<summary>
+    '''txtSessions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtSessions As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidFocusField control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidFocusField As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidPrimaryInsurance control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidPrimaryInsurance As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidPrimaryInsuranceBalance control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidPrimaryInsuranceBalance As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidPrimaryInsurancePlanId control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidPrimaryInsurancePlanId As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidSecondaryInsurance control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidSecondaryInsurance As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidSecondaryInsuranceBalance control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidSecondaryInsuranceBalance As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidSecondaryInsurancePlanId control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidSecondaryInsurancePlanId As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidInsCount control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidInsCount As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidInsRefList control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidInsRefList As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidDefaultPaymentFor control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidDefaultPaymentFor As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidMode control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidMode As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidUnloadWarning control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidUnloadWarning As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidPatientCurrent control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidPatientCurrent As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidPatientCurrentPend control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidPatientCurrentPend As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidPatientPastDue control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidPatientPastDue As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidPatientPastDuePend control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidPatientPastDuePend As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidPatientNext control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidPatientNext As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidPatientNextPend control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidPatientNextPend As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidPatientBalance control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidPatientBalance As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''hidPatientBalancePend control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents hidPatientBalancePend As Global.System.Web.UI.WebControls.HiddenField
+    
+    '''<summary>
+    '''dtePaymentDate control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dtePaymentDate As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''ddlPaymentType control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents ddlPaymentType As Global.System.Web.UI.WebControls.DropDownList
+    
+    '''<summary>
+    '''txtContract_RECID control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtContract_RECID As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolOrig_Payment control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolOrig_Payment As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolPatientAmount control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolPatientAmount As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolApplyToCurrentInvoice control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolApplyToCurrentInvoice As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolApplyToPastDue control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolApplyToPastDue As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolApplyToNextInvoice control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolApplyToNextInvoice As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolApplyToPrinciple control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolApplyToPrinciple As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolPrimaryAmount control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolPrimaryAmount As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''dolSecondaryAmount control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents dolSecondaryAmount As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''txtClaimNumber control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtClaimNumber As Global.System.Web.UI.WebControls.TextBox
+    
+    '''<summary>
+    '''litOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents litOptions As Global.System.Web.UI.WebControls.Literal
+    
+    '''<summary>
+    '''litContractOptions control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents litContractOptions As Global.System.Web.UI.WebControls.Literal
+    
+    '''<summary>
+    '''litPaymentUsers control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents litPaymentUsers As Global.System.Web.UI.WebControls.Literal
+    
+    '''<summary>
     '''litScripts control.
     '''</summary>
     '''<remarks>
@@ -435,4 +903,13 @@ Partial Public Class PaymentPosting
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents litScripts As Global.System.Web.UI.WebControls.Literal
+    
+    '''<summary>
+    '''litInsurnaceScript control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents litInsurnaceScript As Global.System.Web.UI.WebControls.Literal
 End Class

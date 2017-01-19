@@ -202,7 +202,10 @@
             ElseIf tblCurrentData.Rows.Count > 1 Then
                 litOptions.Text = ""
                 For Each row In tblCurrentData.Rows
-                    litOptions.Text &= "<option value = """ & row("Account_Id") & """>" & row("FirstName") & " " & row("LastName") & " - Chart # " & row("ChartNumber") & " | Account # " & row("Account_Id") & " | " & row("ContractDate") & "</option>"
+                    litOptions.Text &= "<option value = """ & row("Account_Id") & """>" & row("FirstName") & " " & row("LastName") &
+                    " - Chart # " & row("ChartNumber") & " | Account # " & row("Account_Id") &
+                    " | " & row("ContractDate") &
+                    "</option>"
                 Next
                 'More than one patient was found, prompt user to select correct patient
                 litScripts.Text = "<script>" & _

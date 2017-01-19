@@ -81,7 +81,7 @@
                                 <label class="sr-only" for="txtAccountNumber">Account #</label>
                                 <div class="input-group col-sm-offset-2">
                                     <div class="input-group-addon" style="background-color:#d1d1d1">Account #</div>
-                                        <asp:TextBox ID="txtAccountNumber" name="txtAccountNumber" value="" CssClass="DB form-control" MaxLength="10" Style="max-width: 130px;" runat="server"
+                                        <asp:TextBox ID="txtAccountNumber" name="txtAccountNumber" value="" CssClass="DB form-control" MaxLength="10" Style="max-width: 160px;" runat="server"
                                             onChange="getPatName('act'); jQuery('.txtChartSearch:first').focus();"></asp:TextBox>
                                 </div>
                             </div>
@@ -150,7 +150,7 @@
                         <label for="ddlTransactionCodes_vw" class="col-sm-6">
                             Transaction Code:
                             <span style="padding-left: 0px;">
-                                <asp:DropDownList ID="ddlTransactionCodes_vw" CssClass="DB form-control PromptSelection" Style="width: 490px;" runat="server"></asp:DropDownList>
+                                <asp:DropDownList ID="ddlTransactionCodes_vw" CssClass="DB form-control PromptSelection" Style="width: 375px;" runat="server"></asp:DropDownList>
                             </span>
                         </label>
                         <label for="ddlStatus_vw" class="col-sm-3">
@@ -1189,7 +1189,6 @@
             jQuery.get("ajaxOrtho.aspx?action=getPatName", { id: strVal, frm: "Contracts" },
                  function (data) {
                      var strData = data;
-                     alert(strData);
                      if (strData.indexOf("~~") == -1) {
                          if (strData.indexOf("<h4>") == 0) {
                              jQuery('#divModalAddNew').modal('show');

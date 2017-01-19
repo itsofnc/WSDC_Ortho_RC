@@ -290,5 +290,661 @@
         g_sendEmail(strEmail, "ASGA - Request for Invitation", strRequestMessage, "", "emailTemplate.html")
 
     End Sub
+    '------------------------------------------------------------------------------------------------------------------------
+    ' 01.02.17 cpb - the following routines were added for the new payment postings screen-----------------------------
+    Public Function g_patientSearch(ByVal strChartNo As String, ByVal strFirstName As String, ByVal strLastName As String, ByVal strContract As String,
+                                     ByRef strSQL As String, ByRef strLitMessage As String, ByRef strModalDDL As String) As DataTable
+
+        ' 01/09/17 add contract date for specific contract selection
+        strLitMessage = ""
+        strSQL = "SELECT c.recid, c.Doctors_vw, isnull(ip.PatientKey,' ') PatientKey, " &
+                "c.ContractDate, " &
+                "isnull(Account_Id,'') Account_Id, " &
+                "isnull(ip.ChartNo, ' ') ChartNumber,  " &
+                "isnull([FirstName] + ' ' + [LastName], ' ') PatientName, " &
+                "FirstName ,LastName, " &
+                "PrimaryInsurancePlans_vw, SecondaryInsurancePlans_vw, " &
+                "PatientMonthlyPayment, PatientRemainingBalance,  " &
+                "PrimaryRemainingBalance, SecondaryRemainingBalance, " &
+                "PrimaryInstallmentAmt, SecondaryInstallmentAmt " &
+            "From [IMPROVIS_PatientData_vw] ip " &
+                "left outer join " &
+                "[Contracts] c on c.ChartNumber = ip.ChartNo "
+
+        Dim strWhere As String = " Where "
+        Dim strWhereDelim As String = ""
+        If strContract = "" Then
+            If Trim(strFirstName) = "" Then
+            Else
+                strWhere &= strWhereDelim & " ip.FirstName like '" & Trim(strFirstName) & "' "
+                strWhereDelim = " and "
+            End If
+            If Trim(strLastName) = "" Then
+            Else
+                strWhere &= strWhereDelim & "ip.LastName like '" & Trim(strLastName) & "' "
+                strWhereDelim = " and "
+            End If
+            If Trim(strChartNo) = "" Then
+            Else
+                strWhere &= strWhereDelim & "ip.ChartNo like '" & Trim(strChartNo) & "' "
+                strWhereDelim = " and "
+            End If
+        Else
+            'Searching on Contract #
+            strWhere &= " c.recid = '" & strContract & "'"
+        End If
+        If strWhere = " Where " Then
+        Else
+            strSQL &= strWhere
+        End If
+        strSQL &= " Order By Account_Id desc, lastName, firstName "
+
+        'Was more than one patient found with First/Last Name search 
+        Dim tblPatientChk As DataTable = g_IO_Execute_SQL(strSQL, False)
+        strModalDDL = ""
+        Dim blnContractsFound As Boolean = True     ' 01.09.17 added to know if data from contracts or just improvis data
+        If tblPatientChk.Rows.Count = 0 Then
+            blnContractsFound = False
+            'Need to pull patient data from Improvis only (no contract found)
+            strSQL = "SELECT isnull(ip.PatientKey, ' ') PatientKey, " &
+                        "isnull(ip.ChartNo, ' ') ChartNumber,  " &
+                        "isnull([FirstName] + ' ' + [LastName], '') PatientName, " &
+                        "FirstName, LastName, " &
+                        "'-1' as PrimaryInsurancePlans_vw, '-1' as SecondaryInsurancePlans_vw, " &
+                        "'0' as PatientMonthlyPayment, '0' as PatientRemainingBalance,  " &
+                        "'0' as PrimaryRemainingBalance, '0' as SecondaryRemainingBalance, " &
+                        "'0' as PrimaryInstallmentAmt, '0' as SecondaryInstallmentAmt," &
+                        "'' as Account_Id " &
+                    "FROM IMPROVIS_PatientData_vw ip "
+            strWhere = " Where "
+            strWhereDelim = ""
+            If Trim(strFirstName) = "" Then
+            Else
+                strWhere &= strWhereDelim & " ip.FirstName like '" & Trim(strFirstName) & "' "
+                strWhereDelim = " and "
+            End If
+            If Trim(strLastName) = "" Then
+            Else
+                strWhere &= strWhereDelim & "ip.LastName like '" & Trim(strLastName) & "' "
+                strWhereDelim = " and "
+            End If
+            If Trim(strChartNo) = "" Then
+            Else
+                strWhere &= strWhereDelim & "ip.ChartNo like '" & Trim(strChartNo) & "' "
+                strWhereDelim = " and "
+            End If
+            If strWhere = " Where " Then
+            Else
+                strSQL &= strWhere
+            End If
+            tblPatientChk = g_IO_Execute_SQL(strSQL, False)
+        End If
+
+        If tblPatientChk.Rows.Count > 1 Then
+            'More than one patient was found, prompt user to select correct patient
+            ' for backward compability--it is always expecting a single value.
+            Dim strGetPatNameType As String = ""
+            If strChartNo = "" Then
+            Else
+                strGetPatNameType = "cht"
+            End If
+            If strLastName = "" Then
+            Else
+                strGetPatNameType = "lst"
+            End If
+            If strFirstName = "" Then
+            Else
+                strGetPatNameType = "fst"
+            End If
+            '--
+            strModalDDL = "<h4>More than 1 patient was found. Please select a patient.</h4>" &
+                              "<div class=""form-group"">" &
+                              "        <label for=""intChartNum"" class="" col-sm-3 control-label"">Patient:</label>" &
+                              "       <div class=""col-sm-9"">" &
+                              "        <select id=""intChartNum"" onchange=""getPatNameCID(this,'" & strGetPatNameType & "');"" class=""form-control"" style=""width:150px"">" &
+                              "         <option value = ""-1"">Choose one</option>#Options#" &
+                              "        </select>" &
+                              "       </div>" &
+                              "</div>"
+            Dim strDDLOptions As String = ""
+            Dim blnFirstNoAccountId As Boolean = True
+            For Each patient In tblPatientChk.Rows
+                'strDDLOptions &= "<option value = """ & row("ChartNumber") & """>" & row("PatientName") & " - Chart #" & row("ChartNumber") & "</option>"
+                If patient("Account_Id") = "" And blnFirstNoAccountId Then
+                    strDDLOptions &= "<option value = ""-1"">" & "-".PadRight(50, "-") & "</option>"
+                    blnFirstNoAccountId = False
+                End If
+                strDDLOptions &= "<option value = """ & patient("ChartNumber") & """>" & patient("ChartNumber").PadLeft(6, "0") & " - " & patient("PatientName").PadRight(50, " ") &
+                    IIf(patient("Account_Id") = "", "", " - " & patient("Account_Id")) &
+                    " - " & patient("ContractDate") &
+                    "</option>"
+            Next
+            strModalDDL = strModalDDL.Replace("#Options#", strDDLOptions)
+            'strLitMessage = strModalDDL
+        End If
+        Return tblPatientChk
+    End Function
+
+    Public Function g_getPatientCurrentAmount(ByVal rowPatient As DataRow, ByRef strInvoicesTableCurrent As String) As Decimal
+        ' 3/21/16 cpb - added routine for common access
+        '   - fixed bug, ajaxOrtho routine assumes one record decCurInv += instead of =
+        'Pull Current Invoice info (0-30 Days)
+        Dim strSQL As String = " Select * from Invoices where status = 'O' and " &
+            "recid >= (Select min(recid) from Invoices where status = 'o' and Contracts_recid = '" & rowPatient("recid") & "') and " &
+            "contracts_recid = '" & rowPatient("recid") & "'  and PostDate  >= DATEADD(day, -30, GETDATE()) order by Bill_date desc "
+        Dim tblCurrentInvoiceInfo As DataTable = g_IO_Execute_SQL(strSQL, False)
+
+        Dim decCurInv As Decimal = 0
+        Dim decCurInvTtl As Decimal = 0
+        Dim intCurInvoice As Integer = -1
+        ' 01.11.17 cpb add for forward possibly adding invoice details later
+        For Each row In tblCurrentInvoiceInfo.Rows
+            decCurInv = CDec(row("AmountDue")) - CDec(row("AmountPaid"))
+            decCurInvTtl += CDec(row("AmountDue")) - CDec(row("AmountPaid"))
+            strInvoicesTableCurrent &=
+                "<tr>" &
+                    "<td style=""text-align:center"">Current</td>" &
+                    "<td style=""text-align:center""ID=""txtInvoiceName" & row("InvoiceNo") & """>" & row("name") & "</td>" &
+                    "<td style=""text-align:center""ID=""txtInvoiceNo" & row("InvoiceNo") & """>" & row("InvoiceNo") & "</td>" &
+                    "<td style=""text-align:center""ID=""txtInvoiceDate" & row("InvoiceNo") & """>" & Format(row("PostDate"), "mm/DD/yyyy") & "</td>" &
+                    "<td style=""text-align:center""ID=""txtInvoiceBal" & row("InvoiceNo") & """>" & FormatCurrency(decCurInv, 2).Replace("$", "").Replace(",", "") & "</td>" &
+                    "<td></td>" &
+                    "<td></td>" &
+                "</tr>"
+        Next
+
+        Return decCurInvTtl
+
+    End Function
+
+    Public Function g_getPatientPastDueAmount(ByVal rowPatient As DataRow, ByRef strInvoicesTablePastDue As String) As Decimal
+        ' 3/21/16 cpb - added routine for common access
+        '   - fixed bug, ajaxOrtho routine steps on decPastDue so always only get 1 row, fix += applied
+        'Pull Past Due Invoice info (31+ days)
+        Dim stSQL As String = "Select * from Invoices where status = 'O' and " &
+            "recid >= (select min(recid) from Invoices where status = 'o' and Contracts_recid = '" & rowPatient("recid") & "') and " &
+            "contracts_recid = '" & rowPatient("recid") & "'  and " &
+            "PostDate  < DATEADD(day, -30, GETDATE()) order by Bill_date desc"
+        Dim tblPastDueInvoiceInfo As DataTable = g_IO_Execute_SQL(stSQL, False)
+
+        Dim decPastDue As Decimal = 0
+        Dim decPastDueTtl As Decimal = 0
+        For Each row In tblPastDueInvoiceInfo.Rows
+            decPastDue = CDec(row("AmountDue")) - CDec(row("AmountPaid"))
+            decPastDueTtl += CDec(row("AmountDue")) - CDec(row("AmountPaid"))
+            strInvoicesTablePastDue &=
+                "<tr>" &
+                    "<td style=""text-align:center"">Past Due</td>" &
+                    "<td style=""text-align:center""ID=""txtInvoiceName" & row("InvoiceNo") & """>" & row("name") & "</td>" &
+                    "<td style=""text-align:center""ID=""txtInvoiceNo" & row("InvoiceNo") & """>" & row("InvoiceNo") & "</td>" &
+                    "<td style=""text-align:center""ID=""txtInvoiceDate" & row("InvoiceNo") & """>" & Format(row("PostDate"), "MM/dd/yyyy") & "</td>" &
+                    "<td style=""text-align:center""ID=""txtInvoiceBal" & row("InvoiceNo") & """>" & FormatCurrency(decPastDue, 2).Replace("$", "").Replace(",", "") & "</td>" &
+                    "<td></td>" &
+                    "<td></td>" &
+                "</tr>"
+        Next
+
+        Return decPastDueTtl
+
+    End Function
+
+    Public Function g_getPatientRemainingBalance(ByVal rowPatient As DataRow) As Decimal
+        If IsDBNull(rowPatient("PatientRemainingBalance")) Then
+            Return 0
+        Else
+            Return IIf(IsNothing(rowPatient("PatientRemainingBalance")), 0, CDec(rowPatient("PatientRemainingBalance")))
+        End If
+    End Function
+
+    Public Function g_getPatientNextInvoice(ByRef rowPatient As DataRow) As Decimal
+        Dim decNextInvoice As Decimal = 0
+        Dim decPatRemaining As Decimal = 0
+        Dim decPatMonthlyPay As Decimal = 0
+        If IsDBNull(rowPatient("PatientRemainingBalance")) Then
+        Else
+            decPatRemaining = IIf(IsNothing(rowPatient("PatientRemainingBalance")), 0, CDec(rowPatient("PatientRemainingBalance")))
+        End If
+        If IsDBNull(rowPatient("PatientMonthlyPayment")) Then
+        Else
+            decPatMonthlyPay = IIf(IsNothing(rowPatient("PatientMonthlyPayment")), 0, CDec(rowPatient("PatientMonthlyPayment")))
+        End If
+        If decPatRemaining < decPatMonthlyPay Then
+            decNextInvoice = decPatRemaining
+        Else
+            decNextInvoice = decPatMonthlyPay
+        End If
+
+        Return decNextInvoice
+    End Function
+
+    Public Sub g_getPatientInsurance(ByVal intPrimaryInsRecId As Integer, ByVal intSecondaryInsRecId As Integer,
+                                     ByRef tblPrimInsurInfo As DataTable, ByRef tblSecInsurInfo As DataTable)
+        Dim strSQL As String = "Select ins_company_name, plan_id from dbo.DropDownList__InsurancePlans where recid = '" & intPrimaryInsRecId & "'"
+        tblPrimInsurInfo = g_IO_Execute_SQL(strSQL, False)
+        strSQL = "select ins_company_name, plan_id from dbo.DropDownList__InsurancePlans where recid = '" & intSecondaryInsRecId & "'"
+        tblSecInsurInfo = g_IO_Execute_SQL(strSQL, False)
+    End Sub
+
+    Public Function g_getPatientClaims(ByVal blnByContract As Boolean, ByVal rowPatient As DataRow, ByVal intPaymentTempRecId As Integer,
+                                       ByRef strDDLValues As String, ByRef strDDLText As String,
+                                       ByRef arrInsuranceTable() As String,
+                                       ByRef intInsCount As Integer,
+                                       ByRef strClaimsScript As String, ByRef strOtherInsList As String,
+                                       ByRef strInsRefList As String) As DataTable
+        ' builds data for insurnace payment for ddl and now show as grid
+
+        ' 01.11.17 cpb break apart different insurnaces
+        Dim strInsuranceTablePrimary As String = ""
+        Dim strInsuranceTableSecondary As String = ""
+        Dim strInsuranceTableOther As String = ""
+
+
+        ' setup defaults - always avaialble even if no claims
+        ' --for ddl
+        strDDLValues = "-2"
+        strDDLText = "Choose an option"
+        strDDLValues &= ",-1"
+        strDDLText &= ",Waiting for claim to be processed"
+        ' -- for table
+        intInsCount = 0
+
+        ' get outstanding insurance claims and add to ddl & new table display
+        Dim strSQL As String = ""
+        Dim strSQLPending As String = ""
+        Dim strSQLCurrentPayment As String = ""
+        Dim strInsuranceRow As String = ""
+        Dim strPrimaryPlanId As String = ""
+        Dim strSecondaryPlanId As String = ""
+        Dim tblPending As DataTable = Nothing
+        Dim tblCurrentPayment As DataTable = Nothing
+        Dim decCurrentPaymentDol As Decimal = 0.0
+        Dim decPendingDol As Decimal = 0.0
+        Dim decMax As Decimal = 0.0
+        strInsRefList = ""
+        Dim strInsRefListDelim As String = ""
+
+        '--first get primary insurance claims
+        If IsDBNull(rowPatient("PrimaryInsurancePlans_vw")) Then
+        Else
+
+            If rowPatient("PrimaryInsurancePlans_vw") > -1 Then
+                strSQL = "Select plan_id, plan_name From DropDownList__InsurancePlans_vw Where recid = '" & rowPatient("PrimaryInsurancePlans_vw") & "'"
+                Dim tblPrimaryInsurance As DataTable = g_IO_Execute_SQL(strSQL, False)
+                If tblPrimaryInsurance.Rows.Count > 0 Then
+                    If blnByContract Then
+                        strSQL = "select * from openClaimsDDL_vw where contracts_recid = '" & rowPatient("recid") & "' and plan_id = '" & tblPrimaryInsurance.Rows("0")("plan_id") & "'" & " order by procedure_date desc "  'DateProcessed
+                    Else
+                        strSQL = "select * from openClaimsDDL_vw where contracts_recid = '" & rowPatient("ChartNumber") & "' and plan_id = '" & tblPrimaryInsurance.Rows("0")("plan_id") & "'" & " order by procedure_date desc "  'DateProcessed
+                    End If
+                    addClaimsToInsuranceTableByPlanId(strSQL, tblPrimaryInsurance.Rows("0")("plan_name"), blnByContract, rowPatient, intInsCount, strClaimsScript, strInsuranceTablePrimary, strDDLValues, strDDLText, strInsRefList, strInsRefListDelim, intPaymentTempRecId, "Primary")
+                    strPrimaryPlanId = tblPrimaryInsurance.Rows("0")("plan_id")
+                End If
+                ' primary claim balance
+                If rowPatient("PrimaryRemainingBalance") = 0 Then
+                Else
+                    ' look for pending payments for primary claim balance
+                    decCurrentPaymentDol = 0.0
+                    decPendingDol = 0.0
+                    decMax = rowPatient("PrimaryRemainingBalance")
+                    strSQLPending = "Select paymentAmount From PaymentsTempDetail Where chartNumber = '" & rowPatient("chartNumber") & "' and paymentId = 'PrimaryBalance'"
+                    tblPending = g_IO_Execute_SQL(strSQLPending, False)
+                    If tblPending.Rows.Count > 0 Then
+                        If intPaymentTempRecId > -1 Then
+                            strSQLCurrentPayment = "Select paymentAmount From PaymentsTempDetail Where chartNumber = '" & rowPatient("chartNumber") & "' and paymentId = 'PrimaryBalance' and paymentsTempRecId = '" & intPaymentTempRecId & "'"
+                            tblCurrentPayment = g_IO_Execute_SQL(strSQLCurrentPayment, False)
+                            If tblCurrentPayment.Rows.Count > 0 Then
+                                decCurrentPaymentDol = tblCurrentPayment.Rows(0)("paymentAmount")
+                            End If
+                        End If
+                        decPendingDol += tblPending.Rows("0")("paymentAmount") - decCurrentPaymentDol
+                    End If
+                    decMax -= decPendingDol
+                    strInsuranceRow =
+                    "<tr>" &
+                        "<td style=""text-align:center""ID=""txtInsName" & intInsCount & """>" & tblPrimaryInsurance.Rows("0")("plan_name") & "(Primary)</td>" &
+                        "<td colspan=""4""ID=""txtInsID" & intInsCount & """>Insurance Balance" & "</td>" &
+                        "<td style=""text-align:right"" ID=""dolInsOpen" & intInsCount & """>" & FormatCurrency(rowPatient("PrimaryRemainingBalance"), 2) & "</td>"
+                    If decPendingDol > 0 Then
+                        strInsuranceRow &= "<td style=""text-align:right"" ID=""dolInsPrev" & intInsCount & """>" & FormatCurrency(decPendingDol, 2) & "</td>"
+                    Else
+                        strInsuranceRow &= "<td></td>"
+                    End If
+                    strInsuranceRow &=
+                            "<td style=""text-align:right""  class=""pull-right"">" &
+                                "<span class=""input-group"">" &
+                                    "<span class=""input-group-addon""><a onclick=""applyInsAmt('dolInsPayment" & intInsCount & "', '" & FormatCurrency(decMax, 2).Replace("$", "").Replace(",", "") & "');"" title=""Apply Remaining Insurnace Balance"" style=""cursor:pointer;"" ><i class=""fa fa-calculator""></i></a></span>" &
+                                    "<span class=""input-group-addon"">$</span>" &
+                                    "<input ID=""dolInsPayment" & intInsCount & """ name=""dolInsPayment" & intInsCount & "" &
+                                    " type=""text"" class=""DB form-control"" Style=""text-align:right; max-width:130px;"" onblur =""checkFieldPaymentAmount(this.id, this.value, " & FormatCurrency(rowPatient("PrimaryRemainingBalance"), 2).Replace("$", "").Replace(",", "") & " );calculateTotalPayment()"" runat=""server""></input>" &
+                                "</span>" &
+                            "</td" &
+                        "</tr>"
+                    strInsuranceTablePrimary &= strInsuranceRow
+                    strClaimsScript &= "<script>jQuery('#dolInsPayment" & intInsCount & "').autoNumeric('init', {aSep: ',', aDec: '.'});</script>"
+                    strInsRefList &= strInsRefListDelim & intInsCount & "~~" &
+                        tblPrimaryInsurance.Rows("0")("plan_name") & "~~" &
+                        "PrimaryBalance" & "~~" &
+                        rowPatient("PrimaryRemainingBalance") & "~~" &
+                        FormatCurrency(decCurrentPaymentDol, 2).Replace("$", "").Replace(",", "") & "~~" &
+                        FormatCurrency(decCurrentPaymentDol, 2).Replace("$", "").Replace(",", "")
+                    strInsRefListDelim = "||"
+                    intInsCount += 1
+                End If
+                ' waiting on primary claim to be processed
+                ' look for pending payments for primary claim waiting to be processed
+                decCurrentPaymentDol = 0.0
+                decPendingDol = 0.0
+                decMax = rowPatient("PrimaryInstallmentAmt")
+                strSQLPending = "Select paymentAmount From PaymentsTempDetail Where chartNumber = '" & rowPatient("chartNumber") & "' and paymentId = 'PrimaryWait'"
+                tblPending = g_IO_Execute_SQL(strSQLPending, False)
+                If tblPending.Rows.Count > 0 Then
+                    If intPaymentTempRecId > -1 Then
+                        strSQLCurrentPayment = "Select paymentAmount From PaymentsTempDetail Where chartNumber = '" & rowPatient("chartNumber") & "' and paymentId = 'PrimaryWait' and paymentsTempRecId = '" & intPaymentTempRecId & "'"
+                        tblCurrentPayment = g_IO_Execute_SQL(strSQLCurrentPayment, False)
+                        If tblCurrentPayment.Rows.Count > 0 Then
+                            decCurrentPaymentDol = tblCurrentPayment.Rows(0)("paymentAmount")
+                        End If
+                    End If
+                    decPendingDol += tblPending.Rows("0")("paymentAmount") - decCurrentPaymentDol
+                End If
+                decMax -= decPendingDol
+                strInsuranceRow =
+                "<tr>" &
+                    "<td style=""text-align:center""ID=""txtInsName" & intInsCount & """>" & tblPrimaryInsurance.Rows("0")("plan_name") & "(Primary)</td>" &
+                    "<td colspan=""4""ID=""txtInsID" & intInsCount & """>Waiting on Claim to be Proccessed" & "</td>" &
+                    "<td style=""text-align:right"" ID=""dolClaimOpen" & intInsCount & """>" & FormatCurrency(rowPatient("PrimaryInstallmentAmt"), 2) & "</td>"
+                If decPendingDol > 0 Then
+                    strInsuranceRow &= "<td style=""text-align:right"" ID=""dolInsPrev" & intInsCount & """>" & FormatCurrency(decPendingDol, 2) & "</td>"
+                Else
+                    strInsuranceRow &= "<td></td>"
+                End If
+                strInsuranceRow &=
+                    "<td style=""text-align:right""  class=""pull-right"">" &
+                        "<span class=""input-group"">" &
+                            "<span class=""input-group-addon""><a onclick=""applyInsAmt('dolInsPayment" & intInsCount & "', '" & FormatCurrency(decMax, 2).Replace("$", "").Replace(",", "") & "');"" title=""Apply Installment Amount"" style=""cursor:pointer;"" ><i class=""fa fa-calculator""></i></a></span>" &
+                            "<span class=""input-group-addon"">$</span>" &
+                            "<input ID=""dolInsPayment" & intInsCount & """ name=""dolInsPayment" & intInsCount & "" &
+                            " type=""text"" class=""DB form-control"" Style=""text-align:right; max-width:130px;"" " &
+                            "onblur =""checkFieldPaymentAmount(this.id, this.value, " & FormatCurrency(rowPatient("PrimaryInstallmentAmt"), 2).Replace("$", "").Replace(",", "") & " );calculateTotalPayment()"" runat=""server""></input>" &
+                        "</span>" &
+                    "</td" &
+                "</tr>"
+                strInsuranceTablePrimary &= strInsuranceRow
+                strClaimsScript &= "<script>jQuery('#dolInsPayment" & intInsCount & "').autoNumeric('init', {aSep: ',', aDec: '.'});</script>"
+                strInsRefList &= strInsRefListDelim & intInsCount & "~~" &
+                    tblPrimaryInsurance.Rows("0")("plan_name") & "~~" &
+                    "PrimaryWait" & "~~" &
+                    rowPatient("PrimaryRemainingBalance") & "~~" &
+                    FormatCurrency(decCurrentPaymentDol, 2).Replace("$", "").Replace(",", "") & "~~" &
+                    FormatCurrency(decCurrentPaymentDol, 2).Replace("$", "").Replace(",", "")
+                strInsRefListDelim = "||"
+                intInsCount += 1
+            End If
+        End If
+        '--next get secondary insurance claims
+        If IsDBNull(rowPatient("SecondaryInsurancePlans_vw")) Then
+        Else
+            If rowPatient("SecondaryInsurancePlans_vw") > -1 Then
+                strSQL = "Select plan_id, plan_name  From DropDownList__InsurancePlans_vw Where recid = '" & rowPatient("SecondaryInsurancePlans_vw") & "'"
+                Dim tblSecondaryInsurnace As DataTable = g_IO_Execute_SQL(strSQL, False)
+                If tblSecondaryInsurnace.Rows.Count > 0 Then
+                    If blnByContract Then
+                        strSQL = "select * from openClaimsDDL_vw where contracts_recid = '" & rowPatient("recid") & "' and plan_id = '" & tblSecondaryInsurnace.Rows("0")("plan_id") & "'" & " order by procedure_date desc "        'DateProcessed
+                    Else
+                        strSQL = "select * from openClaimsDDL_vw where contracts_recid = '" & rowPatient("ChartNumber") & "' and plan_id = '" & tblSecondaryInsurnace.Rows("0")("plan_id") & "'" & " order by procedure_date desc "  'DateProcessed
+                    End If
+                    addClaimsToInsuranceTableByPlanId(strSQL, tblSecondaryInsurnace.Rows("0")("plan_name"), blnByContract, rowPatient, intInsCount, strClaimsScript, strInsuranceTableSecondary, strDDLValues, strDDLText, strInsRefList, strInsRefListDelim, intPaymentTempRecId, "Secondary")
+                    strSecondaryPlanId = tblSecondaryInsurnace.Rows("0")("plan_id")
+                    If rowPatient("SecondaryRemainingBalance") = 0 Then
+                    Else
+                        ' look for pending payments for secondary claim balance
+                        decCurrentPaymentDol = 0.0
+                        decPendingDol = 0.0
+                        decMax = rowPatient("SecondaryRemainingBalance")
+                        strSQLPending = "Select paymentAmount From PaymentsTempDetail Where chartNumber = '" & rowPatient("chartNumber") & "' and paymentId = 'SecondaryBalance'"
+                        tblPending = g_IO_Execute_SQL(strSQLPending, False)
+                        If tblPending.Rows.Count > 0 Then
+                            If intPaymentTempRecId > -1 Then
+                                strSQLCurrentPayment = "Select paymentAmount From PaymentsTempDetail Where chartNumber = '" & rowPatient("chartNumber") & "' and paymentId = 'SecondaryBalance' and paymentsTempRecId = '" & intPaymentTempRecId & "'"
+                                tblCurrentPayment = g_IO_Execute_SQL(strSQLCurrentPayment, False)
+                                If tblCurrentPayment.Rows.Count > 0 Then
+                                    decCurrentPaymentDol = tblCurrentPayment.Rows(0)("paymentAmount")
+                                End If
+                            End If
+                            decPendingDol += tblPending.Rows("0")("paymentAmount") - decCurrentPaymentDol
+                        End If
+                        decMax -= decPendingDol
+                        strInsuranceRow =
+                            "<tr>" &
+                                "<td style=""text-align:center""ID=""txtInsName" & intInsCount & """>" & tblSecondaryInsurnace.Rows("0")("plan_name") & "(Secondary)</td>" &
+                                "<td colspan=""4""ID=""txtInsID" & intInsCount & """>Insurance Balance" & "</td>" &
+                                "<td style=""text-align:right"" ID=""dolInsOpen" & intInsCount & """>" & FormatCurrency(rowPatient("SecondaryRemainingBalance"), 2) & "</td>"
+                        If decPendingDol > 0 Then
+                            strInsuranceRow &= "<td style=""text-align:right"" ID=""dolInsPrev" & intInsCount & """>" & FormatCurrency(decPendingDol, 2) & "</td>"
+                        Else
+                            strInsuranceRow &= "<td></td>"
+                        End If
+                        strInsuranceRow &=
+                                "<td style=""text-align:right""  class=""pull-right"">" &
+                                    "<span class=""input-group"">" &
+                                        "<span class=""input-group-addon""><a onclick=""applyInsAmt('dolInsPayment" & intInsCount & "', '" & FormatCurrency(decMax, 2).Replace("$", "").Replace(",", "") & "');"" title=""Apply Remaining Insurnace Balance"" style=""cursor:pointer;"" ><i class=""fa fa-calculator""></i></a></span>" &
+                                        "<span class=""input-group-addon"">$</span>" &
+                                        "<input ID=""dolInsPayment" & intInsCount & """ name=""dolInsPayment" & intInsCount & "" &
+                                        " type=""text"" class=""DB form-control"" Style=""text-align:right; max-width:130px;"" " &
+                                        "onblur =""checkFieldPaymentAmount(this.id, this.value, " & FormatCurrency(rowPatient("SecondaryRemainingBalance"), 2).Replace("$", "").Replace(",", "") & " );calculateTotalPayment()"" runat=""server""></input>" &
+                                    "</span>" &
+                                "</td" &
+                            "</tr>"
+                        strInsuranceTableSecondary &= strInsuranceRow
+                        strClaimsScript &= "<script>jQuery('#dolInsPayment" & intInsCount & "').autoNumeric('init', {aSep: ',', aDec: '.'});</script>"
+                        strInsRefList &= strInsRefListDelim & intInsCount & "~~" &
+                            tblSecondaryInsurnace.Rows("0")("plan_name") & "~~" &
+                            "SecondaryBalance" & "~~" &
+                            rowPatient("SecondaryRemainingBalance") & "~~" &
+                            FormatCurrency(decCurrentPaymentDol, 2).Replace("$", "").Replace(",", "") & "~~" &
+                            FormatCurrency(decCurrentPaymentDol, 2).Replace("$", "").Replace(",", "")
+                        strInsRefListDelim = "||"
+                        intInsCount += 1
+                    End If
+                    ' waiting on secondary claim to be processed
+                    ' look for pending payments for secondary claim waiting
+                    decCurrentPaymentDol = 0.0
+                    decPendingDol = 0.0
+                    decMax = rowPatient("SecondaryInstallmentAmt")
+                    strSQLPending = "Select paymentAmount From PaymentsTempDetail Where chartNumber = '" & rowPatient("chartNumber") & "' and paymentId = 'SecondaryWait'"
+                    tblPending = g_IO_Execute_SQL(strSQLPending, False)
+                    If tblPending.Rows.Count > 0 Then
+                        If intPaymentTempRecId > -1 Then
+                            strSQLCurrentPayment = "Select paymentAmount From PaymentsTempDetail Where chartNumber = '" & rowPatient("chartNumber") & "' and paymentId = 'SecondaryWait' and paymentsTempRecId = '" & intPaymentTempRecId & "'"
+                            tblCurrentPayment = g_IO_Execute_SQL(strSQLCurrentPayment, False)
+                            If tblCurrentPayment.Rows.Count > 0 Then
+                                decCurrentPaymentDol = tblCurrentPayment.Rows(0)("paymentAmount")
+                            End If
+                        End If
+                        decPendingDol += tblPending.Rows("0")("paymentAmount") - decCurrentPaymentDol
+                    End If
+                    decMax -= decPendingDol
+                    strInsuranceRow =
+                    "<tr>" &
+                        "<td style=""text-align:center""ID=""txtInsName" & intInsCount & """>" & tblSecondaryInsurnace.Rows("0")("plan_name") & "(Secondary)</td>" &
+                        "<td colspan=""4""ID=""txtInsID" & intInsCount & """>Waiting on Claim to be Proccessed" & "</td>" &
+                        "<td style=""text-align:right"" ID=""dolClaimOpen" & intInsCount & """>" & FormatCurrency(rowPatient("SecondaryInstallmentAmt"), 2) & "</td>"
+                    If decPendingDol > 0 Then
+                        strInsuranceRow &= "<td style=""text-align:right"" ID=""dolInsPrev" & intInsCount & """>" & FormatCurrency(decPendingDol, 2) & "</td>"
+                    Else
+                        strInsuranceRow &= "<td></td>"
+                    End If
+                    strInsuranceRow &=
+                        "<td style=""text-align:right""  class=""pull-right"">" &
+                            "<span class=""input-group"">" &
+                                "<span class=""input-group-addon""><a onclick=""applyInsAmt('dolInsPayment" & intInsCount & "', '" & FormatCurrency(decMax, 2).Replace("$", "").Replace(",", "") & "');"" title=""Apply Installment Amount"" style=""cursor:pointer;"" ><i class=""fa fa-calculator""></i></a></span>" &
+                                "<span class=""input-group-addon"">$</span>" &
+                                "<input ID=""dolInsPayment" & intInsCount & """ name=""dolInsPayment" & intInsCount & "" &
+                                " type=""text"" class=""DB form-control"" Style=""text-align:right; max-width:130px;"" " &
+                                "onblur =""checkFieldPaymentAmount(this.id, this.value, " & FormatCurrency(rowPatient("SecondaryInstallmentAmt"), 2).Replace("$", "").Replace(",", "") & " );calculateTotalPayment()"" runat=""server""></input>" &
+                            "</span>" &
+                        "</td" &
+                    "</tr>"
+                    strInsuranceTableSecondary &= strInsuranceRow
+                    strClaimsScript &= "<script>jQuery('#dolInsPayment" & intInsCount & "').autoNumeric('init', {aSep: ',', aDec: '.'});</script>"
+                    strInsRefList &= strInsRefListDelim & intInsCount & "~~" &
+                        tblSecondaryInsurnace.Rows("0")("plan_name") & "~~" &
+                        "SecondaryWait" & "~~" & rowPatient("PrimaryRemainingBalance") & "~~" &
+                        FormatCurrency(decCurrentPaymentDol, 2).Replace("$", "").Replace(",", "") & "~~" &
+                        FormatCurrency(decCurrentPaymentDol, 2).Replace("$", "").Replace(",", "")
+                    strInsRefListDelim = "||"
+                    intInsCount += 1
+                End If
+            End If
+        End If
+        '--now add any rows not belonging to current insurances.
+        If IsDBNull(rowPatient("recid")) Then
+        Else
+            Dim strSQLPlanId As String = ""
+            If blnByContract Then
+                strSQL = "select * from openClaimsDDL_vw where contracts_recid = '" & rowPatient("recid") & "' and plan_id != '" & strPrimaryPlanId & "' and plan_id != '" & strSecondaryPlanId & "'" & " order by plan_id, procedure_date desc "    'DateProcessed
+                strSQLPlanId = "select * from openClaimsDDL_vw where contracts_recid = '" & rowPatient("recid")
+            Else
+                strSQL = "select * from openClaimsDDL_vw where contracts_recid = '" & rowPatient("ChartNumber") & "' and plan_id != '" & strPrimaryPlanId & "' and plan_id != '" & strSecondaryPlanId & "'" & " order by plan_id, procedure_date desc "  'DateProcessed
+                strSQLPlanId = "select * from openClaimsDDL_vw where contracts_recid = '" & rowPatient("ChartNumber")
+            End If
+            Dim strPlanId As String = ""
+            Dim strPlanName As String = ""
+            Dim delimOtherInsList As String = ""
+            Dim tblOtherClaims As DataTable = g_IO_Execute_SQL(strSQL, False)
+            For Each claim As DataRow In tblOtherClaims.Rows
+                If claim("plan_id") = strPlanId Then
+                Else
+                    strSQL = "Select plan_name From DropDownList__InsurancePlans_vw where plan_id='" & claim("plan_id") & "'"
+                    Dim tblInsurancePlan As DataTable = g_IO_Execute_SQL(strSQL, False)
+                    If tblInsurancePlan.Rows.Count > 0 Then
+                        strPlanName = tblInsurancePlan.Rows("0")("plan_name")
+                    Else
+                        strPlanName = claim("plan_id")
+                    End If
+                    strSQL = strSQLPlanId & "' and plan_id = '" & claim("plan_id") & "' order by DateProcessed desc "
+                    addClaimsToInsuranceTableByPlanId(strSQL, strPlanName, blnByContract, rowPatient, intInsCount, strClaimsScript, strInsuranceTableOther, strDDLValues, strDDLText, strInsRefList, strInsRefListDelim, intPaymentTempRecId, "Other")
+                    strPlanId = claim("plan_id")
+                    strOtherInsList &= delimOtherInsList & strPlanName
+                    delimOtherInsList = "||"
+                End If
+            Next
+        End If
+
+        ' now add insurance strings into the returning array
+        arrInsuranceTable(0) = strInsuranceTablePrimary
+        arrInsuranceTable(1) = strInsuranceTableSecondary
+        arrInsuranceTable(2) = strInsuranceTableOther
+
+        ' build and return data tbl to link to ddl
+        Dim intClaimIndex As Integer = 0
+        strSQL = "Select -1 as ddlIndex, '' as claimNumber"
+        Dim tblClaimNumber As DataTable = g_IO_Execute_SQL(strSQL, False)
+        tblClaimNumber.Rows.RemoveAt(0)
+        Dim arrValues() As String = Split(strDDLValues, ",")
+        Dim arrText() As String = Split(strDDLText, ",")
+        Dim intClaimsDDLCounter As Integer = 0
+        For intClaimsDDLCounter = arrValues.Length - 1 To 1 Step -1
+            Dim row As DataRow = tblClaimNumber.NewRow
+            row("ddlIndex") = arrValues(intClaimsDDLCounter)
+            row("claimNumber") = arrText(intClaimsDDLCounter)
+            tblClaimNumber.Rows.InsertAt(row, 0)
+        Next
+        Return tblClaimNumber
+
+    End Function
+
+    Private Sub addClaimsToInsuranceTableByPlanId(ByVal strSQL As String, ByVal strPlanName As String, ByVal blnByContract As Boolean, ByVal rowPatient As DataRow,
+                                                  ByRef intInsCount As Integer, ByRef strClaimsScript As String, ByRef strClaimsTable As String,
+                                                  ByRef strDDLValues As String, ByRef strDDLText As String,
+                                                  ByRef strInsRefList As String, ByRef strInsRefListDelim As String, ByRef intPaymentTempRecId As Integer,
+                                                  ByRef strInsurnaceType As String)
+        Dim tblClaims As DataTable
+        tblClaims = g_IO_Execute_SQL(strSQL, False)
+        Dim strInsuranceRow As String = ""
+        strClaimsScript = ""
+        Dim strSQLCurrentPayment As String = ""
+        Dim tblCurrentPayment As DataTable
+        For Each rowClaims In tblClaims.Rows
+            ' add each claim to the ddl
+            strDDLValues &= "," & intInsCount
+            strDDLText &= "," & rowClaims("ClaimNumber") & " - " &
+                                rowClaims("procedure_date") & " - $" &                   'rowClaims("DateProcessed")
+                                FormatCurrency(rowClaims("claimAmount"), 2) & " Expected - $" &
+                                FormatCurrency(rowClaims("OpenAmount"), 2) & " Due - " &
+                                IIf(rowClaims("type") = "0", rowClaims("insurance_name"), rowClaims("other_policyholder_company"))
+            ' look for pending payments for current claim
+            Dim decMax As Decimal = rowClaims("OpenAmount")
+            Dim decCurrentPaymentDol As Decimal = 0.0
+            Dim decPendingDol As Decimal = 0.0
+            Dim strSQLPending As String = "Select paymentAmount From PaymentsTempDetail Where chartNumber = '" & rowPatient("chartNumber") & "' and paymentId = '" & rowClaims("ClaimNumber") & "'"
+            Dim tblPending As DataTable = g_IO_Execute_SQL(strSQLPending, False)
+            For Each pendingPayment As DataRow In tblPending.Rows
+                decPendingDol += pendingPayment("paymentAmount")
+            Next
+            If tblPending.Rows.Count > 0 Then
+                If intPaymentTempRecId > -1 Then
+                    strSQLCurrentPayment = "Select paymentAmount From PaymentsTempDetail Where chartNumber = '" & rowPatient("chartNumber") & "' and paymentId = '" & rowClaims("ClaimNumber") & "' and paymentsTempRecId = '" & intPaymentTempRecId & "'"
+                    tblCurrentPayment = g_IO_Execute_SQL(strSQLCurrentPayment, False)
+                    If tblCurrentPayment.Rows.Count > 0 Then
+                        decCurrentPaymentDol = tblCurrentPayment.Rows(0)("paymentAmount")
+                    End If
+                End If
+                decPendingDol -= decCurrentPaymentDol
+            End If
+            decMax -= decPendingDol
+            strInsuranceRow =
+            "<tr>" &
+                "<td style=""text-align:center"" ID=""txtInsName" & intInsCount & """>" & strPlanName & "(" & strInsurnaceType & ")" & "</td>" &
+                "<td style=""text-align:center"">" &
+                    IIf(rowClaims("type") = "0", Trim(rowClaims("policyholder_name_first")) & " " & rowClaims("policyholder_name_last"), rowClaims("other_policyholder_name")) & "</td>" &
+                "<td style=""text-align:center""ID=""txtInsID" & intInsCount & """>" & rowClaims("ClaimNumber") & "</td>" &
+                "<td style=""text-align:center"">" & rowClaims("procedure_date") & "</td>" &     'rowClaims("DateProcessed")
+                "<td style=""text-align:right"">" & FormatCurrency(rowClaims("claimAmount"), 2) & "</td>" &
+                "<td style=""text-align:right"" ID=""dolInsOpen" & intInsCount & """>" & FormatCurrency(rowClaims("OpenAmount"), 2) & "</td>"
+            If decPendingDol > 0 Then
+                strInsuranceRow &= "<td style=""text-align:right"" ID=""dolInsPrev" & intInsCount & """>" & FormatCurrency(decPendingDol, 2) & "</td>"
+            Else
+                strInsuranceRow &= "<td></td>"
+            End If
+            If decMax > 0 Then
+                strInsuranceRow &=
+                "<td style=""text-align:right""  class=""pull-right"">" &
+                        "<span class=""input-group"">" &
+                            "<span class=""input-group-addon"">" &
+                                "<a onclick=""applyInsAmt('dolInsPayment" & intInsCount & "', '" & FormatCurrency(decMax, 2).Replace("$", "").Replace(",", "") & "');" &
+                                """ title=""Apply full claim amount"" style=""cursor:pointer;""><i class=""fa fa-calculator""></i></a></span>" &
+                                "<span class=""input-group-addon"">$</span>" &
+                                "<input ID=""dolInsPayment" & intInsCount & """ name=""dolInsPayment" & intInsCount & "" &
+                                " type=""text"" class=""DB form-control"" Style=""text-align:right; max-width:130px;"" " &
+                                "onblur =""checkFieldPaymentAmount(this.id, this.value, " & FormatCurrency(decMax, 2).Replace("$", "").Replace(",", "") & " );calculateTotalPayment()""></input>" &
+                            "</span>" &
+                        "</td"
+            Else
+                strInsuranceRow &= "<td></td>"
+            End If
+            strInsuranceRow &=
+                "</tr>"
+
+            strClaimsTable &= strInsuranceRow
+            strClaimsScript &= "<script>jQuery('#dolInsPayment" & intInsCount & "').autoNumeric('init', {aSep: ',', aDec: '.'});</script>"
+            If decCurrentPaymentDol = 0 Then
+            Else
+            End If
+            strInsRefList &= strInsRefListDelim &
+                intInsCount & "~~" & strPlanName & "~~" &
+                rowClaims("ClaimNumber") & "~~" &
+                rowClaims("OpenAmount") & "~~" &
+                FormatCurrency(decCurrentPaymentDol, 2).Replace("$", "").Replace(",", "") & "~~" &
+                FormatCurrency(decCurrentPaymentDol, 2).Replace("$", "").Replace(",", "")
+            strInsRefListDelim = "||"
+
+            intInsCount += 1
+
+        Next
+    End Sub
+
+    ' 01.02.17 cpb eom
+    '------------------------------------------------------------------------------------------------------------------------
 
 End Module

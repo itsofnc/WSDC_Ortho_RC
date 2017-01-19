@@ -14,8 +14,10 @@
         <asp:TextBox ID="dolOrig_Payment" CssClass="DB form-control hidden" runat="server"></asp:TextBox>
         <asp:TextBox ID="intCurInvoice" CssClass="hidden" runat="server"></asp:TextBox>
         <asp:Literal ID="litViewOnly" runat="server"></asp:Literal>
+        <%--11/29/2016 Added hidden textbox to store doctors_vw (recid) for payment data--%>
+        <asp:TextBox ID="txtDoctors_vw" CssClass="DB form-control hidden" runat="server"></asp:TextBox>
 
-        <div class="container">
+        <%--<div class="container">--%>
             <asp:Literal ID="litHeader" runat="server"></asp:Literal>
 
             <div id="divViewOptions" class="col-sm-12" style="z-index: 1000;">
@@ -264,7 +266,8 @@
                     <%--                    </div>--%>
                 </div>
             </div>
-        </div>
+            <div class="col-sm-12"><br /><br /></div>
+        <%--</div>--%>
         <!--Container end-->
     </form>
 
@@ -1011,11 +1014,14 @@
                                            document.getElementById('<%=lblRemainingAmt.ClientID%>').innerHTML = (0).toFixed(2);
 
                                            document.getElementById('<%=txtContract_RECID.ClientID%>').value = "-1";
+                                           //11/29/16 CS getting doctors_vw back from contract data
+                                           document.getElementById('<%=txtDoctors_vw.ClientID%>').value = "-1";
                                            document.getElementById('<%=intCurrentInvoiceBal.ClientID%>').innerHTML = (0).toFixed(2);
                                            document.getElementById('<%=intPatRemaniningBal.ClientID%>').innerHTML = (0).toFixed(2);
                                            document.getElementById('<%=intPastDueBal.ClientID%>').innerHTML = (0).toFixed(2);
                                            document.getElementById('<%=intCurInvoice.ClientID%>').innerHTML = (0).toFixed(2);
                                            jQuery('#ddlClaimNumber').prop("enabled", false);
+
                                        }
                                    } else {
                                        //enable amounts textboxes & radio buttons
@@ -1041,6 +1047,8 @@
                                        document.getElementById('<%=intCurInvoice.ClientID%>').innerHTML = arrData[12];
                                        document.getElementById('<%=txtFirstName.ClientID%>').value = arrData[14];
                                        document.getElementById('<%=txtLastName.ClientID%>').value = arrData[15];
+                                       //11/29/16 CS getting doctors_vw back from contract data
+                                       document.getElementById('<%=txtDoctors_vw.ClientID%>').value = arrData[18];
                                        jQuery('#rdoPatAmt').focus();
 
                                        if (arrData[3] == "-1") {
@@ -1090,7 +1098,7 @@
                                            }
                                        }
                                        // reset Claims array
-                                       //arrClaims = eval(arrData[18]);
+                                       //arrClaims = eval(arrData[19]);
                                         
                                    }
                                });
@@ -1149,6 +1157,8 @@
                         document.getElementById('<%=lblRemainingAmt.ClientID%>').innerHTML = (0).toFixed(2);
 
                         document.getElementById('<%=txtContract_RECID.ClientID%>').value = "-1";
+                        //11/29/16 CS getting doctors_vw back from contract data
+                        document.getElementById('<%=txtDoctors_vw.ClientID%>').value = "-1";
                         document.getElementById('<%=intCurrentInvoiceBal.ClientID%>').innerHTML = (0).toFixed(2);
                         document.getElementById('<%=intPatRemaniningBal.ClientID%>').innerHTML = (0).toFixed(2);
                         document.getElementById('<%=intPastDueBal.ClientID%>').innerHTML = (0).toFixed(2);
@@ -1179,6 +1189,8 @@
                     document.getElementById('<%=intCurInvoice.ClientID%>').innerHTML = arrData[12];
                     document.getElementById('<%=txtFirstName.ClientID%>').value = arrData[14];
                     document.getElementById('<%=txtLastName.ClientID%>').value = arrData[15];
+                    //11/29/16 CS getting doctors_vw back from contract data
+                    document.getElementById('<%=txtDoctors_vw.ClientID%>').value = arrData[18];
                     jQuery('#rdoPatAmt').focus();
 
                     if (arrData[3] == "-1") {
@@ -1270,6 +1282,12 @@
                 //set ddl index to arrData[25]
                 document.getElementById('<%=txtComments.ClientID%>').value = arrData[26];
                 document.getElementById('<%=txtPaymentReference.ClientID%>').value = arrData[27];
+
+                //11/29/16 CS claimIndex comes back in arrData[28] - not used anywhere tho??
+                //11/29/16 CS getting doctors_vw back from contract data (should be in arrData[29])
+                document.getElementById('<%=txtDoctors_vw.ClientID%>').value = arrData[29];
+                alert(arrData[29]);
+
                 //Readonly/Disable validation on Patient Number & Chart Number since user cannot edit
                 jQuery('#<%=txtChartNumber.ClientID%>').prop('readonly', true);
                 jQuery('#<%=txtPatientNumber.ClientID%>').prop('readonly', true);

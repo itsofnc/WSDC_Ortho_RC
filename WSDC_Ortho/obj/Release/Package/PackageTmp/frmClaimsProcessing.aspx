@@ -16,23 +16,31 @@
         </div>
         <div class="row">
             <div class="col-sm-9">
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <asp:Button ID="btnPrint" runat="server" Text="Print Patient Invoices"  CssClass="btn btn-sm btn-success" OnClientClick="if (confirm('Warning: processing invoices is irreversible. \nClick OK to continue')) {jQuery('#loading_indicator').show(); queryIframe();} else {return false;}" />
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <asp:Button ID="btnPreviewInvoice" runat="server" Text="Preview Patient Invoices"  CssClass="btn btn-sm btn-primary" OnClientClick="jQuery('#loading_indicator').show(); queryIframe();" />
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <asp:Button ID="btnClaimPrimary" runat="server" Text="Print Primary Claims"  CssClass="btn btn-sm btn-success" OnClientClick="if (confirm('Warning: processing claims is irreversible. \nClick OK to continue')) {jQuery('#loading_indicator').show(); queryIframe();} else {return false;}" />
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <asp:Button ID="btnPreviewClaimPrimary" runat="server" Text="Preview Primary Claims"  CssClass="btn btn-sm btn-primary" OnClientClick="jQuery('#loading_indicator').show(); queryIframe();" />
                 </div>
-                <div class="col-sm-2">
+            </div>
+        </div>
+        <div class="row" style="margin-top: 3px; margin-bottom: 3px">
+            <div class="col-sm-9">
+                <div class="col-sm-3">
                     <asp:Button ID="btnClaimSecondary" runat="server" Text="Print Seconary Claims"  CssClass="btn btn-sm btn-success" OnClientClick="if (confirm('Warning: processing claims is irreversible. \nClick OK to continue')) {jQuery('#loading_indicator').show(); queryIframe();} else {return false;}" />
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <asp:Button ID="btnPreviewClaimSecondary" runat="server" Text="Preview Seconary Claims"  CssClass="btn btn-sm btn-primary" OnClientClick="jQuery('#loading_indicator').show(); queryIframe();" />
+                </div>
+                <div class="col-sm-6" >
+                    <asp:Button ID="btnManualClaim" runat="server" Text="Override Processing Date"  CssClass="btn btn-sm btn-success" OnClientClick="getProcessDate();return false" />
+                    <span id="spnManDate" style="display: none"></span>
                 </div>
             </div>
         </div>
@@ -66,6 +74,37 @@
 
         function childLoaded() {
             document.frames.ifmClaims.getAspElement("divHeader").style.display = "none";
+        }
+
+        function getProcessDate() {
+                pDate = prompt('Enter a claim date (mm/dd/yyyy)', "");
+                showProcessDate(pDate);
+                jQuery('#loading_indicator').show();
+                window.open(document.forms[0].action,"_self");
+            } 
+
+        function showProcessDate(pDate) {
+
+            spnDateOvrd = document.getElementById("spnManDate");
+
+            strAction = document.forms[0].action;
+            prmLoc = strAction.indexOf("?od=") + 1;
+
+            if (prmLoc > 0) {
+                // strip out any previous setting of an override date this session
+                strInitAction = strAction.substr(0, prmLoc);
+                strEndAction = strAction.substr(strAction.indexOf("&") + 1);
+                document.forms[0].action = strInitAction + strEndAction;
+            }
+
+            if (pDate === null || pDate.trim == "") {
+                spnDateOvrd.innerHTML = '';
+                spnDateOvrd.style.display = 'none';
+            } else {
+                document.forms[0].action = document.forms[0].action.replace(".aspx?", ".aspx?od=" + pDate + "&");
+                spnDateOvrd.innerHTML = '<b>Claim Date Overridden: ' + pDate + '</b>';
+                spnDateOvrd.style.display = 'block';
+            }
         }
 
     </script>
