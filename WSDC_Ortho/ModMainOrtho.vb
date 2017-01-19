@@ -1279,7 +1279,7 @@ Module ModMainOrtho
                                 tblPaymentsPreview.Rows.Add(rowPreviewPaymentsHolding)
 
                             Else
-
+                                ' 1/4/17 CS Update patientAmount to match the amount actually applied to the invoice
                                 strSQL = "update payments set " &
                                             "invoices_recid=" & intNewInvoiceRecid &
                                             ",contract_recid=" & rowContract("recid") &
@@ -1481,31 +1481,34 @@ Module ModMainOrtho
             For Each row In tblContracts.Rows
                 strWhere &= "," & row("chartNumber")
             Next
+            strWhere &= ")"
         Else
             ' contract recid sent in from calling form (contract entry/claims processing for specific contract, or from payment processing creating secondary claim on-the-fly)
             strWhere = " where contracts_recid = " & strContractID
         End If
-        strWhere &= ")"
+        '  strWhere &= ")"
 
-        ' rodneys codde
-        Dim strViewName As String = "Unprocessed" & strClaimType & "InsuranceClaimsCurrentMonth_vw"
+        ' rodneys code
+        Dim strViewName As String
 
         'RLO 10/25/16 - let user override the date processed on the claims selected ----------------------
 
         If IsDate(strProcedureDate) Then
-            ' we need to extract the view and replace GETDATE with the override date
-            dteProcessDate = strProcedureDate
-            strProcedureDate = Format(dteProcessDate, "MM/dd/yyyy")
+            '' we need to extract the view and replace GETDATE with the override date
+            'dteProcessDate = strProcedureDate
+            'strProcedureDate = Format(dteProcessDate, "MM/dd/yyyy")
 
-            'get the actual SELECT from the VIEW
-            Dim strViewTSQL = g_IO_Execute_SQL("select definition as ViewSQL from sys.objects o join sys.sql_modules m on m.object_id = o.object_id " &
-                                               "where o.object_id = object_id( '" & strViewName & "') and o.type = 'V'", False).Rows(0)("ViewSQL")
-            strViewTSQL = Mid(strViewTSQL, UCase(strViewTSQL).IndexOf("SELECT") + 1)
+            ''get the actual SELECT from the VIEW
+            'Dim strViewTSQL = g_IO_Execute_SQL("select definition as ViewSQL from sys.objects o join sys.sql_modules m on m.object_id = o.object_id " &
+            '                                   "where o.object_id = object_id( '" & strViewName & "') and o.type = 'V'", False).Rows(0)("ViewSQL")
+            'strViewTSQL = Mid(strViewTSQL, UCase(strViewTSQL).IndexOf("SELECT") + 1)
 
-            strViewName = "(" & strViewTSQL.replace("GETDATE()", "'" & strProcedureDate & "'") & ") as temp "
+            'strViewName = "(" & strViewTSQL.replace("GETDATE()", "'" & strProcedureDate & "'") & ") as temp "
         Else
             strProcedureDate = Format(Date.Now, "MM/dd/yyyy")
         End If
+
+        strViewName = "Unprocessed" & strClaimType & "InsuranceClaimsCurrentMonth_fn('" & strProcedureDate & "'" & IIf(strClaimType = "Primary", "", ",0,1") & ")"       ' param's 0 = don't allow secondary without a primary   1 = allow secondary without a closed primary
         strSQL = "Select *, cast(0.00 As money) As claim_amount, Procedure_Date As FirstClaimDate, '' as claimNumber from " & strViewName & " " & strWhere & " order by insurance_name"
 
         'RLO 10/25/16  ----------------------
@@ -1547,12 +1550,12 @@ Module ModMainOrtho
                 If rowClaims("Type") = 0 Then
                     ' this is a primary claim
                     Dim strCurrMonth As String = CType(Month(CDate(strProcedureDate)), String)
-                    strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("contracts_recid") &
+                    strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("recid") &
                         " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and type = 0 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
                     Dim tblClaimsProcessed As DataTable = g_IO_Execute_SQL(strSQL, False)
 
                     ' 11/2/15 CS Check for a claim ever processed for this contract & insurance plan
-                    strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("contracts_recid") &
+                    strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("recid") &
                         " and type = 0 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
                     Dim tblInitialClaimsProcessed As DataTable = g_IO_Execute_SQL(strSQL, False)
 
@@ -1610,12 +1613,12 @@ Module ModMainOrtho
                     'Dim strCurrMonth As String = CType(Month(Date.Now), String)
                     Dim strCurrMonth As String = CType(Month(CDate(strProcedureDate)), String)
 
-                    strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("contracts_recid") &
+                    strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("recid") &
                         " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and type = 1 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
                     Dim tblClaimsProcessed As DataTable = g_IO_Execute_SQL(strSQL, False)
 
                     ' 11/2/15 CS Check for a claim ever processed for this contract & insurance plan
-                    strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("contracts_recid") &
+                    strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("recid") &
                         " and type = 1 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
 
                     Dim tblInitialClaimsProcessed As DataTable = g_IO_Execute_SQL(strSQL, False)
@@ -1758,7 +1761,7 @@ Module ModMainOrtho
                     If blnPreview Then
                         strClaimNumber = Format(CDate(strProcedureDate), "yy") & "PREVIEW"
                     Else
-                        strInsert = "insert into claims (" & strColumnNames & ",sys_users_recid) " & "Select " & strColumnNames & "," & System.Web.HttpContext.Current.Session("user_link_id") & " as sys_users_recid from UnprocessedPrimaryInsuranceClaimsCurrentMonth_vw where contracts_recid = " & rowClaims("contracts_recid")
+                        strInsert = "insert into claims (" & strColumnNames & ",contracts_recid, sys_users_recid) " & "Select " & strColumnNames & ",recid as Contracts_recid," & System.Web.HttpContext.Current.Session("user_link_id") & " as sys_users_recid from UnprocessedPrimaryInsuranceClaimsCurrentMonth_fn('" & strProcedureDate & "') where recid = " & rowClaims("recid")
                         g_IO_Execute_SQL(strInsert, False)
 
                         strClaimRecid = g_IO_GetLastRecId()
@@ -1784,11 +1787,11 @@ Module ModMainOrtho
 
                         g_IO_Execute_SQL("update contracts set PrimaryRemainingBalance = PrimaryRemainingBalance - " & rowClaims("procedure_amount") &
                                                  ",PrimaryAmountBilled = PrimaryAmountBilled + " & rowClaims("procedure_amount") &
-                                                    " where recid = " & rowClaims("contracts_recid"), False)
+                                                    " where recid = " & rowClaims("recid"), False)
                         'End If
                         '11/29/16 CS need to send in contract recid, not chart number as there are multiple contract per chart number now
                         'AttachClaimPayments(tblClaims.Rows(index)("ChartNumber"), strClaimNumber, 0, -1)
-                        AttachClaimPayments(tblClaims.Rows(index)("contracts_recid"), strClaimNumber, 0, -1)
+                        AttachClaimPayments(tblClaims.Rows(index)("recid"), strClaimNumber, 0, -1)
 
                     End If
 
@@ -1799,7 +1802,7 @@ Module ModMainOrtho
                     Else
                         strInsert = "insert into claims (" & strColumnNames & ",sys_users_recid) " &
                                 "Select " & strColumnNames & "," & System.Web.HttpContext.Current.Session("user_link_id") & " as sys_users_recid " &
-                                "from UnprocessedSecondaryInsuranceClaimsCurrentMonth_vw where contracts_recid = " & rowClaims("contracts_recid")
+                                "from UnprocessedSecondaryInsuranceClaimsCurrentMonth_vw where contracts_recid = " & rowClaims("recid")
                         g_IO_Execute_SQL(strInsert, False)
 
                         strClaimRecid = g_IO_GetLastRecId()
@@ -1826,11 +1829,11 @@ Module ModMainOrtho
 
                             g_IO_Execute_SQL("update contracts set SecondaryRemainingBalance = SecondaryRemainingBalance - " & rowClaims("procedure_amount") &
                                                  ",SecondaryAmountBilled = SecondaryAmountBilled + " & rowClaims("procedure_amount") &
-                                                 " where recid = " & rowClaims("contracts_recid"), False)
+                                                 " where recid = " & rowClaims("recid"), False)
                         End If
                         '11/29/16 CS need to send in contract recid, not chart number as there are multiple contract per chart number now
                         'AttachClaimPayments(tblClaims.Rows(index)("ChartNumber"), strClaimNumber, 1, -1)
-                        AttachClaimPayments(tblClaims.Rows(index)("contracts_recid"), strClaimNumber, 1, -1)
+                        AttachClaimPayments(tblClaims.Rows(index)("recid"), strClaimNumber, 1, -1)
 
                     End If
 

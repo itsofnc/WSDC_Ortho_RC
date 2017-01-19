@@ -21,23 +21,24 @@
         Else
             If IsDate(Request.QueryString("od")) Then
                 dteProcedureDate = Request.QueryString("od")
-                litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){showProcessDate('" & Format(dteProcedureDate, "MM/dd/yyyy") & "')});</script>"
             Else
                 lblMessage.Text = "Invalid altered claim date entered.  Please try again."
                 Exit Sub
             End If
         End If
+        litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){showProcessDate('" & Format(dteProcedureDate, "MM/dd/yyyy") & "')});</script>"
 
         Dim strIframeDestination As String = ""
+
         If IsPostBack Then
 
         Else
             If IsNothing(Request.QueryString("rl")) Then
             Else
                 ' If a specific contract is requested then "rl" will contain the contract number(s)
-                'strIframeDestination = "frmListManager.aspx?id=[UnprocessedClaimsInvoicesCurrentMonth_vw]&vo=1&divHide=divHeader,divFooter" ' prepare the iframe load
-                strIframeDestination = "frmListManager.aspx?id=UnprocessedPrimaryInsuranceCurrentMonth_fn(''" & Format(dteProcedureDate, "yyyy/MM/dd") & "'')&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
-                hidInitialcontract.Value = Request.QueryString("rl")
+                ' strIframeDestination = "frmListManager.aspx?id=[UnprocessedClaimsInvoicesCurrentMonth_vw]&vo=1&divHide=divHeader,divFooter" ' prepare the iframe load
+                strIframeDestination = "frmListManager.aspx?id=UnprocessedClaimsInvoicesCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
+                hidInitialcontract.Value = "UnprocessedClaimsInvoicesCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')" & "&&" & Request.QueryString("rl")
 
                 lblMessage.Text = "Print Selected Claims and Invoices"
 
@@ -50,9 +51,8 @@
                         '  there is insurance coverage here
 
                         ' if there is insurance has there already been a primary claim processed for selected month?
-                        ' 12/15/16 CS Need to also check the year value of the procedure date...tested this and thought claim was already processed b/c found 1 from 12/2015!!
-                        strSQL = "Select count(*) as ClaimCount from claims where contracts_recid = " & Request.QueryString("rl") & " and type = 0 and plan_id = (select plan_id from DropDownList__InsurancePlans where RECID =" & tblContracts.Rows(0)("PrimaryInsurancePlans_vw") & ")" &
-                            " and month(procedure_date) = " & Month(dteProcedureDate) & " and year(procedure_date) = " & Year(dteProcedureDate)
+                        strSQL = "Select count(*) as ClaimCount from claims where contracts_recid = " & Request.QueryString("rl") & " and type = 0 " &
+                            " and month(procedure_date) = " & Month(dteProcedureDate) & "and year(procedure_date) = " & Year(dteProcedureDate)
 
                         Dim tblClaims As DataTable = g_IO_Execute_SQL(strSQL, False)
                         If tblClaims.Rows(0)("ClaimCount") > 0 Then
@@ -71,7 +71,6 @@
                                 btnClaimSecondary.Enabled = False
 
                             Else
-                                ' 12/15/16 CS Need to also check the year value of the procedure date...tested this and thought claim was already processed b/c found 1 from 12/2015!!
                                 strSQL = "Select count(*) as ClaimCount from claims where contracts_recid = " & Request.QueryString("rl") & " and type = 1 and plan_id = (select plan_id from DropDownList__InsurancePlans where RECID =" & tblContracts.Rows(0)("PrimaryInsurancePlans_vw") & ")" &
                                  " and month(procedure_date) = " & Month(dteProcedureDate) & " and year(procedure_date) = " & Year(dteProcedureDate)
                                 tblClaims = g_IO_Execute_SQL(strSQL, False)
@@ -99,7 +98,7 @@
 
                     ' has there already been an invoice printed?
                     Dim tblInvoices As DataTable = g_IO_Execute_SQL("select count(*) as InvCount from Invoices inv where InvoiceType = 'I' and inv.contracts_recid = " & Request.QueryString("rl") &
-                                                                    " and month(inv.postdate) = " & Month(dteProcedureDate), False)
+                                                                    " and month(inv.postdate) = " & Month(dteProcedureDate) & " and year(inv.postdate) = " & Year(dteProcedureDate), False)
 
                     ' was the last Invoice processed this month?  If so, it should not be processed again
                     If tblInvoices.Rows(0)("InvCount") > 0 Then
@@ -124,7 +123,7 @@
                 btnPreviewInvoice.Style.Add("display", "none")
 
                 litScripts.Text &= "<script type=""text/javascript"">var InvoiceClaim = 'Claims';</script>" ' load page label
-                hidInitialcontract.Value = "-1"  ' primer -- in case there aren't any below
+
 
 
                 '  create a list of contract recid's to display and store them in hidInitialcontract 
@@ -138,20 +137,22 @@
 
                 btnClaimPrimary.Enabled = False
                 btnClaimSecondary.Enabled = False
+                If Request.QueryString("c") = "1" Then
+                    strIframeDestination = "frmListManager.aspx?id=UnprocessedPrimaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
+                    hidInitialcontract.Value = "frmListManager.aspx?id=UnprocessedPrimaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')" & "&&-1"                               '  "-1"  ' primer -- in case there aren't any below
+                Else
+                    strIframeDestination = "frmListManager.aspx?id=UnprocessedSecondaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "',0,0)&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
+                    hidInitialcontract.Value = "frmListManager.aspx?id=UnprocessedSecondaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "',0,0)" & "&&-1"
+                End If
 
                 For Each rowClaimContract In tblClaimContracts.Rows
                     Dim blnProcessPrimaryClaim As Boolean = False
                     Dim blnProcessSecondaryClaim As Boolean = False
 
                     If Request.QueryString("c") = "1" Then
-                        strIframeDestination = "frmListManager.aspx?id=UnprocessedPrimaryInsuranceClaimsCurrentMonth_fn(''" & Format(dteProcedureDate, "yyyy/MM/dd") & "'')&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
-                        ' strIframeDestination = "frmListManager.aspx?id=UnprocessedClaimsInvoicesCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
-
                         lblMessage.Text = "Create/Print Primary Monthly Claims"
 
                         '  what is the frequency this claim is supposed to be processed?    (determine based on start of contract date, not the last time this claim was processed)
-
-
                         Select Case rowClaimContract("PrimaryBillingFrequency_vw")
                             Case 1
                                 ' monthly  - then flag it to be processed
@@ -176,12 +177,8 @@
                                 blnProcessPrimaryClaim = False
                         End Select
                     Else
-                        blnProcessPrimaryClaim = False
-                    End If
 
-                    If Request.QueryString("c") = "2" Then
-                        ' strIframeDestination = "frmListManager.aspx?id=SecondaryClaimsListingMain_vw&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
-                        strIframeDestination = "frmListManager.aspx?id=UnprocessedSecondaryInsuranceClaimsCurrentMonth_fn(''" & Format(dteProcedureDate, "yyyy/MM/dd") & "'')&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
+                        blnProcessPrimaryClaim = False
 
                         lblMessage.Text = "Create/Print Secondary Monthly Claims"
 
@@ -246,8 +243,8 @@
                                         If blnProcessSecondaryClaim Then
                                             ' there is no secondary claim already processed, but if there is already a primary it must be already paid before the secondary is produced
                                             Dim tblPriClaim As DataTable = g_IO_Execute_SQL("select  count(*) FoundOne procedure_date from Claims clm where clm.contracts_recid = " & rowClaimContract("recid") &
-                                                                      " and type = 0 and plan_id = (select plan_id from DropDownList__InsurancePlans where RECID =" & tblClaimContracts.Rows(0)("PrimaryInsurancePlans_vw") & ")" & " and " &
-                                                                      "DATEPART(month, clms.procedure_date) = " & Format(dteProcedureDate, "MM") &
+                                                                      " and type = 0 and plan_id = (select plan_id from DropDownList__InsurancePlans where RECID =" & tblClaimContracts.Rows(0)("PrimaryInsurancePlans_vw") & ")" &
+                                                                     " and month(clms.procedure_date) = " & Month(dteProcedureDate) & " and year(clms.procedure_date) = " & Year(dteProcedureDate) &
                                                                       " and clms.status = 'C'", False)
 
                                             If tblPriClaim.Rows(0)("FoundOne") = 1 Then
@@ -311,13 +308,14 @@
 
                 ' this is a request to process invoices only
                 strIframeDestination = "frmListManager.aspx?id=UnprocessedInvoiceCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')&vo=1&divHide=divHeader,divFooter"
+                hidInitialcontract.Value = "UnprocessedInvoiceCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')" & "&&-1"       '  "-1"  ' primer -- in case there aren't any below
+
                 btnClaimPrimary.Style.Add("display", "none")
                 btnPreviewClaimPrimary.Style.Add("display", "none")
                 btnClaimSecondary.Style.Add("display", "none")
                 btnPreviewClaimSecondary.Style.Add("display", "none")
 
                 litScripts.Text &= "<script type=""text/javascript"">var InvoiceClaim = 'Invoices';</script>"
-                hidInitialcontract.Value = "-1"  ' primer -- in case there aren't any below
 
                 ' pull contracts that are active and eliminate any that have invoices already processed this month
                 Dim tblPendingInvoices As DataTable = g_IO_Execute_SQL("Select contracts.recid,patientfirstpay, PatientBillingFrequency_vw,contractdate" &
@@ -353,13 +351,14 @@
                 Next
             End If
 
-            If hidInitialcontract.Value = "" Then
+            Dim arrNextActionValues() = Split(hidInitialcontract.Value, "&&")
+            If arrNextActionValues(1) = "" Then
             Else
                 ' RLO - too dangerous to send the recid list in the URL, create a session variable instead and send the session variable name to the list manager
                 ' if this is fed list of recid's or a postback and the form received a recid list then keep them active
                 '  this script will feed the list of recid's to the frmListManager in the iFrame
                 Dim strSessionWhereName As String = "CPWhere" & Trim(CStr(TimeOfDay.Second))   ' create a unique session variable name used to send the list to the frmListManager
-                Session(strSessionWhereName) = hidInitialcontract.Value   ' put the list in the SESSION variable
+                Session(strSessionWhereName) = arrNextActionValues(1)   ' put the list in the SESSION variable
 
                 ' past the name of the session variable to the form list manager via the URL list in the IFRAME
                 litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function() {document.getElementById('ifmClaims').src = """ & strIframeDestination & "&seslst=" & strSessionWhereName & """});</script>"
@@ -384,6 +383,7 @@
         Dim btnPressed As Button = sender
 
         If btnPressed Is btnPrint Or btnPressed Is btnPreviewInvoice Then
+            ' printing invoices
 
             'RLO 10/25/16 - let user override the date processed on the claims selected
             Dim strProcedureDate As String = ""   ' defaults to today i left blank
@@ -416,22 +416,24 @@
             ' now convert this query/view to a straight read of the contracts table using the where clause extracted from the user's filter
             strSQL = "select * from " & strSQL.Replace(strTableName, "contracts")
 
-            ' 6/9/15 CS Not sure why we were sending over an "M" in some scenarios...normal invoice processing should have "I" as invoice type
-            'Dim strPOFileBase = g_createInvoice(strSQL, IIf(hidInitialcontract.Value = "", "M", "I"), 0, blnPreviewInvoices)
             Dim strPOFileBase = g_createInvoice(strSQL, "I", 0, blnPreviewInvoices, CDate(strProcedureDate))
 
             litFrameCall.Text = "DownloadFile.aspx?pdf=" & strPOFileBase
-
+            Dim arrNextActionValues() = Split(hidInitialcontract.Value, "&&")
             Dim strSessionWhereName As String = "CPWhere" & Trim(CStr(TimeOfDay.Second))   ' create a unique session variable name used to send the list to the frmListManager
-            Session(strSessionWhereName) = "-1"   ' put the list in the SESSION variable
+            Session(strSessionWhereName) = arrNextActionValues(1)
 
             If blnPreviewInvoices Then
             Else
-                ' paste the name of the session variable to the form list manager via the URL list in the IFRAME
-                litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = '" &
-                "frmListManager.aspx?id=UnprocessedPrimaryInvoiceCurrentMonth_vw&vo=1&divHide=divHeader,divFooter" &
-                "&seslst=" & strSessionWhereName & "'});</script>"
+                btnPreviewInvoice.Enabled = False
+                btnPrint.Enabled = False
             End If
+
+
+            ' paste the name of the session variable to the form list manager via the URL list in the IFRAME
+            litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = """ &
+                "frmListManager.aspx?id=" & arrNextActionValues(0) & "&vo=1&divHide=divHeader,divFooter" &
+                "&seslst=" & strSessionWhereName & """});</script>"
 
         Else
             ' printing claims
@@ -479,22 +481,28 @@
                 lblMessage.Text = "There were no claims processed for " & strProcedureDate & ".  The contracts selected likely have a claim already processed for the date specified."
             End If
 
-            Dim strSessionWhereName As String = "CPWhere" & Trim(CStr(TimeOfDay.Second))   ' create a unique session variable name used to send the list to the frmListManager
-            Session(strSessionWhereName) = "-1"   ' put the list in the SESSION variable
-
             If blnPreviewClaims Then
             Else
-                ' past the name of the session variable to the form list manager via the URL list in the IFRAME and clear the grid
-                If strClaimType = "Primary" Then
-                    litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = '" &
-                        "frmListManager.aspx?id=PrimaryClaimsListingMain_vw&vo=1&divHide=divHeader,divFooter" &
-                        "&seslst=" & strSessionWhereName & "'});</script>"
+                If blnClaimTypeIsPrimary Then
+                    btnClaimPrimary.Enabled = False
+                    btnPreviewClaimPrimary.Enabled = False
                 Else
-                    litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = '" &
-                        "frmListManager.aspx?id=SecondaryClaimsListingMain_vw&vo=1&divHide=divHeader,divFooter" &
-                        "&seslst=" & strSessionWhereName & "'});</script>"
+                    btnClaimSecondary.Enabled = False
+                    btnPreviewClaimSecondary.Enabled = False
                 End If
             End If
+
+
+            ' past the name of the session variable to the form list manager via the URL list in the IFRAME and clear the grid
+            ' strClaimType will be "Primary" or "Secondary"
+            Dim arrNextActionValues() = Split(hidInitialcontract.Value, "&&")
+
+            Dim strSessionWhereName As String = "CPWhere" & Trim(CStr(TimeOfDay.Second))   ' create a unique session variable name used to send the list to the frmListManager
+            Session(strSessionWhereName) = arrNextActionValues(1)
+
+            litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = """ &
+                    "frmListManager.aspx?id=" & arrNextActionValues(0) & "&vo=1&divHide=divHeader,divFooter" &
+                        "&seslst=" & strSessionWhereName & """});</script>"
 
         End If
 

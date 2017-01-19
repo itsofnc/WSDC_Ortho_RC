@@ -102,7 +102,7 @@
                 spnDateOvrd.style.display = 'none';
             } else {
                 document.forms[0].action = document.forms[0].action.replace(".aspx?", ".aspx?od=" + pDate + "&");
-                spnDateOvrd.innerHTML = '<b>Claim Date Overridden: ' + pDate + '</b>';
+                spnDateOvrd.innerHTML = '<b>Claim/Invoice Date Setting: ' + pDate + '</b>';
                 spnDateOvrd.style.display = 'block';
             }
         }
