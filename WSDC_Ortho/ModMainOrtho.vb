@@ -1622,7 +1622,7 @@ Module ModMainOrtho
             strProcedureDate = Format(Date.Now, "MM/dd/yyyy")
         End If
 
-        strViewName = "Unprocessed" & strClaimType & "InsuranceClaimsCurrentMonth_fn('" & strProcedureDate & "'" & IIf(strClaimType = "Primary", "", ",0,1") & ")"       ' param's 0 = don't allow secondary without a primary   1 = allow secondary without a closed primary
+        strViewName = "Unprocessed" & strClaimType & "InsuranceClaimsCurrentMonth_fn('" & strProcedureDate & "'" & IIf(strClaimType = "Primary", "", ",1,1") & ")"       ' param's 0 = don't allow secondary without a primary   1 = allow secondary without a closed primary
         strSQL = "Select *, cast(0.00 As money) As claim_amount, Procedure_Date As FirstClaimDate, '' as claimNumber from " & strViewName & " " & strWhere & " order by insurance_name"
 
         'RLO 10/25/16  ----------------------
@@ -1664,13 +1664,14 @@ Module ModMainOrtho
                 If rowClaims("Type") = 0 Then
                     ' this is a primary claim
                     Dim strCurrMonth As String = CType(Month(CDate(strProcedureDate)), String)
+                    Dim strCurrYear As String = CType(Year(CDate(strProcedureDate)), String)
                     strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("recid") &
-                        " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and type = 0 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
+                        " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and YEAR(procedure_date) = '" & strCurrMonth & "'" & " and type = 0 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
                     Dim tblClaimsProcessed As DataTable = g_IO_Execute_SQL(strSQL, False)
 
                     ' 11/2/15 CS Check for a claim ever processed for this contract & insurance plan
                     strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("recid") &
-                        " and type = 0 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
+                        " and type = 0)"
                     Dim tblInitialClaimsProcessed As DataTable = g_IO_Execute_SQL(strSQL, False)
 
                     If tblClaimsProcessed.Rows(0)("alreadyProcessed") = 0 And tblInitialClaimsProcessed.Rows(0)("alreadyProcessed") = 0 Then
