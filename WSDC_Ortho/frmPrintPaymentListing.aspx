@@ -12,7 +12,7 @@
 
             <div class="col-sm-12">
                 <div class="form-group">
-                    <div class="col-sm-9">
+                    <div class="col-sm-12">
                         <label for="dteBeginDate" class="col-xs-4">
                             Begin Date:
                         <span style="padding-left: 0px;">
@@ -40,6 +40,15 @@
                                 <asp:RequiredFieldValidator ID="rfvEndDate" runat="server" ControlToValidate="dteEndDate" Display="Dynamic" ErrorMessage="Required" class="requiredFieldValidator" />
                             </p>
                         </span>
+                        </label>
+                        <label for="txtChartNo" class="col-xs-4">
+                            Chart No:
+                            <span style="padding-left: 0px;">
+                                <span class="input-group">
+                                    <span class="input-group-addon" style="background-color:#d1d1d1">Chart #</span>
+                                    <asp:TextBox ID="txtChartNo" CssClass="form-control" runat="server" placeholder="Chart #"></asp:TextBox>
+                                </span>
+                            </span>
                         </label>
                     </div>
                 </div>

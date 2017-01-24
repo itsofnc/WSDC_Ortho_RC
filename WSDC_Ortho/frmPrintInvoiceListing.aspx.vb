@@ -11,6 +11,9 @@
         Dim userID As String = ""
         ' 1/4/17 CS Need to pull invoices based on 'DateProcessed', b/c 'PostDate' (ie invoice date) can now be backdated on invoices by user
         Dim strWhereClause As String = " where DateProcessed >= '" & dateFrom & "  00:00:00  ' and DateProcessed <= '" & dateTo & " 23:59:59' "
+        If txtChartNo.Text <> "" Then
+            strWhereClause &= " and chart_number = '" & txtChartNo.Text & "'"
+        End If
         Dim strOrderBy As String = " order by patientname "
         Dim strSql As String = "select * from MonthEndInvoiceListing_vw " & strWhereClause & strOrderBy
         Dim tblReportData As DataTable = g_IO_Execute_SQL(strSql, False)

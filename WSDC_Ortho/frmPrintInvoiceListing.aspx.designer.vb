@@ -12,7 +12,7 @@ Option Explicit On
 
 
 Partial Public Class frmPrintInvoiceListing
-
+    
     '''<summary>
     '''frmPrintInvoiceListing control.
     '''</summary>
@@ -21,7 +21,7 @@ Partial Public Class frmPrintInvoiceListing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents frmPrintInvoiceListing As Global.System.Web.UI.HtmlControls.HtmlForm
-
+    
     '''<summary>
     '''btnHidden control.
     '''</summary>
@@ -30,7 +30,7 @@ Partial Public Class frmPrintInvoiceListing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnHidden As Global.System.Web.UI.WebControls.Button
-
+    
     '''<summary>
     '''lblTitle control.
     '''</summary>
@@ -39,7 +39,7 @@ Partial Public Class frmPrintInvoiceListing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lblTitle As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''dteBeginDate control.
     '''</summary>
@@ -48,7 +48,7 @@ Partial Public Class frmPrintInvoiceListing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents dteBeginDate As Global.System.Web.UI.WebControls.TextBox
-
+    
     '''<summary>
     '''rfvBeginDate control.
     '''</summary>
@@ -57,7 +57,7 @@ Partial Public Class frmPrintInvoiceListing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents rfvBeginDate As Global.System.Web.UI.WebControls.RequiredFieldValidator
-
+    
     '''<summary>
     '''dteEndDate control.
     '''</summary>
@@ -66,7 +66,7 @@ Partial Public Class frmPrintInvoiceListing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents dteEndDate As Global.System.Web.UI.WebControls.TextBox
-
+    
     '''<summary>
     '''rfvEndDate control.
     '''</summary>
@@ -75,7 +75,16 @@ Partial Public Class frmPrintInvoiceListing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents rfvEndDate As Global.System.Web.UI.WebControls.RequiredFieldValidator
-
+    
+    '''<summary>
+    '''txtChartNo control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents txtChartNo As Global.System.Web.UI.WebControls.TextBox
+    
     '''<summary>
     '''lblMessage control.
     '''</summary>
@@ -84,7 +93,7 @@ Partial Public Class frmPrintInvoiceListing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents lblMessage As Global.System.Web.UI.WebControls.Label
-
+    
     '''<summary>
     '''btnSubmit control.
     '''</summary>
@@ -93,7 +102,7 @@ Partial Public Class frmPrintInvoiceListing
     '''To modify move field declaration from designer file to code-behind file.
     '''</remarks>
     Protected WithEvents btnSubmit As Global.System.Web.UI.WebControls.Button
-
+    
     '''<summary>
     '''btnCancel control.
     '''</summary>

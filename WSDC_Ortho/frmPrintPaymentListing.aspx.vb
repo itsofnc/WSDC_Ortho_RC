@@ -10,6 +10,9 @@
         Dim dateTo As String = Format(CType(dteEndDate.Text, Date), "yyyy-MM-dd")
         Dim userID As String = ""
         Dim strWhereClause As String = " where DatePosted >= '" & dateFrom & "  00:00:00  ' and DatePosted <= '" & dateTo & " 23:59:59' "
+        If txtChartNo.Text <> "" Then
+            strWhereClause &= " and chartNumber = '" & txtChartNo.Text & "'"
+        End If
         Dim strOrderBy As String = " order by patientname "
 
         Dim strSql As String = ""

@@ -41,6 +41,15 @@
                             </p>
                         </span>
                         </label>
+                        <label for="txtChartNo" class="col-xs-4">
+                            Chart No:
+                            <span style="padding-left: 0px;">
+                                <span class="input-group">
+                                    <span class="input-group-addon" style="background-color:#d1d1d1">Chart #</span>
+                                    <asp:TextBox ID="txtChartNo" CssClass="form-control" runat="server" placeholder="Chart #"></asp:TextBox>
+                                </span>
+                            </span>
+                        </label>
                     </div>
                 </div>
             </div>

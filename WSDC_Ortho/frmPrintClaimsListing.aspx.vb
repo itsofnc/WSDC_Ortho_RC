@@ -10,6 +10,9 @@
         Dim dateTo As String = Format(CType(dteEndDate.Text, Date), "yyyy-MM-dd")
         Dim userID As String = ""
         Dim strWhereClause As String = " where DateProcessed >= '" & dateFrom & "  00:00:00  ' and DateProcessed <= '" & dateTo & " 23:59:59' "
+        If txtChartNo.Text <> "" Then
+            strWhereClause &= " and chartNumber = '" & txtChartNo.Text & "'"
+        End If
         Dim strOrderBy As String = " order by insurance_company, patientName"
         Dim strSql As String = "select * from MonthEndClaimListing_vw " & strWhereClause & strOrderBy
         Dim tblReportData As DataTable = g_IO_Execute_SQL(strSql, False)
