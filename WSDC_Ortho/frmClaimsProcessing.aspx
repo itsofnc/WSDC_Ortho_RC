@@ -39,7 +39,7 @@
                     <asp:Button ID="btnPreviewClaimSecondary" runat="server" Text="Preview Seconary Claims"  CssClass="btn btn-sm btn-primary" OnClientClick="jQuery('#loading_indicator').show(); queryIframe();" />
                 </div>
                 <div class="col-sm-6" >
-                    <asp:Button ID="btnManualClaim" runat="server" Text="Override Processing Date"  CssClass="btn btn-sm btn-success" OnClientClick="getProcessDate();return false" />
+                    <asp:Button ID="btnManualClaim" runat="server" Text="Override Billing Date"  CssClass="btn btn-sm btn-success" OnClientClick="getProcessDate();return false" />
                     <span id="spnManDate" style="display: none"></span>
                 </div>
             </div>
