@@ -1666,7 +1666,7 @@ Module ModMainOrtho
                     Dim strCurrMonth As String = CType(Month(CDate(strProcedureDate)), String)
                     Dim strCurrYear As String = CType(Year(CDate(strProcedureDate)), String)
                     strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("recid") &
-                        " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and YEAR(procedure_date) = '" & strCurrMonth & "'" & " and type = 0 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
+                        " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and YEAR(procedure_date) = '" & strCurrYear & "'" & " and type = 0 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
                     Dim tblClaimsProcessed As DataTable = g_IO_Execute_SQL(strSQL, False)
 
                     ' 11/2/15 CS Check for a claim ever processed for this contract & insurance plan
