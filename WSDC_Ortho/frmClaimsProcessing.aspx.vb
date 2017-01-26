@@ -139,10 +139,10 @@
                 btnClaimSecondary.Enabled = False
                 If Request.QueryString("c") = "1" Then
                     strIframeDestination = "frmListManager.aspx?id=UnprocessedPrimaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
-                    hidInitialcontract.Value = "frmListManager.aspx?id=UnprocessedPrimaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')" & "&&-1"                               '  "-1"  ' primer -- in case there aren't any below
+                    hidInitialcontract.Value = "UnprocessedPrimaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')" & "&&-1"                               '  "-1"  ' primer -- in case there aren't any below
                 Else
                     strIframeDestination = "frmListManager.aspx?id=UnprocessedSecondaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "',0,0)&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
-                    hidInitialcontract.Value = "frmListManager.aspx?id=UnprocessedSecondaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "',0,0)" & "&&-1"
+                    hidInitialcontract.Value = "UnprocessedSecondaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "',0,0)" & "&&-1"
                 End If
 
                 For Each rowClaimContract In tblClaimContracts.Rows
