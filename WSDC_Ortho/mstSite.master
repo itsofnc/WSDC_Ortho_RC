@@ -38,6 +38,8 @@
     <link href="Common/datepicker/css/datepicker.css" rel="stylesheet" />
     <link href="Scripts/datepicker/css/datepicker.css" rel="stylesheet" /> 
 
+    <style><asp:Literal ID="litNavCustomBrand" runat="server"></asp:Literal></style>
+
     <asp:PlaceHolder ID="PlaceHolder1" runat="server">
         <link href="/Images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
         <script src="<%: ResolveUrl("~/Common/js/modernizr-2.6.2.js")%>"></script>
@@ -50,7 +52,8 @@
     <div id="pageCover">
         <!--Navigation-->
         <div id="divHeader">
-            <div id="divNavbarTop" class="navbar navbar-inverse navbar-fixed-top " role="navigation" style="z-index: 999999">
+            <div id="divNavbarTop" class="navbar navbar-inverse navbar-fixed-top " role="navigation" style="z-index: 999999; <asp:Literal ID="litNavCustomStyle" runat="server"></asp:Literal>" >
+                
                 <div id="divNavbar" style="margin-right:20px;">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">

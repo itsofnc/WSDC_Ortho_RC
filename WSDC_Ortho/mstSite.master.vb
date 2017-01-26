@@ -22,6 +22,18 @@
             litCompanyName.Text = "&copy; " & Format(Date.Now, "yyyy") & " " & g_CompanyLongName
             litNavbarBrand.Text = Session("CompanyDisplayId") & " " & g_SiteDisplayName
 
+            ' T3 01/26/17 check web config for custom navbar keys 
+            Dim strNavCustomStyle As String = IIf(IsNothing(ConfigurationManager.AppSettings("navCustomStyle")), "", ConfigurationManager.AppSettings("navCustomStyle"))
+            If strNavCustomStyle = "" Then
+            Else
+                litNavCustomStyle.Text = strNavCustomStyle
+            End If
+            Dim strNavCustomBrand As String = IIf(IsNothing(ConfigurationManager.AppSettings("navCustomBrand")), "", ConfigurationManager.AppSettings("navCustomBrand"))
+            If strNavCustomBrand = "" Then
+            Else
+                litNavCustomBrand.Text = strNavCustomBrand
+            End If
+
             litScripts.Text = "<script type=""text/javascript"" language=""javascript"">var g_FormObjectTypes=""" & g_strFormObjectTypes & """;</script>"
 
         End If
