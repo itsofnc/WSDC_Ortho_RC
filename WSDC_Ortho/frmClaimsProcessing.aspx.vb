@@ -37,7 +37,7 @@
             Else
                 ' If a specific contract is requested then "rl" will contain the contract number(s)
                 ' strIframeDestination = "frmListManager.aspx?id=[UnprocessedClaimsInvoicesCurrentMonth_vw]&vo=1&divHide=divHeader,divFooter" ' prepare the iframe load
-                strIframeDestination = "frmListManager.aspx?id=UnprocessedClaimsInvoicesCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
+                strIframeDestination = "frmListManager.aspx?id=UnprocessedClaimsInvoicesCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')&vo=1&perm=00000&divHide=divHeader,divFooter"    ' prepare the iframe load
                 hidInitialcontract.Value = "UnprocessedClaimsInvoicesCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')" & "&&" & Request.QueryString("rl")
 
                 lblMessage.Text = "Print Selected Claims and Invoices"
@@ -138,10 +138,10 @@
                 btnClaimPrimary.Enabled = False
                 btnClaimSecondary.Enabled = False
                 If Request.QueryString("c") = "1" Then
-                    strIframeDestination = "frmListManager.aspx?id=UnprocessedPrimaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
+                    strIframeDestination = "frmListManager.aspx?id=UnprocessedPrimaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')&vo=1&perm=00000&divHide=divHeader,divFooter"    ' prepare the iframe load
                     hidInitialcontract.Value = "UnprocessedPrimaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')" & "&&-1"                               '  "-1"  ' primer -- in case there aren't any below
                 Else
-                    strIframeDestination = "frmListManager.aspx?id=UnprocessedSecondaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "',0,0)&vo=1&divHide=divHeader,divFooter"    ' prepare the iframe load
+                    strIframeDestination = "frmListManager.aspx?id=UnprocessedSecondaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "',0,0)&vo=1&perm=00000&divHide=divHeader,divFooter"    ' prepare the iframe load
                     hidInitialcontract.Value = "UnprocessedSecondaryInsuranceClaimsCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "',0,0)" & "&&-1"
                 End If
 
@@ -307,7 +307,7 @@
                 lblMessage.Text = "Create/Print Monthly Invoices"
 
                 ' this is a request to process invoices only
-                strIframeDestination = "frmListManager.aspx?id=UnprocessedInvoiceCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')&vo=1&divHide=divHeader,divFooter"
+                strIframeDestination = "frmListManager.aspx?id=UnprocessedInvoiceCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')&vo=1&perm=00000&divHide=divHeader,divFooter"
                 hidInitialcontract.Value = "UnprocessedInvoiceCurrentMonth_fn('" & Format(dteProcedureDate, "yyyy/MM/dd") & "')" & "&&-1"       '  "-1"  ' primer -- in case there aren't any below
 
                 btnClaimPrimary.Style.Add("display", "none")

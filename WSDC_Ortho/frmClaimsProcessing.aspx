@@ -33,10 +33,10 @@
         <div class="row" style="margin-top: 3px; margin-bottom: 3px">
             <div class="col-sm-9">
                 <div class="col-sm-3">
-                    <asp:Button ID="btnClaimSecondary" runat="server" Text="Print Seconary Claims"  CssClass="btn btn-sm btn-success" OnClientClick="if (confirm('Warning: processing claims is irreversible. \nClick OK to continue')) {jQuery('#loading_indicator').show(); queryIframe();} else {return false;}" />
+                    <asp:Button ID="btnClaimSecondary" runat="server" Text="Print Secondary Claims"  CssClass="btn btn-sm btn-success" OnClientClick="if (confirm('Warning: processing claims is irreversible. \nClick OK to continue')) {jQuery('#loading_indicator').show(); queryIframe();} else {return false;}" />
                 </div>
                 <div class="col-sm-3">
-                    <asp:Button ID="btnPreviewClaimSecondary" runat="server" Text="Preview Seconary Claims"  CssClass="btn btn-sm btn-primary" OnClientClick="jQuery('#loading_indicator').show(); queryIframe();" />
+                    <asp:Button ID="btnPreviewClaimSecondary" runat="server" Text="Preview Secondary Claims"  CssClass="btn btn-sm btn-primary" OnClientClick="jQuery('#loading_indicator').show(); queryIframe();" />
                 </div>
                 <div class="col-sm-6" >
                     <asp:Button ID="btnManualClaim" runat="server" Text="Override Billing Date"  CssClass="btn btn-sm btn-success" OnClientClick="getProcessDate();return false" />
