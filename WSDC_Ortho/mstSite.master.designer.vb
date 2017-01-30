@@ -32,6 +32,15 @@ Partial Public Class mstSite
     Protected WithEvents litNavCustomBrand As Global.System.Web.UI.WebControls.Literal
     
     '''<summary>
+    '''Literal1 control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents Literal1 As Global.System.Web.UI.WebControls.Literal
+    
+    '''<summary>
     '''PlaceHolder1 control.
     '''</summary>
     '''<remarks>

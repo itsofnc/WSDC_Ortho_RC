@@ -33,6 +33,7 @@
             Else
                 litNavCustomBrand.Text = strNavCustomBrand
             End If
+            'test
 
             litScripts.Text = "<script type=""text/javascript"" language=""javascript"">var g_FormObjectTypes=""" & g_strFormObjectTypes & """;</script>"
 
