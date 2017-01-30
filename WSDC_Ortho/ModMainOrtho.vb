@@ -152,119 +152,6 @@ Module ModMainOrtho
         Next
         Return strClaimsArray & "]"
     End Function
-    ' 01.02.17 cpb - update pulled into newest code
-    ' 09/19/16 cpb - new apply payments routine to loop and apply as much as possible instead of limted to just one invoice
-    ' this routine was created with intentions of replacing the attachInvoicePayments routine.
-    '**** NEW ***NOT COMPLETE -- STOPPED HERE!
-    Public Sub g_applyPaymentToInvoices(paymentRow As DataRow, ByVal intOrigPaymentRecid As Integer, ByVal strTempTable As String)
-        Dim strContractNumber As String = paymentRow("Contract_RECID")
-        Dim decApplyToCurrent As Decimal = paymentRow("ApplyToCurrentInvoice")
-        Dim decApplyToPastDue As Decimal = paymentRow("ApplyToPastDue")
-        Dim strSQL As String = "Select * from Invoices where status = 'O' and " &
-                                    "contracts_recid = '" & strContractNumber & "'"
-        If decApplyToCurrent > 0 And decApplyToPastDue > 0 Then
-        Else
-            If decApplyToCurrent > 0 Then
-                strSQL &= " and PostDate  >= DATEADD(day, -30, GETDATE()) "
-            End If
-            If decApplyToPastDue > 0 Then
-                strSQL &= " and PostDate  < DATEADD(day, -30, GETDATE()) "
-            End If
-        End If
-        strSQL &= " Order by Bill_Date desc"
-        Dim tblInvoicesToApplyTo As DataTable = g_IO_Execute_SQL(strSQL, False)
-        For Each invoice In tblInvoicesToApplyTo.Rows
-            If decApplyToCurrent > 0 Or decApplyToPastDue > 0 Then
-                ' loop the invoices to apply to
-                Dim decApplyToThisInvoiceAmount As Decimal = 0
-                Dim decInvoiceBalance As Decimal = invoice("AmountDue") - invoice("AmountPaid")
-                Dim strApplyTo As String = ""
-
-                If invoice("PostDate") >= DateAdd(DateInterval.Day, -30, Date.Now) Then
-                    ' current
-                    If decApplyToCurrent > 0 Then
-                        If decApplyToCurrent >= decInvoiceBalance Then
-                            decApplyToThisInvoiceAmount = decInvoiceBalance
-                        Else
-                            decApplyToThisInvoiceAmount = decApplyToCurrent
-                        End If
-                    End If
-                    decApplyToCurrent -= decApplyToThisInvoiceAmount
-                    strApplyTo = "ApplyToCurrentInvoice"
-                Else
-                    ' past due
-                    If decApplyToPastDue > 0 Then
-                        If decApplyToPastDue >= decInvoiceBalance Then
-                            decApplyToThisInvoiceAmount = decInvoiceBalance
-                        Else
-                            decApplyToThisInvoiceAmount = decApplyToPastDue
-                        End If
-                    End If
-                    decApplyToPastDue -= decApplyToThisInvoiceAmount
-                    strApplyTo = "ApplyToPastDue"
-                End If
-
-                ' update the invoice record
-                Dim decInvoiceAmtPaid As Decimal = invoice("AmountPaid") + decApplyToThisInvoiceAmount
-                Dim decInvoiceCurrentDue As Decimal = invoice("Current_Due") - decApplyToThisInvoiceAmount
-                Dim decInvoiceTotalDue As Decimal = invoice("Total_Due") - decApplyToThisInvoiceAmount
-                strSQL = "Update Invoices set " &
-                    "AmountPaid = " & decInvoiceAmtPaid &
-                    ", Current_Due = " & decInvoiceCurrentDue &
-                    ", Total_Due = " & decInvoiceTotalDue
-                If decInvoiceCurrentDue = 0 And decInvoiceTotalDue = 0 Then
-                    ' check for invoice paid in full
-                    strSQL &= ", status = 'C'"
-                End If
-                strSQL &= "Where recid = '" & invoice("recid") & "'"
-                g_IO_Execute_SQL(strSQL, False)
-                ' create the payment record and then update with this invoice info
-                g_PostPendingData(strTempTable, "Payments", "recid=" & (paymentRow("recid")), "PaymentPosting.aspx", False)
-                Dim intLastPaymentRecid As Integer = g_IO_GetLastRecId()
-                If intOrigPaymentRecid = -1 Then
-                    intOrigPaymentRecid = intLastPaymentRecid
-                End If
-                strSQL = "Update Payments set PatientAmount = '" & decApplyToThisInvoiceAmount & "'" &
-                    ", orig_payment = '" & paymentRow("PatientAmount") & "'" &
-                    ", " & strApplyTo & " = '" & decApplyToThisInvoiceAmount & "'" &
-                    ", Invoices_RECID = '" & invoice("recid") & "'" &
-                    ", BaseRecid = " & intOrigPaymentRecid &
-                    " where recid=" & intLastPaymentRecid
-                g_IO_Execute_SQL(strSQL, False)
-            Else
-                Exit For
-            End If
-        Next
-
-        ' end of invoices, make sure if we have any left over, we post the overpayment
-        ' 10/05/16 with new payment entry, this should actually never happen here, but will keep code for backward compat.
-        If decApplyToCurrent + decApplyToPastDue > 0 Then
-            strSQL = "Insert into Payments " &
-                            "(DatePosted, sys_users_recid, patientNumber, ChartNumber, PatientAmount, PaymentType, PaymentReference," &
-                            "Comments, Contract_recid, Invoices_recid, baserecid, payername, PaymentSelection,  ApplyToNextInvoice, orig_payment,paymentfor)" &
-                            " values (" &
-                            "'" & paymentRow("DatePosted") & "'," &
-                            paymentRow("sys_users_recid") & "," &
-                            "'" & paymentRow("patientNumber") & "'," &
-                            "'" & paymentRow("ChartNumber") & "'," &
-                             decApplyToCurrent + decApplyToPastDue & "," &
-                            "'" & paymentRow("PaymentType") & "'," &
-                            "'" & paymentRow("PaymentReference").replace("'", "''") & "'," &
-                            "'" & paymentRow("Comments").replace("'", "''") & "'," &
-                            "'" & paymentRow("contract_recid") & "'," &
-                            "-1," &                                                         ' set payment to apply to next invoice.
-                            "'" & paymentRow("BaseRecid") & "'," &
-                            "'" & paymentRow("payername").replace("'", "''") & "'," &
-                            "'" & paymentRow("PaymentSelection") & "'," &
-                            decApplyToCurrent + decApplyToPastDue & "," &                   ' apply all that was left over to next invoice
-                            paymentRow("orig_payment") & "," &
-                            "'" & paymentRow("PaymentFor").replace("'", "''") & "'" &
-                            ")"
-            g_IO_Execute_SQL(strSQL, False)
-        End If
-
-    End Sub
-
 
     Public Sub AttachInvoicePayments(ByVal ContractNumber As String, ByVal InvoiceNumber As String, ByVal InvoiceAmount As Decimal, ByVal InvoiceType As String, ByVal PaymentRecid As Integer)
         Dim tblPayments As DataTable = g_IO_Execute_SQL("Select * from payments where recid = " &
@@ -1250,7 +1137,6 @@ Module ModMainOrtho
                 End If
             End If
 
-
             ' extract patients name and address
             strSQL = "Select RTrim(name_first) + ' ' + LTrim(RTrim(substring(isnull(name_mid,' ') + ' ',1,1))) + ' ' + Name_Last as Name," &
                 " isnull(addr_other,'') as address1, addr_street as address2," &
@@ -1577,6 +1463,7 @@ Module ModMainOrtho
         ' 11/29/16 CS Changed ByRef ChartNumber to Contract Recid and all references in code below
         ' Also updated anywhere this function was called to send contract recid instead of chartnumber bc there can be more than 1 contract per chartnumber
 
+        Dim strColumnsUsedForDisplayOnlyAndNotStoredInDatabase As String = "Payments"   ' comma separated
         Dim blnInitialClaim As Boolean = False
         Dim blnProcessPrimaryClaim As Boolean = False
         Dim blnProcessSecondaryClaim As Boolean = False
@@ -1628,6 +1515,17 @@ Module ModMainOrtho
         'RLO 10/25/16  ----------------------
 
         Dim tblClaims As DataTable = g_IO_Execute_SQL(strSQL, False)
+
+        'remove columns used for display only
+        Dim arrColumnsToRemove() As String = Split(strColumnsUsedForDisplayOnlyAndNotStoredInDatabase, ",")
+        For i = tblClaims.Columns.Count - 1 To 0 Step -1
+            For Each strColumnToRemove As String In arrColumnsToRemove
+                If UCase(tblClaims.Columns(i).ColumnName) = UCase(strColumnToRemove) Then
+                    tblClaims.Columns.RemoveAt(i)
+                End If
+            Next
+        Next
+
         Dim strColumnNames As String = ""
         Dim strcolumnNamesDelim As String = ""
         For Each colColumn As DataColumn In tblClaims.Columns
@@ -1666,7 +1564,7 @@ Module ModMainOrtho
                     Dim strCurrMonth As String = CType(Month(CDate(strProcedureDate)), String)
                     Dim strCurrYear As String = CType(Year(CDate(strProcedureDate)), String)
                     strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("recid") &
-                        " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and YEAR(procedure_date) = '" & strCurrYear & "'" & " and type = 0 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
+                        " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and YEAR(procedure_date) = '" & strCurrMonth & "'" & " and type = 0 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
                     Dim tblClaimsProcessed As DataTable = g_IO_Execute_SQL(strSQL, False)
 
                     ' 11/2/15 CS Check for a claim ever processed for this contract & insurance plan
@@ -1690,6 +1588,7 @@ Module ModMainOrtho
                         blnInitialClaim = True
 
                     Else
+
                         ' installment claim
                         rowClaims("procedure_desc") = "PERIOD ORTHO TX INSTALLMENT"
                         rowClaims("procedure_code") = "D8670"
