@@ -1,0 +1,86 @@
+﻿
+/*control alignment of buttons*/
+.pagination > .disabled > span, .pagination > .disabled > span:hover, 
+.pagination > .disabled > span:focus, .pagination > .disabled > a, 
+.pagination > .disabled > a:hover, .pagination > .disabled > a:focus {
+    margin-top: -1px;
+}
+
+/*Custom Bootstrap Overwrite*/
+.form-horizontal .control-label {
+    overflow-wrap:break-word;
+}
+
+.navbar-selectedList {
+  /*padding: 15px 15px;*/
+  padding-left: 15px;
+  font-size: 18px;
+  line-height: 20px;
+  height: 50px;
+  color: GrayText;
+ 
+}
+.navbar-selectedList:hover,
+.navbar-selectedList:focus {
+  text-decoration: none;
+}
+
+#navPage {
+    min-height: 30px;
+    margin-bottom: 10px;
+}
+
+/*****Toggle List CSS - This controls auto dropdown__list as nav pills at small view point*****/
+@media (min-width: 768px) {
+  .navbar > .container .navbar-selectedList,
+  .navbar > .container-fluid .navbar-selectedList {
+    margin-left: -15px; 
+  }
+}
+
+.navbar-toggle-list {
+  position: relative;
+  float: right;
+  margin-right: 15px;
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+    .navbar-toggle-list:focus {
+        outline: none;
+    }
+@media (min-width: 768px) {
+  .navbar-toggle-list {
+    display: none;
+  }
+}
+/*********END Toggle List css **********/
+
+
+/*1/28/15 CPB to center tab navigation vertical*/
+.nav-pills {
+    margin-top: -2px;
+    margin-bottom: 3px;
+}
+
+  .pagination{
+      margin:0px;
+  }
+
+/*12/1/15 T3 keeps columns set to true data width, instead of spreading the columns out across page*/
+.table {
+    width: auto;
+}
+
+/*07/21/15 T3*/
+.sortIndicator{
+    text-decoration:underline;
+}
+.fixed{
+  /*top:1px;*/
+  position:fixed;
+  width:auto;
+  /*display:none;*/
+  border:none;
+}

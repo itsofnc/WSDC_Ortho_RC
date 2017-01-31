@@ -39,3 +39,85 @@ C:\Projects\WSDC\WSDC_Ortho\Ortho_VS2015\WSDC_Ortho\WSDC_Ortho\obj\Release\WSDC_
 C:\Projects\WSDC\WSDC_Ortho\Ortho_VS2015\WSDC_Ortho\WSDC_Ortho\obj\Release\WSDC_Ortho.dll
 C:\Projects\WSDC\WSDC_Ortho\Ortho_VS2015\WSDC_Ortho\WSDC_Ortho\obj\Release\WSDC_Ortho.xml
 C:\Projects\WSDC\WSDC_Ortho\Ortho_VS2015\WSDC_Ortho\WSDC_Ortho\obj\Release\WSDC_Ortho.pdb
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\csc.exe
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\System.Collections.Immutable.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\System.Reflection.Metadata.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\vbc.exe
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\VBCSCompiler.exe
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\roslyn\VBCSCompiler.exe.config
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\WSDC_Ortho.dll.config
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\WSDC_Ortho.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\WSDC_Ortho.pdb
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\WSDC_Ortho.xml
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.CrystalReports.Engine.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportSource.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.Shared.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.Web.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.DataDefModel.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.ClientDoc.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.ReportDefModel.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.Controllers.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.CommLayer.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.DataSetConversion.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.Prompting.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.XmlSerialize.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.CubeDefModel.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.CommonObjectModel.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.ObjectFactory.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.CommonControls.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\stdole.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\obj\Release\WSDC_Ortho.vbprojResolveAssemblyReference.cache
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\obj\Release\WSDC_Ortho.Resources.resources
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\obj\Release\WSDC_Ortho.vbproj.GenerateResource.Cache
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\obj\Release\WSDC_Ortho.dll
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\obj\Release\WSDC_Ortho.xml
+C:\Projects\WSDC\WSDC_Ortho\Release Candidate\WSDC_Ortho\WSDC_Ortho\obj\Release\WSDC_Ortho.pdb
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\csc.exe
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\System.Collections.Immutable.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\System.Reflection.Metadata.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\vbc.exe
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\VBCSCompiler.exe
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\roslyn\VBCSCompiler.exe.config
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\WSDC_Ortho.dll.config
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\WSDC_Ortho.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\WSDC_Ortho.pdb
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\WSDC_Ortho.xml
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.CrystalReports.Engine.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportSource.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.Shared.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.Web.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.DataDefModel.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.ClientDoc.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.ReportDefModel.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.Controllers.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.CommLayer.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.DataSetConversion.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.Prompting.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.XmlSerialize.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.CubeDefModel.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.CommonObjectModel.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.ObjectFactory.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\CrystalDecisions.ReportAppServer.CommonControls.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\stdole.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\obj\Release\WSDC_Ortho.vbprojResolveAssemblyReference.cache
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\obj\Release\WSDC_Ortho.Resources.resources
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\obj\Release\WSDC_Ortho.vbproj.GenerateResource.Cache
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\obj\Release\WSDC_Ortho.dll
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\obj\Release\WSDC_Ortho.xml
+C:\Projects\WSDC\WSDC_Ortho\WSDC_Ortho_RC\WSDC_Ortho\obj\Release\WSDC_Ortho.pdb

@@ -1,0 +1,93 @@
+﻿/*Common CSS*/ 
+
+.text-align-left {
+    text-align:left;
+}
+
+.noLeftPadding {
+    padding-left:0px;
+}
+
+
+/*09/29/14*/
+.required {
+    background-color: #f3f1c3;
+}
+
+/*09/30/14*/
+.requiredFieldIndicator {
+    color:red;
+    font-weight: bold;
+}
+.requiredFieldValidator {
+    color:red;
+}
+
+
+
+/*01/19/15 Control highlight color for onclick of row in frmListManager*/
+.t3-highlightColor {
+    background-color: #FFEA95;
+}
+/*01/19/15 Control checkbox colors in dataGrid using fa-check, fa-times css*/
+.t3-check-color {
+    color: #077a12;
+}
+.t3-times-color {
+    color:#9b2222;
+}
+
+/*modal not working on mobile*/
+.modal-body { 
+    max-height: 350px; 
+    padding: 15px; 
+    overflow-y: auto; 
+    -webkit-overflow-scrolling: touch; 
+ }
+
+/*Fixes modal issue with scrolling on mobile devices*/
+.modal-body-touch {
+    min-height: 100px;
+    max-height: 300px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (min-height: 600px) {
+    .modal-body-touch {
+        max-height: 500px;
+    }
+}
+
+@media (min-height: 800px) {
+    .modal-body-touch {
+        max-height: 700px;
+    }
+}
+
+@media (min-height: 1000px) {
+    .modal-body-touch {
+        max-height: 800px;
+    }
+}
+
+@media (min-height: 1200px) {
+    .modal-body-touch-body {
+        max-height: 1000px;
+    }
+}
+    
+
+/*05/14/2015 Overide color of labels that form validation normally turned red/green T3*/
+ .has-error .control-label, .checkbox.has-error label, .checkbox-inline.has-error label, .radio.has-error label, .radio-inline.has-error label {
+    color:#000;
+
+}
+  .has-success .control-label, .checkbox.has-success label, .checkbox-inline.has-success label, .radio.has-success label, .radio-inline.has-success label {
+    color:#000;
+
+}
+  /*07/28/15 T3 Bootstrap Bold Label - This is the font weight used in a BS vs 3.3.2 label*/
+  .T3bootstrapBoldLabel {
+      font-weight:700;
+  }

@@ -3282,6 +3282,15 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
+<member name="F:WSDC_Ortho.frmPrintClaimsListing._txtChartNo">
+<summary>
+txtChartNo control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
 <member name="F:WSDC_Ortho.frmPrintClaimsListing._lblMessage">
 <summary>
 lblMessage control.
@@ -3609,6 +3618,15 @@ To modify move field declaration from designer file to code-behind file.
 <member name="F:WSDC_Ortho.frmPrintInvoiceListing._rfvEndDate">
 <summary>
 rfvEndDate control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.frmPrintInvoiceListing._txtChartNo">
+<summary>
+txtChartNo control.
 </summary>
 <remarks>
 Auto-generated field.
@@ -3987,6 +4005,15 @@ To modify move field declaration from designer file to code-behind file.
 <member name="F:WSDC_Ortho.frmPrintPaymentListing._rfvEndDate">
 <summary>
 rfvEndDate control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.frmPrintPaymentListing._txtChartNo">
+<summary>
+txtChartNo control.
 </summary>
 <remarks>
 Auto-generated field.
@@ -4920,6 +4947,15 @@ Auto-generated field.
 To modify move field declaration from designer file to code-behind file.
 </remarks>
 </member>
+<member name="F:WSDC_Ortho.mstSite._litNavCustomBrand">
+<summary>
+litNavCustomBrand control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
 <member name="F:WSDC_Ortho.mstSite._PlaceHolder1">
 <summary>
 PlaceHolder1 control.
@@ -4932,6 +4968,15 @@ To modify move field declaration from designer file to code-behind file.
 <member name="F:WSDC_Ortho.mstSite._HeaderContent">
 <summary>
 HeaderContent control.
+</summary>
+<remarks>
+Auto-generated field.
+To modify move field declaration from designer file to code-behind file.
+</remarks>
+</member>
+<member name="F:WSDC_Ortho.mstSite._litNavCustomStyle">
+<summary>
+litNavCustomStyle control.
 </summary>
 <remarks>
 Auto-generated field.

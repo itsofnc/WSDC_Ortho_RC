@@ -1,0 +1,153 @@
+﻿<%@ Master Language="VB" AutoEventWireup="false" CodeBehind="Admin.master.vb" Inherits="WSDC_Ortho.Admin" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="Content/js/jquery-ui-redmond-1.10.4/jquery-ui-1.10.4.custom/css/redmond/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" />
+    <link href="Common/bootstrap-3.3.2/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="Common/js/jquery-1.11.0.js"></script>
+
+    <!--Tablesorter jQuery-->
+    <link href="Content/tableSorter/tableSorter_theme_blue.css" rel="stylesheet" />
+    <script src="Content/tableSorter/jquery.tablesorter.min.js"></script>
+    <script src="Content/tableSorter/jquery.tablesorter.widgets.js"></script>
+
+    <link href="Content/bootstrap-datetimepicker.css" rel="stylesheet" />
+    <link href="Content/bootstrap-validator.min.css" rel="stylesheet" />
+    <!--Datepicker-->
+    <link href="Common/datepicker/css/datepicker.css" rel="stylesheet" />
+    <link href="Scripts/datepicker/css/datepicker.css" rel="stylesheet" /> CCC
+
+    <!--form validation css-->
+    <link href="Common/formValidation/css/formValidation.min.css" rel="stylesheet" />
+
+    <!--Custome Site CSS-->
+    <link href="Content/css/site.css" rel="stylesheet" />
+    <link href="Content/css/stickyFooterNavbar.css" rel="stylesheet" />    
+
+    <asp:ContentPlaceHolder ID="HeaderContent" runat="server">
+    </asp:ContentPlaceHolder>
+
+</head>
+<body id="adminBody" >  <%--#rlo --%>
+    <div id="pageCover">
+        <%--Bootstrap Navigation--%>
+        <div id="divHeader">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="Dashboard.aspx"><i class="glyphicon glyphicon-home"></i></a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <asp:Literal ID="litNavigation" runat="server"></asp:Literal>
+                    <asp:Literal ID="litHeaderGreeting" runat="server"></asp:Literal>
+
+                </div>
+                <!--/.navbar-collapse -->
+            </div>
+        </div>
+        </div>
+        <div id="mainContent">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+        </div>
+
+        <footer class="footer">
+            <div id="divFooter" class="container">
+                <p class="text-muted text-center"><asp:Literal ID="litCompanyName" runat="server"></asp:Literal></p>
+            </div>
+        </footer>
+        
+        <%-- Session Timeout--%>
+         <!--#include file="Common/inc/getSessionTimeout.inc"-->
+        <!--Site Common Code Requirements-->
+        <script src="Common/js/jquery-1.11.0.js"></script>
+        <script src="Content/js/jquery-ui-redmond-1.10.4/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.min.js"></script>
+        <script src="Common/bootstrap-3.3.2/js/bootstrap.min.js"></script>
+        <!--For IE 8--->
+        <script src="Common/js/respond.js"></script>
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="Common/bootstrap-3.3.2/js/ie10ViewportButWorkaround.js"></script>
+        <!--formValidation js-->
+        <script src="Common/formValidation/js/formValidation.min.js"></script>
+        <script src="Common/formValidation/js/framework/bootstrap.min.js"></script>
+        <!--datepicker js-->
+        <script src="Common/datepicker/js/bootstrap-datepicker_T3custom.js"></script>
+        <script src="Content/js/jsValidateDate.js"></script>
+        
+
+        <script>
+
+            jQuery(window).resize(function () {
+                jQuery('body').css('padding-top', parseInt(jQuery('#divNavbar').css("height")));
+            });
+
+            jQuery(window).load(function () {
+                jQuery('body').css('padding-top', parseInt(jQuery('#divNavbar').css("height")));
+            });
+
+            function setListSession(list) {
+                if (list == '') {
+                    //No specific table, clear session variable(s)
+                    jQuery.post("ajaxFunctions.aspx?action=clearSessions&Sessions=selectedList||remove||~~selectedId||remove||",
+                            function () {
+                            });
+
+                } else {
+                    //specific table requested, set/clear session variables
+                    jQuery.post("ajaxFunctions.aspx?action=clearSessions&Sessions=selectedList||remove||~~selectedId||set||" + list,
+                            function () {
+                            });
+                }
+            }
+            function logOut() {
+                // this works in ie only
+                window.open('Default.aspx?l=1', '_blank');
+                window.open('javascript:window.open("","_self");window.close();', '_self');
+                
+            }
+
+            window.addEventListener("focus", function (event) {
+                if (blnTimeoutActive) {
+                jQuery.post("ajaxFunctions.aspx?action=checkLogin",
+                   function (data) {
+                       if (data.indexOf("expired") == -1) {
+                       } else {
+                           //need to "beautify" sessTimeout.aspx or we can just take them back to login screen
+                           window.open("frmSessionTimeout.aspx", "_self");
+                       }
+                   });
+                } else {
+                    clearInterval(sessionTestTimer);
+                }
+            })
+
+            //09/30/14 - CS - Only allow numeric digits in a textbox
+            // required on textbox --->  onkeypress="return IsNumeric(event);" ondrop="return false;" onpaste="return false;" 
+            var specialKeys = new Array();
+            specialKeys.push(8); //Backspace
+            function IsNumeric(e) {
+                var keyCode = e.which ? e.which : e.keyCode
+                var ret = ((keyCode >= 48 && keyCode <= 57) || specialKeys.indexOf(keyCode) != -1);
+                return ret;
+            }
+
+         
+        </script>
+        <asp:Literal ID="litScripts" runat="server"></asp:Literal>
+        <asp:ContentPlaceHolder ID="pageJavaScripts" runat="server">
+        </asp:ContentPlaceHolder>
+    
+</body>
+</html>
