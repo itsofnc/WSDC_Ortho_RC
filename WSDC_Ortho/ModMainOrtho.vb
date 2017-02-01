@@ -1702,6 +1702,7 @@ Module ModMainOrtho
                         blnInitialClaim = True
 
                     Else
+
                         ' installment claim
                         rowClaims("procedure_desc") = "PERIOD ORTHO TX INSTALLMENT"
                         rowClaims("procedure_code") = "D8670"
@@ -1739,9 +1740,9 @@ Module ModMainOrtho
                     ' 11/29/2016 Need to use procedure date sent in, if provided
                     'Dim strCurrMonth As String = CType(Month(Date.Now), String)
                     Dim strCurrMonth As String = CType(Month(CDate(strProcedureDate)), String)
-
+                    Dim strCurrYear As String = CType(Year(CDate(strProcedureDate)), String)
                     strSQL = "(Select count(*) as alreadyProcessed from Claims where contracts_recid=" & tblClaims.Rows(index)("recid") &
-                        " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and type = 1 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
+                        " and MONTH(procedure_date) = '" & strCurrMonth & "'" & " and YEAR(procedure_date) = '" & strCurrYear & "'" & " and type = 1 and plan_id = '" & tblClaims.Rows(index)("plan_id") & "')"
                     Dim tblClaimsProcessed As DataTable = g_IO_Execute_SQL(strSQL, False)
 
                     ' 11/2/15 CS Check for a claim ever processed for this contract & insurance plan
@@ -1929,7 +1930,7 @@ Module ModMainOrtho
                     Else
                         strInsert = "insert into claims (" & strColumnNames & ",sys_users_recid) " &
                                 "Select " & strColumnNames & "," & System.Web.HttpContext.Current.Session("user_link_id") & " as sys_users_recid " &
-                                "from UnprocessedSecondaryInsuranceClaimsCurrentMonth_vw where contracts_recid = " & rowClaims("recid")
+                                "from UnprocessedSecondaryInsuranceClaimsCurrentMonth_fn('" & strProcedureDate & "',1,1) where contracts_recid = " & rowClaims("recid")
                         g_IO_Execute_SQL(strInsert, False)
 
                         strClaimRecid = g_IO_GetLastRecId()

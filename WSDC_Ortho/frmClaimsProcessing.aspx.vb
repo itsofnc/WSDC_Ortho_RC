@@ -320,7 +320,7 @@
                 ' pull contracts that are active and eliminate any that have invoices already processed this month
                 Dim tblPendingInvoices As DataTable = g_IO_Execute_SQL("Select contracts.recid,patientfirstpay, PatientBillingFrequency_vw,contractdate" &
                     " from Contracts " &
-                    "left outer join Invoices inv on  inv.InvoiceType = 'I' and inv.contracts_recid = contracts.recid and DATEPART(month, inv.PostDate) = " & Format(dteProcedureDate, "MM") &
+                    "left outer join Invoices inv on  inv.InvoiceType = 'I' and inv.contracts_recid = contracts.recid and month(inv.Bill_Date) = " & Month(dteProcedureDate) & " and year(inv.Bill_Date) = " & Year(dteProcedureDate) &
                     " where PatientRemainingBalance > 0 and contractdate <= '" & Format(dteProcedureDate, "yyyy/MM/dd") & " 23:59:59' and inv.recid is null", False)
 
                 For Each rowPendingInvoice In tblPendingInvoices.Rows
@@ -423,8 +423,10 @@
             Dim strSessionWhereName As String = "CPWhere" & Trim(CStr(TimeOfDay.Second))   ' create a unique session variable name used to send the list to the frmListManager
             Session(strSessionWhereName) = arrNextActionValues(1)
 
+            Dim strAlertMessage As String = ""
             If blnPreviewInvoices Then
             Else
+                strAlertMessage = "alert('Invoices for month of " & Month(strProcedureDate) & " have been generated.');"
                 btnPreviewInvoice.Enabled = False
                 btnPrint.Enabled = False
             End If
@@ -433,7 +435,7 @@
             ' paste the name of the session variable to the form list manager via the URL list in the IFRAME
             litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = """ &
                 "frmListManager.aspx?id=" & arrNextActionValues(0) & "&vo=1&divHide=divHeader,divFooter" &
-                "&seslst=" & strSessionWhereName & """});</script>"
+                "&seslst=" & strSessionWhereName & """;" & strAlertMessage & "});</script>"
 
         Else
             ' printing claims
@@ -481,14 +483,17 @@
                 lblMessage.Text = "There were no claims processed for " & strProcedureDate & ".  The contracts selected likely have a claim already processed for the date specified."
             End If
 
+            Dim strAlertMessage As String = ""
             If blnPreviewClaims Then
             Else
                 If blnClaimTypeIsPrimary Then
                     btnClaimPrimary.Enabled = False
                     btnPreviewClaimPrimary.Enabled = False
+                    strAlertMessage = "alert('Primary Claims for month of " & Month(strProcedureDate) & " have been generated.');"
                 Else
                     btnClaimSecondary.Enabled = False
                     btnPreviewClaimSecondary.Enabled = False
+                    strAlertMessage = "alert('Secondary Claims for month of " & Month(strProcedureDate) & " have been generated.');"
                 End If
             End If
 
@@ -502,7 +507,7 @@
 
             litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = """ &
                     "frmListManager.aspx?id=" & arrNextActionValues(0) & "&vo=1&divHide=divHeader,divFooter" &
-                        "&seslst=" & strSessionWhereName & """});</script>"
+                        "&seslst=" & strSessionWhereName & """;" & strAlertMessage & "});</script>"
 
         End If
 
