@@ -426,7 +426,7 @@
             Dim strAlertMessage As String = ""
             If blnPreviewInvoices Then
             Else
-                strAlertMessage = "alert('Invoices for month of " & Month(strProcedureDate) & " have been generated.');"
+                strAlertMessage = "alert('Invoices for month of " & MonthName(Month(strProcedureDate)) & " have been generated.');"
                 btnPreviewInvoice.Enabled = False
                 btnPrint.Enabled = False
             End If
@@ -489,11 +489,11 @@
                 If blnClaimTypeIsPrimary Then
                     btnClaimPrimary.Enabled = False
                     btnPreviewClaimPrimary.Enabled = False
-                    strAlertMessage = "alert('Primary Claims for month of " & Month(strProcedureDate) & " have been generated.');"
+                    strAlertMessage = "alert('Primary Claims for month of " & MonthName(Month(strProcedureDate)) & " have been generated.');"
                 Else
                     btnClaimSecondary.Enabled = False
                     btnPreviewClaimSecondary.Enabled = False
-                    strAlertMessage = "alert('Secondary Claims for month of " & Month(strProcedureDate) & " have been generated.');"
+                    strAlertMessage = "alert('Secondary Claims for month of " & MonthName(Month(strProcedureDate)) & " have been generated.');"
                 End If
             End If
 
