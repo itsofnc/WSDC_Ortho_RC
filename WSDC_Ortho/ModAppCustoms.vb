@@ -446,7 +446,7 @@
                     "<td style=""text-align:center"">Current</td>" &
                     "<td style=""text-align:center""ID=""txtInvoiceName" & row("InvoiceNo") & """>" & row("name") & "</td>" &
                     "<td style=""text-align:center""ID=""txtInvoiceNo" & row("InvoiceNo") & """>" & row("InvoiceNo") & "</td>" &
-                    "<td style=""text-align:center""ID=""txtInvoiceDate" & row("InvoiceNo") & """>" & Format(row("PostDate"), "mm/DD/yyyy") & "</td>" &
+                    "<td style=""text-align:center""ID=""txtInvoiceDate" & row("InvoiceNo") & """>" & Format(row("PostDate"), "MM/dd/yyyy") & "</td>" &
                     "<td style=""text-align:center""ID=""txtInvoiceBal" & row("InvoiceNo") & """>" & FormatCurrency(decCurInv, 2).Replace("$", "").Replace(",", "") & "</td>" &
                     "<td></td>" &
                     "<td></td>" &
@@ -615,7 +615,7 @@
                                     "<span class=""input-group-addon""><a onclick=""applyInsAmt('dolInsPayment" & intInsCount & "', '" & FormatCurrency(decMax, 2).Replace("$", "").Replace(",", "") & "');"" title=""Apply Remaining Insurnace Balance"" style=""cursor:pointer;"" ><i class=""fa fa-calculator""></i></a></span>" &
                                     "<span class=""input-group-addon"">$</span>" &
                                     "<input ID=""dolInsPayment" & intInsCount & """ name=""dolInsPayment" & intInsCount & "" &
-                                    " type=""text"" class=""DB form-control"" Style=""text-align:right; max-width:130px;"" onblur =""checkFieldPaymentAmount(this.id, this.value, " & FormatCurrency(rowPatient("PrimaryRemainingBalance"), 2).Replace("$", "").Replace(",", "") & " );calculateTotalPayment()"" runat=""server""></input>" &
+                                    " type=""text"" class=""DB form-control"" Style=""text-align:right; min-width:100px;"" onblur =""checkFieldPaymentAmount(this.id, this.value, " & FormatCurrency(rowPatient("PrimaryRemainingBalance"), 2).Replace("$", "").Replace(",", "") & " );calculateTotalPayment()"" runat=""server""></input>" &
                                 "</span>" &
                             "</td" &
                         "</tr>"
@@ -651,7 +651,7 @@
                 strInsuranceRow =
                 "<tr>" &
                     "<td style=""text-align:center""ID=""txtInsName" & intInsCount & """>" & tblPrimaryInsurance.Rows("0")("plan_name") & "(Primary)</td>" &
-                    "<td colspan=""4""ID=""txtInsID" & intInsCount & """>Waiting on Claim to be Proccessed" & "</td>" &
+                    "<td colspan=""4""ID=""txtInsID" & intInsCount & """>Waiting on Claim/Credit on Account" & "</td>" &
                     "<td style=""text-align:right"" ID=""dolClaimOpen" & intInsCount & """>" & FormatCurrency(rowPatient("PrimaryInstallmentAmt"), 2) & "</td>"
                 If decPendingDol > 0 Then
                     strInsuranceRow &= "<td style=""text-align:right"" ID=""dolInsPrev" & intInsCount & """>" & FormatCurrency(decPendingDol, 2) & "</td>"
@@ -664,7 +664,7 @@
                             "<span class=""input-group-addon""><a onclick=""applyInsAmt('dolInsPayment" & intInsCount & "', '" & FormatCurrency(decMax, 2).Replace("$", "").Replace(",", "") & "');"" title=""Apply Installment Amount"" style=""cursor:pointer;"" ><i class=""fa fa-calculator""></i></a></span>" &
                             "<span class=""input-group-addon"">$</span>" &
                             "<input ID=""dolInsPayment" & intInsCount & """ name=""dolInsPayment" & intInsCount & "" &
-                            " type=""text"" class=""DB form-control"" Style=""text-align:right; max-width:130px;"" " &
+                            " type=""text"" class=""DB form-control"" Style=""text-align:right; min-width:100px;"" " &
                             "onblur =""checkFieldPaymentAmount(this.id, this.value, " & FormatCurrency(rowPatient("PrimaryInstallmentAmt"), 2).Replace("$", "").Replace(",", "") & " );calculateTotalPayment()"" runat=""server""></input>" &
                         "</span>" &
                     "</td" &
@@ -730,7 +730,7 @@
                                         "<span class=""input-group-addon""><a onclick=""applyInsAmt('dolInsPayment" & intInsCount & "', '" & FormatCurrency(decMax, 2).Replace("$", "").Replace(",", "") & "');"" title=""Apply Remaining Insurnace Balance"" style=""cursor:pointer;"" ><i class=""fa fa-calculator""></i></a></span>" &
                                         "<span class=""input-group-addon"">$</span>" &
                                         "<input ID=""dolInsPayment" & intInsCount & """ name=""dolInsPayment" & intInsCount & "" &
-                                        " type=""text"" class=""DB form-control"" Style=""text-align:right; max-width:130px;"" " &
+                                        " type=""text"" class=""DB form-control"" Style=""text-align:right; min-width:100px;"" " &
                                         "onblur =""checkFieldPaymentAmount(this.id, this.value, " & FormatCurrency(rowPatient("SecondaryRemainingBalance"), 2).Replace("$", "").Replace(",", "") & " );calculateTotalPayment()"" runat=""server""></input>" &
                                     "</span>" &
                                 "</td" &
@@ -767,7 +767,7 @@
                     strInsuranceRow =
                     "<tr>" &
                         "<td style=""text-align:center""ID=""txtInsName" & intInsCount & """>" & tblSecondaryInsurnace.Rows("0")("plan_name") & "(Secondary)</td>" &
-                        "<td colspan=""4""ID=""txtInsID" & intInsCount & """>Waiting on Claim to be Proccessed" & "</td>" &
+                        "<td colspan=""4""ID=""txtInsID" & intInsCount & """>Waiting on Claim/Credit On Account" & "</td>" &
                         "<td style=""text-align:right"" ID=""dolClaimOpen" & intInsCount & """>" & FormatCurrency(rowPatient("SecondaryInstallmentAmt"), 2) & "</td>"
                     If decPendingDol > 0 Then
                         strInsuranceRow &= "<td style=""text-align:right"" ID=""dolInsPrev" & intInsCount & """>" & FormatCurrency(decPendingDol, 2) & "</td>"
@@ -780,7 +780,7 @@
                                 "<span class=""input-group-addon""><a onclick=""applyInsAmt('dolInsPayment" & intInsCount & "', '" & FormatCurrency(decMax, 2).Replace("$", "").Replace(",", "") & "');"" title=""Apply Installment Amount"" style=""cursor:pointer;"" ><i class=""fa fa-calculator""></i></a></span>" &
                                 "<span class=""input-group-addon"">$</span>" &
                                 "<input ID=""dolInsPayment" & intInsCount & """ name=""dolInsPayment" & intInsCount & "" &
-                                " type=""text"" class=""DB form-control"" Style=""text-align:right; max-width:130px;"" " &
+                                " type=""text"" class=""DB form-control"" Style=""text-align:right; min-width:100px;"" " &
                                 "onblur =""checkFieldPaymentAmount(this.id, this.value, " & FormatCurrency(rowPatient("SecondaryInstallmentAmt"), 2).Replace("$", "").Replace(",", "") & " );calculateTotalPayment()"" runat=""server""></input>" &
                             "</span>" &
                         "</td" &
@@ -916,7 +916,7 @@
                                 """ title=""Apply full claim amount"" style=""cursor:pointer;""><i class=""fa fa-calculator""></i></a></span>" &
                                 "<span class=""input-group-addon"">$</span>" &
                                 "<input ID=""dolInsPayment" & intInsCount & """ name=""dolInsPayment" & intInsCount & "" &
-                                " type=""text"" class=""DB form-control"" Style=""text-align:right; max-width:130px;"" " &
+                                " type=""text"" class=""DB form-control"" Style=""text-align:right; min-width:100px;"" " &
                                 "onblur =""checkFieldPaymentAmount(this.id, this.value, " & FormatCurrency(decMax, 2).Replace("$", "").Replace(",", "") & " );calculateTotalPayment()""></input>" &
                             "</span>" &
                         "</td"
