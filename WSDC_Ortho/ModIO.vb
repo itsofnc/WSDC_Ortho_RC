@@ -349,6 +349,7 @@ Module ModIO
                         End If
 
                     Catch ex2 As Exception
+                        Dim r = 1
                     End Try
                 End If
 
@@ -554,6 +555,27 @@ Module ModIO
 
 
         Dim tblColumns = g_IO_Execute_SQL(strSQL, False)
+
+        If tblColumns.Rows.Count = 0 Then
+            ' build column detail table
+            Dim tblTable As DataTable = g_IO_Execute_SQL("Select top 1 * from " & tableName, False)
+            For Each colColumn As DataColumn In tblTable.Columns
+                Dim rowColumns As DataRow = tblColumns.NewRow
+
+                rowColumns("extName") = ""
+                rowColumns("extValue") = ""
+                rowColumns("Column") = colColumn.ColumnName
+                rowColumns("Maxlength") = 500
+                rowColumns("Data_type") = "varChar"
+                rowColumns("numeric_precision") = 0
+                rowColumns("numeric_scale") = 0
+                rowColumns("column_Default") = vbNull
+
+                tblColumns.Rows.Add(rowColumns)
+            Next
+        End If
+
+
         Dim intIndex As Integer = 0
         Dim strColumnIndexName As String = ""
         Dim strImageFieldsList As String = ""

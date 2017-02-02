@@ -26,7 +26,7 @@
                 Exit Sub
             End If
         End If
-        litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){showProcessDate('" & Format(dteProcedureDate, "MM/dd/yyyy") & "')});</script>"
+        litScripts.Text = "<script type=""text/javascript"">jQuery(document).ready(function(){showProcessDate('" & Format(dteProcedureDate, "MM/dd/yyyy") & "')});</script>"
 
         Dim strIframeDestination As String = ""
 
@@ -425,6 +425,7 @@
 
             Dim strAlertMessage As String = ""
             If blnPreviewInvoices Then
+                strAlertMessage = "alert('Your Invoice Previews are ready.\n\n\nNOTE:  These are previews only for month of " & MonthName(Month(strProcedureDate)) & ".\n\n\n      *** These documents are for PREVIEW only ***\n\nUse the \'Print Invoices\' button to generate and post live invoices.\n\nClick OK to download previews.');"
             Else
                 strAlertMessage = "alert('Invoices for month of " & MonthName(Month(strProcedureDate)) & " have been generated.');"
                 btnPreviewInvoice.Enabled = False
@@ -485,6 +486,11 @@
 
             Dim strAlertMessage As String = ""
             If blnPreviewClaims Then
+                If blnClaimTypeIsPrimary Then
+                    strAlertMessage = "alert('Your Primary Claim Previews are ready.\n\n\nNOTE:  These are previews only for month of " & MonthName(Month(strProcedureDate)) & ".\n\n\n      *** These documents are PREVIEWS only ***\n\nUse the \'Print Primary\' button to generate and post live claims. ***.\n\n\n\nClick OK to download previews.');"
+                Else
+                    strAlertMessage = "alert('Your Secondary Claim Previews are ready.\n\n\nNOTE:  These are previews only for month of " & MonthName(Month(strProcedureDate)) & ".\n\n\n      *** These documents are PREVIEWS only ***\n\nUse the '\Print Secondary\' button to generate and post live claims. ***.\n\n\n\nClick OK to download previews.');"
+                End If
             Else
                 If blnClaimTypeIsPrimary Then
                     btnClaimPrimary.Enabled = False
@@ -505,9 +511,15 @@
             Dim strSessionWhereName As String = "CPWhere" & Trim(CStr(TimeOfDay.Second))   ' create a unique session variable name used to send the list to the frmListManager
             Session(strSessionWhereName) = arrNextActionValues(1)
 
-            litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = """ &
+            If blnPreviewClaims Then
+                litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = """ &
+                    "frmListManager.aspx?pri=1&vo=1&divHide=divHeader,divFooter" &
+                        """;" & strAlertMessage & "});</script>"
+            Else
+                litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = """ &
                     "frmListManager.aspx?id=" & arrNextActionValues(0) & "&vo=1&divHide=divHeader,divFooter" &
                         "&seslst=" & strSessionWhereName & """;" & strAlertMessage & "});</script>"
+            End If
 
         End If
 
