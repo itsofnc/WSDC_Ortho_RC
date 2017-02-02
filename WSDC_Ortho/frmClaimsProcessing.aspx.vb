@@ -21,6 +21,11 @@
         Else
             If IsDate(Request.QueryString("od")) Then
                 dteProcedureDate = Request.QueryString("od")
+                ' RO 02/02/17 make sure they are using a date that is not in a future month/year
+                If CStr(Year(dteProcedureDate)) & Right("0" & CStr(Month(dteProcedureDate)), 2) > CStr(Year(Date.Now())) & Right("0" & CStr(Month(Date.Now())), 2) Then
+                    lblMessage.Text = "Date cannot be in a future month/year.  Please try again."
+                    Exit Sub
+                End If
             Else
                 lblMessage.Text = "Invalid altered claim date entered.  Please try again."
                 Exit Sub

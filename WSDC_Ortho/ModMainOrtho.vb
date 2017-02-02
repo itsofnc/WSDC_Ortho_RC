@@ -206,13 +206,9 @@ Module ModMainOrtho
 
                 ' update the invoice record
                 Dim decInvoiceAmtPaid As Decimal = invoice("AmountPaid") + decApplyToThisInvoiceAmount
-                Dim decInvoiceCurrentDue As Decimal = invoice("Current_Due") - decApplyToThisInvoiceAmount
-                Dim decInvoiceTotalDue As Decimal = invoice("Total_Due") - decApplyToThisInvoiceAmount
                 strSQL = "Update Invoices set " &
-                    "AmountPaid = " & decInvoiceAmtPaid &
-                    ", Current_Due = " & decInvoiceCurrentDue &
-                    ", Total_Due = " & decInvoiceTotalDue
-                If decInvoiceCurrentDue = 0 And decInvoiceTotalDue = 0 Then
+                    "AmountPaid = " & decInvoiceAmtPaid
+                If invoice("AmountDue") = decInvoiceAmtPaid Then
                     ' check for invoice paid in full
                     strSQL &= ", status = 'C'"
                 End If
@@ -632,7 +628,7 @@ Module ModMainOrtho
         rptReport = New rptInvoice
 
         '   code to reprint a Invoice
-        Dim tbltry As DataTable = g_IO_Execute_SQL("Select * from Invoices where InvoiceNo in ('" & CommaSepInvoiceNumbers.Replace(",", "','").Replace(" ", "") & "') order by InvoiceNo", False)
+        Dim tbltry As DataTable = g_IO_Execute_SQL("Select *, CONVERT(VARCHAR(10), bill_date, 101) as Statement_Date from Invoices where InvoiceNo in ('" & CommaSepInvoiceNumbers.Replace(",", "','").Replace(" ", "") & "') order by InvoiceNo", False)
 
         Try
             strMinDocumentNumber = tbltry.Rows(0)("InvoiceNo")
@@ -676,6 +672,7 @@ Module ModMainOrtho
                 Next
 
                 rowPaymentDetail("current_due") = Math.Round(rowPayment("Amountdue") - rowPayment("AmountPaid"), 2)
+                rowPaymentDetail("statement_date") = tbltry.Rows(i)("statement_date")
 
                 tbltry.Rows.Add(rowPaymentDetail)
             Next
@@ -991,7 +988,7 @@ Module ModMainOrtho
                 If Preview Then
                 Else
                     strSQL = "INSERT INTO Invoices_HistoryDetail" &
-                        "([Invoices_recid],[ChartNumber],[Bill_Date],[AmountDue],[amountPaid],[Descr],[InvoiceNo])" &
+                        "([Invoices_recid],[ChartNumber],[Bill_Date],[AmountDue],[amountPaid],[Descr],[InvoiceNo], [Statement_Date])" &
                     " VALUES (" &
                     tblContracts.Rows(TableRowIndex)("NewInvoiceRecid") &
                     ",'" & rowHistoryDetail("chartnumber") & "'" &
@@ -1000,7 +997,8 @@ Module ModMainOrtho
                     "," & rowHistoryDetail("AmountPaid") &
                     ",'" & rowHistoryDetail("descr") & "'" &
                     ",'" & rowHistoryDetail("InvoiceNo") & "'" &
-                    ")"
+                    ",'" & rowHistoryDetail("Statement_Date") & "'" &
+                     ")"
                     g_IO_Execute_SQL(strSQL, False)
                 End If
 
@@ -1081,6 +1079,7 @@ Module ModMainOrtho
             rowPaymentHistoryDetail("Address_line2") = tblContracts.Rows(TableRowIndex)("Address_line2")
             rowPaymentHistoryDetail("Address_line3") = tblContracts.Rows(TableRowIndex)("Address_line3")
             rowPaymentHistoryDetail("Total_Due") = tblContracts.Rows(TableRowIndex)("Total_Due")
+            rowPaymentHistoryDetail("Statement_Date") = Format(InvoiceDate, "MM/dd/yyyy")
 
             Select Case tblContracts.Rows(TableRowIndex)("Total_due")
                 Case 0
@@ -1096,7 +1095,7 @@ Module ModMainOrtho
             If Preview Then
             Else
                 strSQL = "INSERT INTO Invoices_HistoryDetail" &
-                    "([Invoices_recid],[ChartNumber],[Bill_Date],[AmountDue],[AmountPaid],[Descr],[InvoiceNo])" &
+                    "([Invoices_recid],[ChartNumber],[Bill_Date],[AmountDue],[AmountPaid],[Descr],[InvoiceNo], [Statement_Date])" &
                 " VALUES (" &
                 tblContracts.Rows(TableRowIndex)("NewInvoiceRecid") &
                 ",'" & rowPaymentHistoryDetail("chartnumber") & "'" &
@@ -1105,6 +1104,7 @@ Module ModMainOrtho
                 "," & rowPaymentHistoryDetail("AmountPaid") &
                 ",'" & rowPaymentHistoryDetail("descr").replace("'", "''") & "'" &
                 ",'" & rowPaymentHistoryDetail("InvoiceNo") & "'" &
+                ",'" & rowPaymentHistoryDetail("Statement_Date") & "'" &
                 ")"
 
                 g_IO_Execute_SQL(strSQL, False)
