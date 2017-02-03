@@ -116,14 +116,14 @@
                 End If
             Case "rptPaymentsRecord"
                 rptReport = New rptPaymentsRecord
-                strSql = "select * from rptPaymentsRecord_vw " & strWhereClause
+                strSql = Session("rptPaymentsRecord")
                 tblReportData = g_IO_Execute_SQL(strSql, False)
                 If tblReportData.Rows.Count > 0 Then
                     rptReport.SetDataSource(tblReportData)
                 End If
             Case "rptPaymentsRecordSummary"
                 rptReport = New rptPaymentsRecordSummary
-                strSql = "select * from rptPaymentsRecord_vw " & strWhereClause
+                strSql = Session("rptPaymentsRecord")
                 tblReportData = g_IO_Execute_SQL(strSql, False)
                 If tblReportData.Rows.Count > 0 Then
                     rptReport.SetDataSource(tblReportData)
