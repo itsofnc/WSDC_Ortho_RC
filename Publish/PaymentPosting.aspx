@@ -12,7 +12,7 @@
         <asp:TextBox ID="txtPaymentSelection" CssClass="DB form-control hidden" runat="server"></asp:TextBox>
         <asp:TextBox ID="txtPatientContractRecId" CssClass ="hidden" runat="server"></asp:TextBox>
 
-        <div class="container">
+        <div class="pull-left">   <!--class="container"-->
             <!--View only-->
             <div id="divViewOptions" class="col-sm-12" style="z-index: 1000;" runat="server">
                 <div class="text-center">
@@ -65,7 +65,7 @@
                 <!--Payer Info-->
                 <div id="divPatientInfo" class="col-sm-12" style="color: #2d6ca2;" runat="server">
                     <div class="form-group">
-                        <div class="col-sm-offset-1 col-sm-10">
+                        <div class="col-sm-10"> <!--col-sm-offset-1-->
                             <div class="col-xs-12 col-sm-3">
                                 <label for="ddlPaymentFrom">
                                     <span style="white-space:nowrap">*Payment From:</span>
@@ -100,7 +100,7 @@
                 <!--Payment Amount Info-->
                 <div id="divPaymentInfo" class="col-xs-12 col-sm-12" runat="server">
                     <div class="form-group">
-                        <div class="col-sm-offset-1 col-sm-10">
+                        <div class=" col-sm-10"> <!--col-sm-offset-1-->
                             <div class="col-xs-12 col-sm-3">
                                 <label for="dolPaymentAmount">
                                     <span style="white-space:nowrap">*Payment Amount:</span>
@@ -153,7 +153,7 @@
                 <!--Patient Apply To Info-->
                 <div id="divPatientPaymentsApply" class="col-xs-12 col-sm-12" runat="server">
                     <div class="form-group">
-                        <div class="col-sm-offset-1 col-sm-10">
+                        <div class="col-sm-10"> <!--col-sm-offset-1 -->
                             <div id="divApplyCurrent" class="col-xs-12 col-sm-3">
                                 <label for="dolPatientCurrent">
                                     <span style="white-space: nowrap">Current:
@@ -162,7 +162,8 @@
                                     </span>
                                     <span class="input-group">
                                         <span class="input-group-addon">$</span>
-                                        <asp:TextBox ID="dolPatientCurrent" name="dolPatientCurrent" type="text" CssClass="DB form-control required" Style="text-align:right;" runat="server"
+                                        <!--01.31.17 cpb removed required as part of the cssclass -->
+                                        <asp:TextBox ID="dolPatientCurrent" name="dolPatientCurrent" type="text" CssClass="DB form-control" Style="text-align:right;" runat="server"
                                             onblur ="checkFieldPaymentAmount(this.id, this.value, 'hid');calculateTotalPayment();"></asp:TextBox>
                                     </span>
                                 </label>
@@ -183,7 +184,7 @@
                             </div>
                             <div id="divApplyNextInvoice" class="col-xs-12 col-sm-3">
                                 <label for="dolPatientNext">
-                                    <span style="white-space: nowrap;">Next Inv:
+                                    <span style="white-space: nowrap;">Next Inv/Credit:
                                         <asp:Label ID="lblPatientNext" runat="server" Text="" style="color:green"></asp:Label>
                                         <asp:Label ID="lblPatientNextPend" runat="server" Text="" CssClass="pull-right alert-info" ></asp:Label>
                                     </span>
@@ -216,15 +217,15 @@
                 <!--Insurance Apply To Info  current/secondary -->
                 <div id="divInsurancePaymentsApply" class="col-xs-12 col-sm-12 hidden" runat="server">
                     <div id="divClaimNumber" class="form-group">
-                        <div class="col-sm-offset-1 col-sm-10">
+                        <div class=" col-sm-10"> <!--col-sm-offset-1-->
                             <!--use table instead of text boxes-->
                             <table id="tblClaimInvoiceData" class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th style="text-align:center; white-space:nowrap; min-width:150px;">Insurance</th>
-                                        <th style="text-align: center; white-space:nowrap; min-width:150px;">Policy Holder</th>
-                                        <th style="text-align:center; white-space:nowrap; min-width:75px;">Claim #</th>
-                                        <th style="text-align:center; white-space:nowrap; min-width:75px;">Date</th>
+                                        <th style="text-align:center; white-space:nowrap; min-width:110px;">Insurance</th>
+                                        <th style="text-align: center; white-space:nowrap; min-width:100px;">Policy Holder</th>
+                                        <th style="text-align:center; white-space:nowrap; min-width:60px;">Claim #</th>
+                                        <th style="text-align:center; white-space:nowrap; min-width:65px;">Date</th>
                                         <th style="text-align:right; white-space:nowrap; min-width:75px;">Expected $</th>
                                         <th style="text-align:right; white-space:nowrap; min-width:75px;">Due $</th>
                                         <th style="text-align:right; white-space:nowrap; min-width:75px;">Pend $</th>
@@ -242,19 +243,19 @@
                 <!--Insurance Apply To Info secondary -->
                 <div id="divInsurancePaymentApplySecondary" class="col-xs-12 col-sm-12 hidden" runat="server">
                     <div id="divClaimNumberSecondary" class="form-group">
-                        <div class="col-sm-offset-1 col-sm-10">
+                        <div class=" col-sm-10"> <!--col-sm-offset-1-->
                             <!--use table instead of text boxes-->
                             <table id="tblClaimInvoiceDataSecondary" class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th style="text-align:center; white-space:nowrap; min-width:150px;">Insurance</th>
-                                        <th style="text-align: center; white-space:nowrap; min-width:150px;">Policy Holder</th>
-                                        <th style="text-align:center; white-space:nowrap; min-width:75px;">Claim #</th>
-                                        <th style="text-align:center; white-space:nowrap; min-width:75px;">Date</th>
+                                        <th style="text-align:center; white-space:nowrap; min-width:110px;">Insurance</th>
+                                        <th style="text-align: center; white-space:nowrap; min-width:100px;">Policy Holder</th>
+                                        <th style="text-align:center; white-space:nowrap; min-width:60px;">Claim #</th>
+                                        <th style="text-align:center; white-space:nowrap; min-width:65px;">Date</th>
                                         <th style="text-align:right; white-space:nowrap; min-width:75px;">Expected $</th>
                                         <th style="text-align:right; white-space:nowrap; min-width:75px;">Due $</th>
                                         <th style="text-align:right; white-space:nowrap; min-width:75px;">Pend $</th>
-                                        <th style="text-align:right; white-space:nowrap; min-width:75px;">Apply $&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                        <th style="text-align:right; white-space:nowrap; min-width:120px;">Apply $&nbsp;&nbsp;&nbsp;&nbsp;</th>
                                     </tr>
                                 </thead> 
                                 <tbody>
@@ -268,7 +269,7 @@
                 <!--Patient Invoice Detail Table 01.11.17 cpb-->
                 <div id="divPatientInvoiceDetail" class="col-xs-12 col-sm-12 hidden" runat="server">
                     <div id="divInvoiceNumber" class="form-group">
-                        <div class="col-sm-offset-1 col-sm-10">
+                        <div class=" col-sm-10"> <!--col-sm-offset-1-->
                             <table id="tblPatientInvoiceData" class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -278,7 +279,7 @@
                                         <th style="text-align:center; white-space:nowrap; min-width:75px;">Date</th>
                                         <th style="text-align:right; white-space:nowrap; min-width:75px;">Balance $</th>
                                         <th style="text-align:right; white-space:nowrap; min-width:75px;">Pend $</th>
-                                        <th style="text-align:right; white-space:nowrap; min-width:75px;">Apply $&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                        <th style="text-align:right; white-space:nowrap; min-width:120px;">Apply $&nbsp;&nbsp;&nbsp;&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -291,7 +292,7 @@
 
                 <div id="divPaymentForComment" class="col-sm-12">
                     <div class="form-group">
-                        <div class="col-sm-offset-1 col-sm-10">
+                        <div class=" col-sm-10"> <!--col-sm-offset-1-->
                             <div id="divDDLPaymentFor" class="col-xs-12 col-sm-6">
                                 <label for="ddlPaymentFor">
                                     Payment For:
@@ -310,7 +311,7 @@
 
                 <div id="divPaymentButtons" class="col-xs-12 col-sm-12" runat="server">
                     <div class="form-group">
-                        <div class="col-sm-offset-1 col-sm-10">
+                        <div class="col-sm-10"> <!--col-sm-offset-1-->
                             <div id="divButtons" class="col-xs-12 col-sm-4">
                                 <div id="divBtnOptions" runat="server">
                                     <asp:Button ID="btnAdd" cssClass="btn btn-large btn-success"  runat="server" Text="Add to Queue" OnClientClick="jQuery('#divWait').show(); setWarningPrompt(false); blnOkToAdd = addToQueue(); if (blnOkToAdd == false) { return false;};" />
@@ -601,7 +602,13 @@
             } else {
                 jQuery('#<%=dolPatientNext.ClientID%>').prop('disabled', true);
             };
-            jQuery('#<%=dolPatientBalance.ClientID%>').prop('disabled', false);
+            if (+decPatientBalance - +decPatientBalancePend > 0.00) {
+                jQuery('#<%=dolPatientBalance.ClientID%>').prop('disabled', false);
+            } else {
+                jQuery('#<%=dolPatientBalance.ClientID%>').prop('disabled', true);
+            };
+
+            jQuery('#<%=dolPatientNext.ClientID%>').prop('disabled', false);
         }
 
         function patientSelectedFromDDL() {
@@ -829,33 +836,58 @@
                             }
                         }
                     }
-                    // 3rd apply to next inv
+
+                    // last apply to contract balance
                     if (+pmtRemaining > 0) {
-                        itmAmt = jQuery('#<%=hidPatientNext.ClientID%>').val().replace(',', '').replace('$', '');
-                        itmPend = jQuery('#<%=hidPatientNextPend.ClientID%>').val().replace(',', '').replace('$', '');
+
+                        itmAmt = jQuery('#<%=hidPatientBalance.ClientID%>').val().replace(',', '').replace('$', '');
+                        itmPend = jQuery('#<%=hidPatientBalancePend.ClientID%>').val().replace(',', '').replace('$', '');
                         curMax = +itmAmt - +itmPend;
                         if (+curMax > 0) {
                             if (+pmtRemaining >= +curMax) {
-                                jQuery('#<%=dolPatientNext.ClientID%>').val(curMax);
+                                jQuery('#<%=dolPatientBalance.ClientID%>').val(curMax);
                                 pmtRemaining = pmtRemaining - curMax;
                             } else {
-                                jQuery('#<%=dolPatientNext.ClientID%>').val(pmtRemaining);
+                                jQuery('#<%=dolPatientBalance.ClientID%>').val(pmtRemaining);
                                 pmtRemaining = 0;
                             }
                         }
+                    };
+
+                    // 3rd apply to next inv
+                    if (+pmtRemaining > 0) {
+
+                        itmPmt = pmtRemaining;
+                        jQuery('#<%=dolPatientNext.ClientID%>').val(pmtRemaining);
+                        pmtRemaining = 0;
+                        itmAmt = jQuery('#<%=hidPatientNext.ClientID%>').val().replace(',', '').replace('$', '');
+                        itmPend = jQuery('#<%=hidPatientNextPend.ClientID%>').val().replace(',', '').replace('$', '');
+
+                        //itmAmt = jQuery('#<//%=hidPatientNext.ClientID%>').val().replace(',', '').replace('$', '');
+                        //itmPend = jQuery('#<//%=hidPatientNextPend.ClientID%>').val().replace(',', '').replace('$', '');
+                        //curMax = +itmAmt - +itmPend;
+                        //if (+curMax > 0) {
+                            //if (+pmtRemaining >= +curMax) {
+                                //jQuery('#<//%=dolPatientNext.ClientID%>').val(curMax);
+                                //pmtRemaining = pmtRemaining - curMax;
+                            //} else {
+                                //jQuery('#<//%=dolPatientNext.ClientID%>').val(pmtRemaining);
+                                //pmtRemaining = 0;
+                            //}
+                        //}
                     }
                     // last apply to contract balance
-                    if (+pmtRemaining > 0) {
-                        itmPmt = pmtRemaining;
-                        jQuery('#<%=dolPatientBalance.ClientID%>').val(pmtRemaining);
-                        pmtRemaining = 0;
-                        itmAmt = jQuery('#<%=hidPatientBalance.ClientID%>').val().replace(',', '').replace('$', '');
-                        itmPend = jQuery('#<%=hidPatientBalancePend.ClientID%>').val().replace(',', '').replace('$', '');
+                    //if (+pmtRemaining > 0) {
+                        //itmPmt = pmtRemaining;
+                        //jQuery('#<%=dolPatientBalance.ClientID%>').val(pmtRemaining);
+                        //pmtRemaining = 0;
+                        //itmAmt = jQuery('#<%=hidPatientBalance.ClientID%>').val().replace(',', '').replace('$', '');
+                        //itmPend = jQuery('#<%=hidPatientBalancePend.ClientID%>').val().replace(',', '').replace('$', '');
                         //overPayment =  +itmPend + +itmPmt - +itmAmt;
                         //if (+overPayment > 0) {
                         //    alert('Notice: Patient has an overpayment of $' + overPayment + ' to the Balance.')
                         //}
-                    };
+                    //};
                 }
             } else {
                 // pmt from insurance -- no auto apply -- jsut put amount into remaining          
@@ -939,13 +971,14 @@
                         if (arrInsEntry[2] == 'PrimaryWait') {
                             overPay = +val - +max;
                             overPay = parseFloat(overPay).toFixed(2);
-                            applyPaymentMessage += 'Warning: Overpayment of $' + overPay + ' to Waiting on Claim';
+                            applyPaymentMessage += 'Warning: Overpayment of $' + overPay + ' to Waiting on Claim.  This transaction will create a Credit on Account.';
                             blnOverPayOk = true;
                         }
                     };
-                    if (fld == '<%=dolPatientBalance.ClientID%>') {
+                    // 01.31.17 cpb changed to check patient next invoice instead of patient balance
+                    if (fld == '<%=dolPatientNext.ClientID%>') {
                         overPay = +val - +max;
-                        applyPaymentMessage += 'Warning: Overpayment of $' + overPay + ' to Patient Balance';
+                        applyPaymentMessage += 'Warning: Overpayment of $' + overPay + ' to Patient Next Invoice.  This transaction will create a Credit on Account.';
                         blnOverPayOk = true;
                     };
                     if (blnOverPayOk) {
