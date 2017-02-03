@@ -425,6 +425,24 @@
 
             litFrameCall.Text = "DownloadFile.aspx?pdf=" & strPOFileBase
             Dim arrNextActionValues() = Split(hidInitialcontract.Value, "&&")
+
+            '  If this is a preview and the user has narrowed down the list using search options, need to show those specific items again
+            If IsNothing(Session("LM_SQL")) Then
+
+            Else
+                If CStr(Session("LM_SQL")).Contains(arrNextActionValues(1)) Then
+                    ' if the current search string for this list is in the frmListManager query, then use it
+                    'Extract the current list from the frmListManager query
+                    Dim strQuerySegments() As String = Split(CStr(Session("LM_SQL")), "recid in (")
+                    If strQuerySegments.Count > 0 Then
+                        'extract most current list of recid's
+                        arrNextActionValues(1) = Split(strQuerySegments(1), ")")(0)
+                        hidInitialcontract.Value = arrNextActionValues(0) & "&&" & arrNextActionValues(1)
+                    End If
+                End If
+            End If
+
+
             Dim strSessionWhereName As String = "CPWhere" & Trim(CStr(TimeOfDay.Second))   ' create a unique session variable name used to send the list to the frmListManager
             Session(strSessionWhereName) = arrNextActionValues(1)
 
@@ -513,20 +531,32 @@
             ' strClaimType will be "Primary" or "Secondary"
             Dim arrNextActionValues() = Split(hidInitialcontract.Value, "&&")
 
-            Dim strSessionWhereName As String = "CPWhere" & Trim(CStr(TimeOfDay.Second))   ' create a unique session variable name used to send the list to the frmListManager
-            Session(strSessionWhereName) = arrNextActionValues(1)
+            '  If this is a preview and the user has narrowed down the list using search options, need to show those specific items again
+            If IsNothing(Session("LM_SQL")) Then
 
-            If blnPreviewClaims Then
-                litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = """ &
-                    "frmListManager.aspx?pri=1&vo=1&divHide=divHeader,divFooter" &
-                        """;" & strAlertMessage & "});</script>"
             Else
+                If CStr(Session("LM_SQL")).Contains(arrNextActionValues(1)) Then
+                    ' if the current search string for this list is in the frmListManager query, then use it
+                    'Extract the current list from the frmListManager query
+                    Dim strQuerySegments() As String = Split(CStr(Session("LM_SQL")), "recid in (")
+                    If strQuerySegments.Count > 0 Then
+                        'extract most current list of recid's
+                        arrNextActionValues(1) = Split(strQuerySegments(1), ")")(0)
+                        hidInitialcontract.Value = arrNextActionValues(0) & "&&" & arrNextActionValues(1)
+                    End If
+                End If
+            End If
+
+            Dim strSessionWhereName As String = "CPWhere" & Trim(CStr(TimeOfDay.Second))   ' create a unique session variable name used to send the list to the frmListManager
+                Session(strSessionWhereName) = arrNextActionValues(1)
+
+
                 litScripts.Text &= "<script type=""text/javascript"">jQuery(document).ready(function(){document.getElementById('ifmClaims').src = """ &
                     "frmListManager.aspx?id=" & arrNextActionValues(0) & "&vo=1&divHide=divHeader,divFooter" &
                         "&seslst=" & strSessionWhereName & """;" & strAlertMessage & "});</script>"
-            End If
 
-        End If
+
+            End If
 
     End Sub
 
