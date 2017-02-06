@@ -410,7 +410,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">More than One Patie</h4>
+                    <h4 class="modal-title">More than One Patient</h4>
                 </div>
                 <div class="modal-body modal-contract">
                     <h5>Please select a patient.</h5>

@@ -297,7 +297,7 @@
 
         ' 01/09/17 add contract date for specific contract selection
         strLitMessage = ""
-        strSQL = "SELECT c.recid, c.Doctors_vw, isnull(ip.PatientKey,' ') PatientKey, " &
+        strSQL = "SELECT c.recid, isnull(c.Doctors_vw,'-1'), isnull(ip.PatientKey,' ') PatientKey, " &
                 "c.ContractDate, " &
                 "isnull(Account_Id,'') Account_Id, " &
                 "isnull(ip.ChartNo, ' ') ChartNumber,  " &
@@ -311,8 +311,9 @@
                 "left outer join " &
                 "[Contracts] c on c.ChartNumber = ip.ChartNo "
 
-        Dim strWhere As String = " Where "
-        Dim strWhereDelim As String = ""
+        ' 2.6.17 cpb default where to not include any patients without an account_id - requested fomr 1.30.17 on-site meeting
+        Dim strWhere As String = " Where Account_Id <> ''  "
+        Dim strWhereDelim As String = " and "
         If strContract = "" Then
             If Trim(strFirstName) = "" Then
             Else
@@ -333,11 +334,13 @@
             'Searching on Contract #
             strWhere &= " c.recid = '" & strContract & "'"
         End If
-        If strWhere = " Where " Then
-        Else
-            strSQL &= strWhere
-        End If
-        strSQL &= " Order By Account_Id desc, lastName, firstName "
+
+        ' 2.6.17 cpb took out sorting by accountid because only  including patients with an account anyway - 
+        ' If strWhere = " Where " Then
+        'Else
+        strSQL &= strWhere
+        'End If
+        strSQL &= " Order By lastName, firstName "  'Account_Id desc, 
 
         'Was more than one patient found with First/Last Name search 
         Dim tblPatientChk As DataTable = g_IO_Execute_SQL(strSQL, False)
@@ -354,7 +357,8 @@
                         "'0' as PatientMonthlyPayment, '0' as PatientRemainingBalance,  " &
                         "'0' as PrimaryRemainingBalance, '0' as SecondaryRemainingBalance, " &
                         "'0' as PrimaryInstallmentAmt, '0' as SecondaryInstallmentAmt," &
-                        "'' as Account_Id " &
+                        "'' as Account_Id, " &
+                        "'-1' as doctors_vw " &
                     "FROM IMPROVIS_PatientData_vw ip "
             strWhere = " Where "
             strWhereDelim = ""
