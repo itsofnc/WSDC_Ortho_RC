@@ -156,7 +156,7 @@ Module ModMainOrtho
     ' 09/19/16 cpb - new apply payments routine to loop and apply as much as possible instead of limted to just one invoice
     ' this routine was created with intentions of replacing the attachInvoicePayments routine.
     '**** NEW ***NOT COMPLETE -- STOPPED HERE!
-    Public Sub g_applyPaymentToInvoices(paymentRow As DataRow, ByVal intOrigPaymentRecid As Integer, ByVal strTempTable As String)
+    Public Sub g_applyPaymentToInvoices(paymentRow As DataRow, ByRef intOrigPaymentRecid As Integer, ByVal strTempTable As String)
         Dim strContractNumber As String = paymentRow("Contract_RECID")
         Dim decApplyToCurrent As Decimal = paymentRow("ApplyToCurrentInvoice")
         Dim decApplyToPastDue As Decimal = paymentRow("ApplyToPastDue")
@@ -190,7 +190,7 @@ Module ModMainOrtho
                         End If
                     End If
                     decApplyToCurrent -= decApplyToThisInvoiceAmount
-                    strApplyTo = "ApplyToCurrentInvoice"
+                    strApplyTo = "ApplyToPastDue=0.00, ApplyToPrinciple=0.00, ApplyToNextInvoice=0.00, ApplyToCurrentInvoice"
                 Else
                     ' past due
                     If decApplyToPastDue > 0 Then
@@ -201,7 +201,7 @@ Module ModMainOrtho
                         End If
                     End If
                     decApplyToPastDue -= decApplyToThisInvoiceAmount
-                    strApplyTo = "ApplyToPastDue"
+                    strApplyTo = "ApplyToPrinciple=0.00, ApplyToNextInvoice=0.00, ApplyToCurrentInvoice=0.00, ApplyToPastDue"
                 End If
 
                 ' update the invoice record
@@ -760,7 +760,10 @@ Module ModMainOrtho
                             ")"
                 g_IO_Execute_SQL(strSQL, False)
 
-                intNewPaymentsBaseRecid = g_IO_GetLastRecId()
+                ' 2/6/17 CS Added check to see if we have a new base recid, b/c need to tie payment records together with this id, not reset it every time in this loop
+                If intNewPaymentsBaseRecid = -1 Then
+                    intNewPaymentsBaseRecid = g_IO_GetLastRecId()
+                End If
 
                 ' rlo 2016-12-21 - this new record should remain a part of the original payment stream
                 '    g_IO_Execute_SQL("Update payments set baserecid = " & intNewPaymentsBaseRecid & " where recid =" & intNewPaymentsBaseRecid, False)

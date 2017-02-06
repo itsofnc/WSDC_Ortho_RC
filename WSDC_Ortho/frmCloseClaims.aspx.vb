@@ -104,7 +104,7 @@
 
             ' create session variable to use during CreateInvoice processing                
             System.Web.HttpContext.Current.Session("InvoiceDescr") = "Amount Not Covered By Insurance (Claim # " & Trim(txtClaimNumber.Value) & ") "
-            Dim strPOFileBase As String = g_createInvoice("Select * from contracts where recid = " & txtContract_RECID.Text, "M", txtCharge.Text)
+            Dim strPOFileBase As String = g_createInvoice("Select * from contracts where recid = " & txtContract_RECID.Text, "M", txtCharge.Text, Date.Now)
 
             Dim strSessionWhereName As String = "CPWhere" & Trim(CStr(TimeOfDay.Second))   ' create a unique session variable name used to send the list to the frmListManager
             Session(strSessionWhereName) = "-1"   ' put the list in the SESSION variable
