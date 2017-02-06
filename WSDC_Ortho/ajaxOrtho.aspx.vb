@@ -126,7 +126,7 @@
                                 End If
                                 strSQL = "Update Payments set PatientAmount = '" & decApplyToPrinciple & "'" &
                                     ", orig_payment = '" & paymentRow("PatientAmount") & "'" &
-                                    ", ApplyToNextInvoice=0.00, ApplyToCurrentInvoice=0.00, ApplyToPastDue=0.00, " &
+                                    ", ApplyToNextInvoice=0.00, ApplyToCurrentInvoice=0.00, ApplyToPastDue=0.00 " &
                                     ", ApplyToPrinciple = '" & decApplyToPrinciple & "'" &
                                     ", Invoices_RECID = '-99'" &
                                     ", BaseRecid = " & intOrigPaymentRecid & " where recid=" & intLastPaymentRecid
@@ -147,7 +147,7 @@
                                 End If
                                 strSQL = "Update Payments set PatientAmount = '" & decApplyToNextInvoice & "'" &
                                     ", orig_payment = '" & paymentRow("PatientAmount") & "'" &
-                                    ", ApplyToPrinciple=0.00, ApplyToCurrentInvoice=0.00, ApplyToPastDue=0.00, " &
+                                    ", ApplyToPrinciple=0.00, ApplyToCurrentInvoice=0.00, ApplyToPastDue=0.00 " &
                                     ", ApplyToNextInvoice = '" & decApplyToNextInvoice & "'" &
                                     ", Invoices_RECID = '-1'" &
                                     ", BaseRecid = " & intOrigPaymentRecid & " where recid=" & intLastPaymentRecid
