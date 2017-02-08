@@ -297,7 +297,8 @@
 
         ' 01/09/17 add contract date for specific contract selection
         strLitMessage = ""
-        strSQL = "SELECT c.recid, isnull(c.Doctors_vw,'-1'), isnull(ip.PatientKey,' ') PatientKey, " &
+        ' 2/8/17 cpb add to add as doctors_vw to getting the doctors_vw field -- otherwiwse was coming up as unname field
+        strSQL = "SELECT c.recid, isnull(c.Doctors_vw,'-1') as Doctors_vw, isnull(ip.PatientKey,' ') PatientKey, " &
                 "c.ContractDate, " &
                 "isnull(Account_Id,'') Account_Id, " &
                 "isnull(ip.ChartNo, ' ') ChartNumber,  " &
@@ -349,6 +350,7 @@
         If tblPatientChk.Rows.Count = 0 Then
             blnContractsFound = False
             'Need to pull patient data from Improvis only (no contract found)
+            ' 2/8/17 cpb this select does not contain a contract date -- will cause ddl to blowup
             strSQL = "SELECT isnull(ip.PatientKey, ' ') PatientKey, " &
                         "isnull(ip.ChartNo, ' ') ChartNumber,  " &
                         "isnull([FirstName] + ' ' + [LastName], '') PatientName, " &
@@ -358,7 +360,8 @@
                         "'0' as PrimaryRemainingBalance, '0' as SecondaryRemainingBalance, " &
                         "'0' as PrimaryInstallmentAmt, '0' as SecondaryInstallmentAmt," &
                         "'' as Account_Id, " &
-                        "'-1' as doctors_vw " &
+                        "'-1' as doctors_vw, " &
+                        "'' as contractdate " &
                     "FROM IMPROVIS_PatientData_vw ip "
             strWhere = " Where "
             strWhereDelim = ""
