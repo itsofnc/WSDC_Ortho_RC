@@ -458,14 +458,15 @@ Module ModMainOrtho
 
                     ' create a payment record for an adjustment to close out the claim
                     ' 10/7/16 CS New Field Doctors_vw
-                    ' 11/29/16 CS All dollar amounts on this adj record need to be set to decPaymentDifference, 
+                    ' 11/29/16 CS All dollar amounts on this adj record need to be set to decPaymentDifference,
+                    ' 2/10/17 CS Use admin userid for adjustment record (throws off balances on their user specific daily reports)
                     Dim intLastPaymentRecid As Integer = -1
                     strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, ApplyToClaim, " &
                             "PaymentType, PaymentReference, Contract_recid, Invoices_recid, claimNumber, baserecid, PaymentSelection, orig_Payment, " &
                             "Comments, PayerName,PaymentFor, Doctors_vw)" &
                             " values (" &
                             "'" & Format(Date.Now, "MM/dd/yyyy") & "'," &
-                            rowPayment("sys_users_recid") & "," &
+                            "1," &
                             "'" & rowPayment("patientNumber") & "'," &
                             "'" & rowPayment("ChartNumber") & "'," &
                             IIf(rowPayment("PaymentSelection") = "PrimaryAmount", decPaymentDifference, 0.0) & "," &

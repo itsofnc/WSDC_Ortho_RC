@@ -198,8 +198,11 @@
                                     ' (we don't know what the procedure date needs to be from what that they are paying, so WSDC needs to manually gen claim or they can opt to apply to contract balance)
                                     Dim strEmailTo As String = IIf(IsNothing(ConfigurationManager.AppSettings("emailAutomatedClaimTo")), "", ConfigurationManager.AppSettings("emailAutomatedClaimTo"))
                                     Dim strEmailMessage As String = "A Secondary insurance payment was received without a claim to allocate to. " & vbCrLf
-                                    strEmailMessage &= " A claim will need to be processed manually to attach to this payment, or you can opt to allow this payment to be applied to the contract balance. " & vbCrLf
-                                    'strEmailMessage &= " Insurance Provider: " & tblClaims.Rows(0)("other_insurancecompanyname") & vbCrLf
+                                    strEmailMessage &= " A claim will need to be processed manually to attach to this payment, or you can opt to allow this payment to be applied to the contract balance. " & vbCrLf & vbCrLf
+                                    ' 2/10/17 CS Added info related to the contract, insurance company making the payment & payment comments
+                                    strEmailMessage &= " Chart #: " & paymentRow("ChartNumber") & vbCrLf
+                                    strEmailMessage &= " Insurance: " & paymentRow("PayerName") & vbCrLf
+                                    strEmailMessage &= " Payment Comments: " & paymentRow("Comments") & vbCrLf & vbCrLf
                                     strEmailMessage &= " Contact your software vendor for assistance if you feel this email was sent in error. "
                                     g_sendEmail(strEmailTo, "Secondary Payment Received Without a Claim", strEmailMessage)
                                 ElseIf pmtDetail("paymentId") = "PrimaryBalance" Or pmtDetail("paymentId") = "SecondaryBalance" Then
