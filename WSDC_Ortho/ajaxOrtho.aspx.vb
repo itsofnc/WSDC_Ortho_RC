@@ -233,10 +233,12 @@
                                     ' 11/2/16 payment amount is only amount paying to this specific claim
                                     Dim decPayemtAmt As Decimal = pmtDetail("paymentAmount")
 
+                                    ' 2.10.17 must fix cliam number from detail file, main payment file contains summary
                                     strSQL = "update Payments set " &
                                         "ApplyToClaim = '" & decPayemtAmt & "'" &
                                         ", orig_payment = '" & decOriginalPaymentAmt & "'" &
-                                        ", BaseRecid = " & intOrigPaymentRecid
+                                        ", BaseRecid = " & intOrigPaymentRecid &
+                                        ", ClaimNumber = '" & pmtDetail("paymentId") & "'"
                                     strSQL &= IIf(paymentRow("primaryAmount") > 0, ", primaryAmount = '" & decPayemtAmt & "'", ", secondaryAmount = '" & decPayemtAmt & "'")
                                     strSQL &= " where recid=" & intLastPaymentRecid
                                     g_IO_Execute_SQL(strSQL, False)
