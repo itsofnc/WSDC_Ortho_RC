@@ -968,7 +968,7 @@
                         idx = fld.replace('dolInsPayment', '');
                         arrInsList = jQuery('#<%=hidInsRefList.ClientID%>').val().split('||');
                         arrInsEntry = arrInsList[idx].split('~~');
-                        if (arrInsEntry[2] == 'PrimaryWait') {
+                        if (arrInsEntry[2] == 'PrimaryWait' || arrInsEntry[2] == 'SecondaryWait') {
                             overPay = +val - +max;
                             overPay = parseFloat(overPay).toFixed(2);
                             applyPaymentMessage += 'Warning: Overpayment of $' + overPay + ' to Waiting on Claim.  This transaction will create a Credit on Account.';

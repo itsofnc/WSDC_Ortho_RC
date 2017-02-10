@@ -313,7 +313,7 @@
                 "[Contracts] c on c.ChartNumber = ip.ChartNo "
 
         ' 2.6.17 cpb default where to not include any patients without an account_id - requested fomr 1.30.17 on-site meeting
-        Dim strWhere As String = " Where Account_Id <> ''  "
+        Dim strWhere As String = " Where Account_Id <> '' "
         Dim strWhereDelim As String = " and "
         If strContract = "" Then
             If Trim(strFirstName) = "" Then
@@ -333,7 +333,8 @@
             End If
         Else
             'Searching on Contract #
-            strWhere &= " c.recid = '" & strContract & "'"
+            ' 2.10.17 cpb this needed delim b/c now always already has where text
+            strWhere &= strWhereDelim & " c.recid = '" & strContract & "'"
         End If
 
         ' 2.6.17 cpb took out sorting by accountid because only  including patients with an account anyway - 
