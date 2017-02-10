@@ -501,40 +501,71 @@ Module ModMainOrtho
                 End If
 
 
-
                 If decOverpaymentAmount > 0 Then
                     ' 12/2/15 CS If overpaid, apply overpayment to remaining balance left to bill out
-                    Dim InsType As String = IIf(ClaimType = 0, "PrimaryRemainingBalance", "SecondaryRemainingBalance")
-                    '11/29/16 CS need to use contract recid not chart number, multiple contracts per chart number now
-                    'g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where chartNumber = '" & rowClaims("ChartNumber") & "'", False)
-                    g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where recid = '" & rowClaims("contracts_recid") & "'", False)
+                    ' 2/10/17 CS apply to balance if $5 of less, apply to balance, otherwise leave as open credit 
+                    ' (scenario today where insurance paid for 3 months and needed to generate those 3 claims and let the payment split amount them and pay them in full)
+                    If decOverpaymentAmount <= 5.0 Then
+                        Dim InsType As String = IIf(ClaimType = 0, "PrimaryRemainingBalance", "SecondaryRemainingBalance")
+                        '11/29/16 CS need to use contract recid not chart number, multiple contracts per chart number now
+                        'g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where chartNumber = '" & rowClaims("ChartNumber") & "'", False)
+                        g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where recid = '" & rowClaims("contracts_recid") & "'", False)
 
-                    ' 10/7/16 CS Added new field doctors_vw and put it in this section even tho commented out, just in cas it gets implemented again in the future??
-                    ' 11/1116 CS overpayment made, create a new payment record with the overage to be posted to principle 
-                    Dim strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, " &
-                                "PaymentType, PaymentReference, Contract_recid, Invoices_recid, claimNumber, baserecid, PaymentSelection, orig_Payment, " &
-                                "Comments, PayerName,PaymentFor, Doctors_vw)" &
-                                " values (" &
-                                "'" & rowPayment("DatePosted") & "'," &
-                                rowPayment("sys_users_recid") & "," &
-                                "'" & rowPayment("patientNumber") & "'," &
-                                "'" & rowPayment("ChartNumber") & "'," &
-                                IIf(rowPayment("PaymentSelection") = "PrimaryAmount", decOverpaymentAmount, 0.0) & "," &
-                                IIf(rowPayment("PaymentSelection") = "SecondaryAmount", decOverpaymentAmount, 0.0) & "," &
-                                "'" & rowPayment("PaymentType") & "'," &
-                                "'" & rowPayment("PaymentReference").replace("'", "''") & "'," &
-                                "'" & rowPayment("contract_recid") & "'," &
-                                "''," &
-                                "'-99'," &
-                                "'" & rowPayment("BaseRecid") & "'," &
-                                "'" & rowPayment("PaymentSelection") & "'," &
-                                rowPayment("orig_payment") & "," &
-                                "'" & rowPayment("comments").replace("'", "''") & "'," &
-                                "'" & rowPayment("PayerName").replace("'", "''") & "'," &
-                                "'" & rowPayment("PaymentFor").replace("'", "''") & "'," &
-                                rowPayment("doctors_vw") &
-                                ")"
-                    g_IO_Execute_SQL(strSQL, False)
+                        ' 10/7/16 CS Added new field doctors_vw and put it in this section even tho commented out, just in cas it gets implemented again in the future??
+                        ' 11/1116 CS overpayment made, create a new payment record with the overage to be posted to principle 
+                        Dim strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, " &
+                                    "PaymentType, PaymentReference, Contract_recid, Invoices_recid, claimNumber, baserecid, PaymentSelection, orig_Payment, " &
+                                    "Comments, PayerName,PaymentFor, Doctors_vw)" &
+                                    " values (" &
+                                    "'" & rowPayment("DatePosted") & "'," &
+                                    rowPayment("sys_users_recid") & "," &
+                                    "'" & rowPayment("patientNumber") & "'," &
+                                    "'" & rowPayment("ChartNumber") & "'," &
+                                    IIf(rowPayment("PaymentSelection") = "PrimaryAmount", decOverpaymentAmount, 0.0) & "," &
+                                    IIf(rowPayment("PaymentSelection") = "SecondaryAmount", decOverpaymentAmount, 0.0) & "," &
+                                    "'" & rowPayment("PaymentType") & "'," &
+                                    "'" & rowPayment("PaymentReference").replace("'", "''") & "'," &
+                                    "'" & rowPayment("contract_recid") & "'," &
+                                    "''," &
+                                    "'-99'," &
+                                    "'" & rowPayment("BaseRecid") & "'," &
+                                    "'" & rowPayment("PaymentSelection") & "'," &
+                                    rowPayment("orig_payment") & "," &
+                                    "'" & rowPayment("comments").replace("'", "''") & "'," &
+                                    "'" & rowPayment("PayerName").replace("'", "''") & "'," &
+                                    "'" & rowPayment("PaymentFor").replace("'", "''") & "'," &
+                                    rowPayment("doctors_vw") &
+                                    ")"
+                        g_IO_Execute_SQL(strSQL, False)
+                    Else
+                        ' create an overpayment/credit payments records for the remaining payment to be open to apply to another claim
+                        Dim strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, " &
+                                    "PaymentType, PaymentReference, Contract_recid, Invoices_recid, claimNumber, ApplyToClaim, baserecid, PaymentSelection, orig_Payment, " &
+                                    "Comments, PayerName,PaymentFor, Doctors_vw)" &
+                                    " values (" &
+                                    "'" & rowPayment("DatePosted") & "'," &
+                                    rowPayment("sys_users_recid") & "," &
+                                    "'" & rowPayment("patientNumber") & "'," &
+                                    "'" & rowPayment("ChartNumber") & "'," &
+                                    IIf(rowPayment("PaymentSelection") = "PrimaryAmount", decOverpaymentAmount, 0.0) & "," &
+                                    IIf(rowPayment("PaymentSelection") = "SecondaryAmount", decOverpaymentAmount, 0.0) & "," &
+                                    "'" & rowPayment("PaymentType") & "'," &
+                                    "'" & rowPayment("PaymentReference").replace("'", "''") & "'," &
+                                    "'" & rowPayment("contract_recid") & "'," &
+                                    "''," &
+                                    "'-1'," &
+                                    decOverpaymentAmount & "," &
+                                    "'" & rowPayment("BaseRecid") & "'," &
+                                    "'" & rowPayment("PaymentSelection") & "'," &
+                                    rowPayment("orig_payment") & "," &
+                                    "'" & rowPayment("comments").replace("'", "''") & "'," &
+                                    "'" & rowPayment("PayerName").replace("'", "''") & "'," &
+                                    "'" & rowPayment("PaymentFor").replace("'", "''") & "'," &
+                                    rowPayment("doctors_vw") &
+                                    ")"
+                        g_IO_Execute_SQL(strSQL, False)
+                    End If
+
                 End If
 
                 g_IO_Execute_SQL("update claims set status = '" & strClaimStatus & "', AmountPaid = " & decClaimAmtPaid & " where claimnumber = '" & rowClaims("ClaimNumber") & "'", False)

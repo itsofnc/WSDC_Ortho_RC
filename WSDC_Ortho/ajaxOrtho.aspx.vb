@@ -171,20 +171,27 @@
                                     intOrigPaymentRecid = intLastPaymentRecid
                                 End If
                                 If pmtDetail("paymentId") = "PrimaryWait" Then
+                                    ' no claim -- will need to be manually applied
+                                    ' 2/10/17 CS PrimaryAmount does need to be updated with the payment amount
                                     decPaymentAmt = pmtDetail("paymentAmount")
                                     strSQL = "Update Payments Set " &
                                         "orig_payment = '" & decOriginalPaymentAmt & "'" &
                                         ", BaseRecid = " & intOrigPaymentRecid &
-                                        ", ClaimNumber = '-1'"                          ' no claim -- will need to be manually applied
-                                    ' ", PrimaryAmount = '" & decPaymentAmt & "'" & -- 01.10.17 cpb took this out b/c payment could be from secondary, but applied to primary wait. and primary has already been updated.
+                                        ", ClaimNumber = '-1'" &
+                                        ", PrimaryAmount = '" & decPaymentAmt & "'" &
+                                        ", ApplyToClaim = '" & decPaymentAmt & "'"
+                                    ' & -- 01.10.17 cpb took this out b/c payment could be from secondary, but applied to primary wait. and primary has already been updated.
                                     strSQL &= " Where recId= '" & intLastPaymentRecid & "'"
                                     g_IO_Execute_SQL(strSQL, False)
                                 ElseIf pmtDetail("paymentId") = "SecondaryWait" Then
                                     ' 01.17.17 cpb must do an update so that the baserecid gets updated, it is currently sitting at -1, also claim number is at InsurnaceName-SeondaryWait
+                                    decPaymentAmt = pmtDetail("paymentAmount")
                                     strSQL = "Update Payments Set " &
                                         "orig_payment = '" & decOriginalPaymentAmt & "'" &
                                         ", BaseRecid = " & intOrigPaymentRecid &
-                                        ", ClaimNumber = '-1'"
+                                        ", ClaimNumber = '-1'" &
+                                        ", SecondaryAmount = '" & decPaymentAmt & "'" &
+                                        ", ApplyToClaim = '" & decPaymentAmt & "'"
                                     strSQL &= " Where recId= '" & intLastPaymentRecid & "'"
                                     g_IO_Execute_SQL(strSQL, False)
                                     ' 1/3/2017 CS email insurance distribution group that a secondary payment received without a claim 
@@ -205,12 +212,12 @@
                                     strSQLContract = "Update Contracts Set "
                                     If pmtDetail("paymentId") = "PrimaryBalance" Then
                                         ' 01.10.17 cpb - do not need to update amount fields, they are already set and paymentid does not control who supplied the payment, just where it is applied
-                                        strSQL &= ", ApplyToPrimaryBalance = '" & decPaymentAmt & "'"  '&
-                                        '", PrimaryAmount = '" & decPaymentAmt & "'"
+                                        strSQL &= ", ApplyToPrimaryBalance = '" & decPaymentAmt & "'" &
+                                        ", PrimaryAmount = '" & decPaymentAmt & "'"
                                         strSQLContract &= "PrimaryRemainingBalance = PrimaryRemainingBalance - " & decPaymentAmt
                                     Else
-                                        strSQL &= ", ApplyToSecondaryBalance = '" & decPaymentAmt & "'" ' &
-                                        ' ", SecondaryAmount = '" & decPaymentAmt & "'"
+                                        strSQL &= ", ApplyToSecondaryBalance = '" & decPaymentAmt & "'" &
+                                        ", SecondaryAmount = '" & decPaymentAmt & "'"
                                         strSQLContract &= "SecondaryRemainingBalance = SecondaryRemainingBalance - " & decPaymentAmt
                                     End If
                                     strSQL &= " Where recId= '" & intLastPaymentRecid & "'"
