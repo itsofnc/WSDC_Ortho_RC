@@ -122,7 +122,7 @@
                                 g_PostPendingData(strTempTable, "Payments", "recid=" & (paymentRow("recid")), "PaymentPosting.aspx", False)
                                 intLastPaymentRecid = g_IO_GetLastRecId()
                                 If intOrigPaymentRecid = -1 Then
-                                    intOrigPaymentRecid = intOrigPaymentRecid
+                                    intOrigPaymentRecid = intLastPaymentRecid   '2.14.17 cpb setting base recid wrong? intOrigPaymentRecid
                                 End If
                                 strSQL = "Update Payments set PatientAmount = '" & decApplyToPrinciple & "'" &
                                     ", orig_payment = '" & paymentRow("PatientAmount") & "'" &
