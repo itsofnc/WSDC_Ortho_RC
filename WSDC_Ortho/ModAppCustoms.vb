@@ -297,7 +297,8 @@
 
         ' 01/09/17 add contract date for specific contract selection
         strLitMessage = ""
-        strSQL = "SELECT c.recid, c.Doctors_vw, isnull(ip.PatientKey,' ') PatientKey, " &
+        ' 2/8/17 cpb add to add as doctors_vw to getting the doctors_vw field -- otherwiwse was coming up as unname field
+        strSQL = "SELECT c.recid, isnull(c.Doctors_vw,'-1') as Doctors_vw, isnull(ip.PatientKey,' ') PatientKey, " &
                 "c.ContractDate, " &
                 "isnull(Account_Id,'') Account_Id, " &
                 "isnull(ip.ChartNo, ' ') ChartNumber,  " &
@@ -311,8 +312,9 @@
                 "left outer join " &
                 "[Contracts] c on c.ChartNumber = ip.ChartNo "
 
-        Dim strWhere As String = " Where "
-        Dim strWhereDelim As String = ""
+        ' 2.6.17 cpb default where to not include any patients without an account_id - requested fomr 1.30.17 on-site meeting
+        Dim strWhere As String = " Where Account_Id <> '' "
+        Dim strWhereDelim As String = " and "
         If strContract = "" Then
             If Trim(strFirstName) = "" Then
             Else
@@ -331,13 +333,16 @@
             End If
         Else
             'Searching on Contract #
-            strWhere &= " c.recid = '" & strContract & "'"
+            ' 2.10.17 cpb this needed delim b/c now always already has where text
+            strWhere &= strWhereDelim & " c.recid = '" & strContract & "'"
         End If
-        If strWhere = " Where " Then
-        Else
-            strSQL &= strWhere
-        End If
-        strSQL &= " Order By Account_Id desc, lastName, firstName "
+
+        ' 2.6.17 cpb took out sorting by accountid because only  including patients with an account anyway - 
+        ' If strWhere = " Where " Then
+        'Else
+        strSQL &= strWhere
+        'End If
+        strSQL &= " Order By lastName, firstName "  'Account_Id desc, 
 
         'Was more than one patient found with First/Last Name search 
         Dim tblPatientChk As DataTable = g_IO_Execute_SQL(strSQL, False)
@@ -346,6 +351,7 @@
         If tblPatientChk.Rows.Count = 0 Then
             blnContractsFound = False
             'Need to pull patient data from Improvis only (no contract found)
+            ' 2/8/17 cpb this select does not contain a contract date -- will cause ddl to blowup
             strSQL = "SELECT isnull(ip.PatientKey, ' ') PatientKey, " &
                         "isnull(ip.ChartNo, ' ') ChartNumber,  " &
                         "isnull([FirstName] + ' ' + [LastName], '') PatientName, " &
@@ -354,7 +360,9 @@
                         "'0' as PatientMonthlyPayment, '0' as PatientRemainingBalance,  " &
                         "'0' as PrimaryRemainingBalance, '0' as SecondaryRemainingBalance, " &
                         "'0' as PrimaryInstallmentAmt, '0' as SecondaryInstallmentAmt," &
-                        "'' as Account_Id " &
+                        "'' as Account_Id, " &
+                        "'-1' as doctors_vw, " &
+                        "'' as contractdate " &
                     "FROM IMPROVIS_PatientData_vw ip "
             strWhere = " Where "
             strWhereDelim = ""

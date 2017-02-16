@@ -410,7 +410,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">More than One Patie</h4>
+                    <h4 class="modal-title">More than One Patient</h4>
                 </div>
                 <div class="modal-body modal-contract">
                     <h5>Please select a patient.</h5>
@@ -968,7 +968,7 @@
                         idx = fld.replace('dolInsPayment', '');
                         arrInsList = jQuery('#<%=hidInsRefList.ClientID%>').val().split('||');
                         arrInsEntry = arrInsList[idx].split('~~');
-                        if (arrInsEntry[2] == 'PrimaryWait') {
+                        if (arrInsEntry[2] == 'PrimaryWait' || arrInsEntry[2] == 'SecondaryWait') {
                             overPay = +val - +max;
                             overPay = parseFloat(overPay).toFixed(2);
                             applyPaymentMessage += 'Warning: Overpayment of $' + overPay + ' to Waiting on Claim.  This transaction will create a Credit on Account.';

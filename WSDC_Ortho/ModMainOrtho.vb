@@ -156,7 +156,7 @@ Module ModMainOrtho
     ' 09/19/16 cpb - new apply payments routine to loop and apply as much as possible instead of limted to just one invoice
     ' this routine was created with intentions of replacing the attachInvoicePayments routine.
     '**** NEW ***NOT COMPLETE -- STOPPED HERE!
-    Public Sub g_applyPaymentToInvoices(paymentRow As DataRow, ByVal intOrigPaymentRecid As Integer, ByVal strTempTable As String)
+    Public Sub g_applyPaymentToInvoices(paymentRow As DataRow, ByRef intOrigPaymentRecid As Integer, ByVal strTempTable As String)
         Dim strContractNumber As String = paymentRow("Contract_RECID")
         Dim decApplyToCurrent As Decimal = paymentRow("ApplyToCurrentInvoice")
         Dim decApplyToPastDue As Decimal = paymentRow("ApplyToPastDue")
@@ -190,7 +190,7 @@ Module ModMainOrtho
                         End If
                     End If
                     decApplyToCurrent -= decApplyToThisInvoiceAmount
-                    strApplyTo = "ApplyToCurrentInvoice"
+                    strApplyTo = "ApplyToPastDue=0.00, ApplyToPrinciple=0.00, ApplyToNextInvoice=0.00, ApplyToCurrentInvoice"
                 Else
                     ' past due
                     If decApplyToPastDue > 0 Then
@@ -201,7 +201,7 @@ Module ModMainOrtho
                         End If
                     End If
                     decApplyToPastDue -= decApplyToThisInvoiceAmount
-                    strApplyTo = "ApplyToPastDue"
+                    strApplyTo = "ApplyToPrinciple=0.00, ApplyToNextInvoice=0.00, ApplyToCurrentInvoice=0.00, ApplyToPastDue"
                 End If
 
                 ' update the invoice record
@@ -458,14 +458,15 @@ Module ModMainOrtho
 
                     ' create a payment record for an adjustment to close out the claim
                     ' 10/7/16 CS New Field Doctors_vw
-                    ' 11/29/16 CS All dollar amounts on this adj record need to be set to decPaymentDifference, 
+                    ' 11/29/16 CS All dollar amounts on this adj record need to be set to decPaymentDifference,
+                    ' 2/10/17 CS Use admin userid for adjustment record (throws off balances on their user specific daily reports)
                     Dim intLastPaymentRecid As Integer = -1
                     strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, ApplyToClaim, " &
                             "PaymentType, PaymentReference, Contract_recid, Invoices_recid, claimNumber, baserecid, PaymentSelection, orig_Payment, " &
                             "Comments, PayerName,PaymentFor, Doctors_vw)" &
                             " values (" &
                             "'" & Format(Date.Now, "MM/dd/yyyy") & "'," &
-                            rowPayment("sys_users_recid") & "," &
+                            "1," &
                             "'" & rowPayment("patientNumber") & "'," &
                             "'" & rowPayment("ChartNumber") & "'," &
                             IIf(rowPayment("PaymentSelection") = "PrimaryAmount", decPaymentDifference, 0.0) & "," &
@@ -501,40 +502,71 @@ Module ModMainOrtho
                 End If
 
 
-
                 If decOverpaymentAmount > 0 Then
                     ' 12/2/15 CS If overpaid, apply overpayment to remaining balance left to bill out
-                    Dim InsType As String = IIf(ClaimType = 0, "PrimaryRemainingBalance", "SecondaryRemainingBalance")
-                    '11/29/16 CS need to use contract recid not chart number, multiple contracts per chart number now
-                    'g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where chartNumber = '" & rowClaims("ChartNumber") & "'", False)
-                    g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where recid = '" & rowClaims("contracts_recid") & "'", False)
+                    ' 2/10/17 CS apply to balance if $5 of less, apply to balance, otherwise leave as open credit 
+                    ' (scenario today where insurance paid for 3 months and needed to generate those 3 claims and let the payment split amount them and pay them in full)
+                    If decOverpaymentAmount <= 5.0 Then
+                        Dim InsType As String = IIf(ClaimType = 0, "PrimaryRemainingBalance", "SecondaryRemainingBalance")
+                        '11/29/16 CS need to use contract recid not chart number, multiple contracts per chart number now
+                        'g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where chartNumber = '" & rowClaims("ChartNumber") & "'", False)
+                        g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where recid = '" & rowClaims("contracts_recid") & "'", False)
 
-                    ' 10/7/16 CS Added new field doctors_vw and put it in this section even tho commented out, just in cas it gets implemented again in the future??
-                    ' 11/1116 CS overpayment made, create a new payment record with the overage to be posted to principle 
-                    Dim strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, " &
-                                "PaymentType, PaymentReference, Contract_recid, Invoices_recid, claimNumber, baserecid, PaymentSelection, orig_Payment, " &
-                                "Comments, PayerName,PaymentFor, Doctors_vw)" &
-                                " values (" &
-                                "'" & rowPayment("DatePosted") & "'," &
-                                rowPayment("sys_users_recid") & "," &
-                                "'" & rowPayment("patientNumber") & "'," &
-                                "'" & rowPayment("ChartNumber") & "'," &
-                                IIf(rowPayment("PaymentSelection") = "PrimaryAmount", decOverpaymentAmount, 0.0) & "," &
-                                IIf(rowPayment("PaymentSelection") = "SecondaryAmount", decOverpaymentAmount, 0.0) & "," &
-                                "'" & rowPayment("PaymentType") & "'," &
-                                "'" & rowPayment("PaymentReference").replace("'", "''") & "'," &
-                                "'" & rowPayment("contract_recid") & "'," &
-                                "''," &
-                                "'-99'," &
-                                "'" & rowPayment("BaseRecid") & "'," &
-                                "'" & rowPayment("PaymentSelection") & "'," &
-                                rowPayment("orig_payment") & "," &
-                                "'" & rowPayment("comments").replace("'", "''") & "'," &
-                                "'" & rowPayment("PayerName").replace("'", "''") & "'," &
-                                "'" & rowPayment("PaymentFor").replace("'", "''") & "'," &
-                                rowPayment("doctors_vw") &
-                                ")"
-                    g_IO_Execute_SQL(strSQL, False)
+                        ' 10/7/16 CS Added new field doctors_vw and put it in this section even tho commented out, just in cas it gets implemented again in the future??
+                        ' 11/1116 CS overpayment made, create a new payment record with the overage to be posted to principle 
+                        Dim strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, " &
+                                    "PaymentType, PaymentReference, Contract_recid, Invoices_recid, claimNumber, baserecid, PaymentSelection, orig_Payment, " &
+                                    "Comments, PayerName,PaymentFor, Doctors_vw)" &
+                                    " values (" &
+                                    "'" & rowPayment("DatePosted") & "'," &
+                                    rowPayment("sys_users_recid") & "," &
+                                    "'" & rowPayment("patientNumber") & "'," &
+                                    "'" & rowPayment("ChartNumber") & "'," &
+                                    IIf(rowPayment("PaymentSelection") = "PrimaryAmount", decOverpaymentAmount, 0.0) & "," &
+                                    IIf(rowPayment("PaymentSelection") = "SecondaryAmount", decOverpaymentAmount, 0.0) & "," &
+                                    "'" & rowPayment("PaymentType") & "'," &
+                                    "'" & rowPayment("PaymentReference").replace("'", "''") & "'," &
+                                    "'" & rowPayment("contract_recid") & "'," &
+                                    "''," &
+                                    "'-99'," &
+                                    "'" & rowPayment("BaseRecid") & "'," &
+                                    "'" & rowPayment("PaymentSelection") & "'," &
+                                    rowPayment("orig_payment") & "," &
+                                    "'" & rowPayment("comments").replace("'", "''") & "'," &
+                                    "'" & rowPayment("PayerName").replace("'", "''") & "'," &
+                                    "'" & rowPayment("PaymentFor").replace("'", "''") & "'," &
+                                    rowPayment("doctors_vw") &
+                                    ")"
+                        g_IO_Execute_SQL(strSQL, False)
+                    Else
+                        ' create an overpayment/credit payments records for the remaining payment to be open to apply to another claim
+                        Dim strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, " &
+                                    "PaymentType, PaymentReference, Contract_recid, Invoices_recid, claimNumber, ApplyToClaim, baserecid, PaymentSelection, orig_Payment, " &
+                                    "Comments, PayerName,PaymentFor, Doctors_vw)" &
+                                    " values (" &
+                                    "'" & rowPayment("DatePosted") & "'," &
+                                    rowPayment("sys_users_recid") & "," &
+                                    "'" & rowPayment("patientNumber") & "'," &
+                                    "'" & rowPayment("ChartNumber") & "'," &
+                                    IIf(rowPayment("PaymentSelection") = "PrimaryAmount", decOverpaymentAmount, 0.0) & "," &
+                                    IIf(rowPayment("PaymentSelection") = "SecondaryAmount", decOverpaymentAmount, 0.0) & "," &
+                                    "'" & rowPayment("PaymentType") & "'," &
+                                    "'" & rowPayment("PaymentReference").replace("'", "''") & "'," &
+                                    "'" & rowPayment("contract_recid") & "'," &
+                                    "''," &
+                                    "'-1'," &
+                                    decOverpaymentAmount & "," &
+                                    "'" & rowPayment("BaseRecid") & "'," &
+                                    "'" & rowPayment("PaymentSelection") & "'," &
+                                    rowPayment("orig_payment") & "," &
+                                    "'" & rowPayment("comments").replace("'", "''") & "'," &
+                                    "'" & rowPayment("PayerName").replace("'", "''") & "'," &
+                                    "'" & rowPayment("PaymentFor").replace("'", "''") & "'," &
+                                    rowPayment("doctors_vw") &
+                                    ")"
+                        g_IO_Execute_SQL(strSQL, False)
+                    End If
+
                 End If
 
                 g_IO_Execute_SQL("update claims set status = '" & strClaimStatus & "', AmountPaid = " & decClaimAmtPaid & " where claimnumber = '" & rowClaims("ClaimNumber") & "'", False)
@@ -760,7 +792,10 @@ Module ModMainOrtho
                             ")"
                 g_IO_Execute_SQL(strSQL, False)
 
-                intNewPaymentsBaseRecid = g_IO_GetLastRecId()
+                ' 2/6/17 CS Added check to see if we have a new base recid, b/c need to tie payment records together with this id, not reset it every time in this loop
+                If intNewPaymentsBaseRecid = -1 Then
+                    intNewPaymentsBaseRecid = g_IO_GetLastRecId()
+                End If
 
                 ' rlo 2016-12-21 - this new record should remain a part of the original payment stream
                 '    g_IO_Execute_SQL("Update payments set baserecid = " & intNewPaymentsBaseRecid & " where recid =" & intNewPaymentsBaseRecid, False)
