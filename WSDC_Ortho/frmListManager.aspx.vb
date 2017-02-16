@@ -865,7 +865,7 @@
         Dim rowIndex As Integer = 1 'starts at 1 since we have any field at position 0
         For Each colColumn In m_nvcColumnNames
             'Or UCase(colColumn.ColumnName).Contains("PASSWORD") 
-            If "RECID,TDS".Contains(UCase(colColumn)) Then
+            If ",RECID,TDS,".Contains("," & UCase(colColumn) & ",") Then
             Else
                 ' load ddl for advanced searching section
                 ' 2/2/15 use column description if available
@@ -906,6 +906,7 @@
                 End If
             End If
             rowIndex += 1
+
         Next
 
         ' Load ddl's for advanced searching section
