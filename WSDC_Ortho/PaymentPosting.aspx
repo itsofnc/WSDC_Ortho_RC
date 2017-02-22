@@ -837,9 +837,33 @@
                         }
                     }
 
-                    // last apply to contract balance
+                    //2.22.17 change next iv back to 3rd, and balance last.
+                    // 3rd apply to next inv
                     if (+pmtRemaining > 0) {
 
+                        itmPmt = pmtRemaining;
+                        jQuery('#<%=dolPatientNext.ClientID%>').val(pmtRemaining);
+                        pmtRemaining = 0;
+                        itmAmt = jQuery('#<%=hidPatientNext.ClientID%>').val().replace(',', '').replace('$', '');
+                        itmPend = jQuery('#<%=hidPatientNextPend.ClientID%>').val().replace(',', '').replace('$', '');
+
+                        itmAmt = jQuery('#<%=hidPatientNext.ClientID%>').val().replace(',', '').replace('$', '');
+                        itmPend = jQuery('#<%=hidPatientNextPend.ClientID%>').val().replace(',', '').replace('$', '');
+                        curMax = +itmAmt - +itmPend;
+                        if (+curMax > 0) {
+                            if (+pmtRemaining >= +curMax) {
+                                jQuery('#<%=dolPatientNext.ClientID%>').val(curMax);
+                                pmtRemaining = pmtRemaining - curMax;
+                            } else {
+                                jQuery('#<%=dolPatientNext.ClientID%>').val(pmtRemaining);
+                                pmtRemaining = 0;
+                            }
+                        }
+                    }
+
+                    // last apply to contract balance
+                    // 2.22.17 commented this out reversed next inv and balance to move balance back to last
+                    <%--if (+pmtRemaining > 0) {
                         itmAmt = jQuery('#<%=hidPatientBalance.ClientID%>').val().replace(',', '').replace('$', '');
                         itmPend = jQuery('#<%=hidPatientBalancePend.ClientID%>').val().replace(',', '').replace('$', '');
                         curMax = +itmAmt - +itmPend;
@@ -852,42 +876,20 @@
                                 pmtRemaining = 0;
                             }
                         }
-                    };
+                    };--%>
 
-                    // 3rd apply to next inv
-                    if (+pmtRemaining > 0) {
-
-                        itmPmt = pmtRemaining;
-                        jQuery('#<%=dolPatientNext.ClientID%>').val(pmtRemaining);
-                        pmtRemaining = 0;
-                        itmAmt = jQuery('#<%=hidPatientNext.ClientID%>').val().replace(',', '').replace('$', '');
-                        itmPend = jQuery('#<%=hidPatientNextPend.ClientID%>').val().replace(',', '').replace('$', '');
-
-                        //itmAmt = jQuery('#<//%=hidPatientNext.ClientID%>').val().replace(',', '').replace('$', '');
-                        //itmPend = jQuery('#<//%=hidPatientNextPend.ClientID%>').val().replace(',', '').replace('$', '');
-                        //curMax = +itmAmt - +itmPend;
-                        //if (+curMax > 0) {
-                            //if (+pmtRemaining >= +curMax) {
-                                //jQuery('#<//%=dolPatientNext.ClientID%>').val(curMax);
-                                //pmtRemaining = pmtRemaining - curMax;
-                            //} else {
-                                //jQuery('#<//%=dolPatientNext.ClientID%>').val(pmtRemaining);
-                                //pmtRemaining = 0;
-                            //}
-                        //}
-                    }
                     // last apply to contract balance
-                    //if (+pmtRemaining > 0) {
-                        //itmPmt = pmtRemaining;
-                        //jQuery('#<%=dolPatientBalance.ClientID%>').val(pmtRemaining);
-                        //pmtRemaining = 0;
-                        //itmAmt = jQuery('#<%=hidPatientBalance.ClientID%>').val().replace(',', '').replace('$', '');
-                        //itmPend = jQuery('#<%=hidPatientBalancePend.ClientID%>').val().replace(',', '').replace('$', '');
-                        //overPayment =  +itmPend + +itmPmt - +itmAmt;
-                        //if (+overPayment > 0) {
-                        //    alert('Notice: Patient has an overpayment of $' + overPayment + ' to the Balance.')
-                        //}
-                    //};
+                    if (+pmtRemaining > 0) {
+                        itmPmt = pmtRemaining;
+                        jQuery('#<%=dolPatientBalance.ClientID%>').val(pmtRemaining);
+                        pmtRemaining = 0;
+                        itmAmt = jQuery('#<%=hidPatientBalance.ClientID%>').val().replace(',', '').replace('$', '');
+                        itmPend = jQuery('#<%=hidPatientBalancePend.ClientID%>').val().replace(',', '').replace('$', '');
+                        overPayment =  +itmPend + +itmPmt - +itmAmt;
+                        if (+overPayment > 0) {
+                            alert('Notice: Patient has an overpayment of $' + overPayment + ' to the Balance.')
+                        }
+                    };
                 }
             } else {
                 // pmt from insurance -- no auto apply -- jsut put amount into remaining          
