@@ -1100,7 +1100,8 @@
             }
             pmtAmount = checkNullZero(jQuery('#<%=dolPaymentAmount.ClientID%>').val());
             if (pmtAmount == 'nullZero') {
-                alertMsg += 'Please enter a Payment Amount.\n'
+                //alertMsg += 'Please enter a Payment Amount.\n'
+                pmtAmount = parseFloat("0.00").toFixed(2);
             };
             // verify payment distributed correctly
             remaining = checkNullZero(jQuery('#<%=dolApplyRemaining.ClientID%>').val());

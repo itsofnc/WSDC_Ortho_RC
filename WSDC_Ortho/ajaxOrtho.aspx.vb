@@ -159,138 +159,152 @@
                             Dim decPaymentAmt As Decimal = 0.00
                             Dim strSQLWhere As String = ""
                             Dim decOriginalPaymentAmt As Decimal = paymentRow("PrimaryAmount") + paymentRow("SecondaryAmount")
-                            ' get details for this payment and post payments from details
-                            strSQL = "Select * From paymentsTempDetail Where paymentsTempRecId = '" & paymentRow("recid") & "'"
-                            tblPaymentTempDetail = g_IO_Execute_SQL(strSQL, False)
-                            For Each pmtDetail In tblPaymentTempDetail.Rows
-                                ' create a payment record, then update the apply to amounts properly
-                                '   - need a payment record for each distribution from the details file
-                                g_PostPendingData(strTempTable, "Payments", "recid=" & (paymentRow("recid")), "PaymentPosting.aspx", False)
-                                intLastPaymentRecid = g_IO_GetLastRecId()
-                                If intOrigPaymentRecid = -1 Then
-                                    intOrigPaymentRecid = intLastPaymentRecid
-                                End If
-                                If pmtDetail("paymentId") = "PrimaryWait" Then
-                                    ' no claim -- will need to be manually applied
-                                    ' 2/10/17 CS PrimaryAmount does need to be updated with the payment amount
-                                    decPaymentAmt = pmtDetail("paymentAmount")
-                                    strSQL = "Update Payments Set " &
+                            ' 3/1/17 check for a payment amount - if zero, must just be a comment and there will not be any detail records
+                            If decPaymentAmt > 0 Then
+                                ' get details for this payment and post payments from details
+                                strSQL = "Select * From paymentsTempDetail Where paymentsTempRecId = '" & paymentRow("recid") & "'"
+                                tblPaymentTempDetail = g_IO_Execute_SQL(strSQL, False)
+                                For Each pmtDetail In tblPaymentTempDetail.Rows
+                                    ' create a payment record, then update the apply to amounts properly
+                                    '   - need a payment record for each distribution from the details file
+                                    g_PostPendingData(strTempTable, "Payments", "recid=" & (paymentRow("recid")), "PaymentPosting.aspx", False)
+                                    intLastPaymentRecid = g_IO_GetLastRecId()
+                                    If intOrigPaymentRecid = -1 Then
+                                        intOrigPaymentRecid = intLastPaymentRecid
+                                    End If
+                                    If pmtDetail("paymentId") = "PrimaryWait" Then
+                                        ' no claim -- will need to be manually applied
+                                        ' 2/10/17 CS PrimaryAmount does need to be updated with the payment amount
+                                        decPaymentAmt = pmtDetail("paymentAmount")
+                                        strSQL = "Update Payments Set " &
                                         "orig_payment = '" & decOriginalPaymentAmt & "'" &
                                         ", BaseRecid = " & intOrigPaymentRecid &
                                         ", ClaimNumber = '-1'" &
                                         ", PrimaryAmount = '" & decPaymentAmt & "'" &
                                         ", ApplyToClaim = '" & decPaymentAmt & "'"
-                                    ' & -- 01.10.17 cpb took this out b/c payment could be from secondary, but applied to primary wait. and primary has already been updated.
-                                    strSQL &= " Where recId= '" & intLastPaymentRecid & "'"
-                                    g_IO_Execute_SQL(strSQL, False)
-                                ElseIf pmtDetail("paymentId") = "SecondaryWait" Then
-                                    ' 01.17.17 cpb must do an update so that the baserecid gets updated, it is currently sitting at -1, also claim number is at InsurnaceName-SeondaryWait
-                                    decPaymentAmt = pmtDetail("paymentAmount")
-                                    strSQL = "Update Payments Set " &
+                                        ' & -- 01.10.17 cpb took this out b/c payment could be from secondary, but applied to primary wait. and primary has already been updated.
+                                        strSQL &= " Where recId= '" & intLastPaymentRecid & "'"
+                                        g_IO_Execute_SQL(strSQL, False)
+                                    ElseIf pmtDetail("paymentId") = "SecondaryWait" Then
+                                        ' 01.17.17 cpb must do an update so that the baserecid gets updated, it is currently sitting at -1, also claim number is at InsurnaceName-SeondaryWait
+                                        decPaymentAmt = pmtDetail("paymentAmount")
+                                        strSQL = "Update Payments Set " &
                                         "orig_payment = '" & decOriginalPaymentAmt & "'" &
                                         ", BaseRecid = " & intOrigPaymentRecid &
                                         ", ClaimNumber = '-1'" &
                                         ", SecondaryAmount = '" & decPaymentAmt & "'" &
                                         ", ApplyToClaim = '" & decPaymentAmt & "'"
-                                    strSQL &= " Where recId= '" & intLastPaymentRecid & "'"
-                                    g_IO_Execute_SQL(strSQL, False)
-                                    ' 1/3/2017 CS email insurance distribution group that a secondary payment received without a claim 
-                                    ' (we don't know what the procedure date needs to be from what that they are paying, so WSDC needs to manually gen claim or they can opt to apply to contract balance)
-                                    Dim strEmailTo As String = IIf(IsNothing(ConfigurationManager.AppSettings("emailAutomatedClaimTo")), "", ConfigurationManager.AppSettings("emailAutomatedClaimTo"))
-                                    Dim strEmailMessage As String = "A Secondary insurance payment was received without a claim to allocate to. " & vbCrLf
-                                    strEmailMessage &= " A claim will need to be processed manually to attach to this payment, or you can opt to allow this payment to be applied to the contract balance. " & vbCrLf & vbCrLf
-                                    ' 2/10/17 CS Added info related to the contract, insurance company making the payment & payment comments
-                                    strEmailMessage &= " Chart #: " & paymentRow("ChartNumber") & vbCrLf
-                                    strEmailMessage &= " Insurance: " & paymentRow("PayerName") & vbCrLf
-                                    strEmailMessage &= " Payment Comments: " & paymentRow("Comments") & vbCrLf & vbCrLf
-                                    strEmailMessage &= " Contact your software vendor for assistance if you feel this email was sent in error. "
-                                    g_sendEmail(strEmailTo, "Secondary Payment Received Without a Claim", strEmailMessage)
-                                ElseIf pmtDetail("paymentId") = "PrimaryBalance" Or pmtDetail("paymentId") = "SecondaryBalance" Then
-                                    Dim strSQLContract As String = ""
-                                    decPaymentAmt = pmtDetail("paymentAmount")
-                                    strSQL = "Update Payments Set " &
-                                    "orig_payment = '" & decOriginalPaymentAmt & "'" &
-                                    ", BaseRecid = " & intOrigPaymentRecid &
-                                    ", ClaimNumber = '-99'"
-                                    strSQLContract = "Update Contracts Set "
-                                    If pmtDetail("paymentId") = "PrimaryBalance" Then
-                                        ' 01.10.17 cpb - do not need to update amount fields, they are already set and paymentid does not control who supplied the payment, just where it is applied
-                                        strSQL &= ", ApplyToPrimaryBalance = '" & decPaymentAmt & "'" &
+                                        strSQL &= " Where recId= '" & intLastPaymentRecid & "'"
+                                        g_IO_Execute_SQL(strSQL, False)
+                                        ' 1/3/2017 CS email insurance distribution group that a secondary payment received without a claim 
+                                        ' (we don't know what the procedure date needs to be from what that they are paying, so WSDC needs to manually gen claim or they can opt to apply to contract balance)
+                                        Dim strEmailTo As String = IIf(IsNothing(ConfigurationManager.AppSettings("emailAutomatedClaimTo")), "", ConfigurationManager.AppSettings("emailAutomatedClaimTo"))
+                                        Dim strEmailMessage As String = "A Secondary insurance payment was received without a claim to allocate to. " & vbCrLf
+                                        strEmailMessage &= " A claim will need to be processed manually to attach to this payment, or you can opt to allow this payment to be applied to the contract balance. " & vbCrLf & vbCrLf
+                                        ' 2/10/17 CS Added info related to the contract, insurance company making the payment & payment comments
+                                        strEmailMessage &= " Chart #: " & paymentRow("ChartNumber") & vbCrLf
+                                        strEmailMessage &= " Insurance: " & paymentRow("PayerName") & vbCrLf
+                                        strEmailMessage &= " Payment Comments: " & paymentRow("Comments") & vbCrLf & vbCrLf
+                                        strEmailMessage &= " Contact your software vendor for assistance if you feel this email was sent in error. "
+                                        g_sendEmail(strEmailTo, "Secondary Payment Received Without a Claim", strEmailMessage)
+                                    ElseIf pmtDetail("paymentId") = "PrimaryBalance" Or pmtDetail("paymentId") = "SecondaryBalance" Then
+                                        Dim strSQLContract As String = ""
+                                        decPaymentAmt = pmtDetail("paymentAmount")
+                                        strSQL = "Update Payments Set " &
+                                                "orig_payment = '" & decOriginalPaymentAmt & "'" &
+                                                ", BaseRecid = " & intOrigPaymentRecid &
+                                                ", ClaimNumber = '-99'"
+                                        strSQLContract = "Update Contracts Set "
+                                        If pmtDetail("paymentId") = "PrimaryBalance" Then
+                                            ' 01.10.17 cpb - do not need to update amount fields, they are already set and paymentid does not control who supplied the payment, just where it is applied
+                                            strSQL &= ", ApplyToPrimaryBalance = '" & decPaymentAmt & "'" &
                                         ", PrimaryAmount = '" & decPaymentAmt & "'"
-                                        strSQLContract &= "PrimaryRemainingBalance = PrimaryRemainingBalance - " & decPaymentAmt
-                                    Else
-                                        strSQL &= ", ApplyToSecondaryBalance = '" & decPaymentAmt & "'" &
+                                            strSQLContract &= "PrimaryRemainingBalance = PrimaryRemainingBalance - " & decPaymentAmt
+                                        Else
+                                            strSQL &= ", ApplyToSecondaryBalance = '" & decPaymentAmt & "'" &
                                         ", SecondaryAmount = '" & decPaymentAmt & "'"
-                                        strSQLContract &= "SecondaryRemainingBalance = SecondaryRemainingBalance - " & decPaymentAmt
-                                    End If
-                                    strSQL &= " Where recId= '" & intLastPaymentRecid & "'"
-                                    strSQLContract &= " Where recId = '" & paymentRow("Contract_RECID") & "'"
-                                    g_IO_Execute_SQL(strSQL, False)
-                                    ' 01/07/17 cpb need to update patient data to reduce primary or secondary balance
-                                    g_IO_Execute_SQL(strSQLContract, False)
-                                Else
-                                    ' must have a specific claim number
-                                    ' 11/2/16 payment amount is only amount paying to this specific claim
-                                    Dim decPayemtAmt As Decimal = pmtDetail("paymentAmount")
+                                            strSQLContract &= "SecondaryRemainingBalance = SecondaryRemainingBalance - " & decPaymentAmt
+                                        End If
+                                        strSQL &= " Where recId= '" & intLastPaymentRecid & "'"
+                                        strSQLContract &= " Where recId = '" & paymentRow("Contract_RECID") & "'"
+                                        g_IO_Execute_SQL(strSQL, False)
+                                        ' 01/07/17 cpb need to update patient data to reduce primary or secondary balance
+                                        g_IO_Execute_SQL(strSQLContract, False)
+                                    Else
+                                        ' must have a specific claim number
+                                        ' 11/2/16 payment amount is only amount paying to this specific claim
+                                        Dim decPayemtAmt As Decimal = pmtDetail("paymentAmount")
 
-                                    ' 2.10.17 must fix cliam number from detail file, main payment file contains summary
-                                    strSQL = "update Payments set " &
+                                        ' 2.10.17 must fix cliam number from detail file, main payment file contains summary
+                                        strSQL = "update Payments set " &
                                         "ApplyToClaim = '" & decPayemtAmt & "'" &
                                         ", orig_payment = '" & decOriginalPaymentAmt & "'" &
                                         ", BaseRecid = " & intOrigPaymentRecid &
                                         ", ClaimNumber = '" & pmtDetail("paymentId") & "'"
-                                    strSQL &= IIf(paymentRow("primaryAmount") > 0, ", primaryAmount = '" & decPayemtAmt & "'", ", secondaryAmount = '" & decPayemtAmt & "'")
-                                    strSQL &= " where recid=" & intLastPaymentRecid
-                                    g_IO_Execute_SQL(strSQL, False)
+                                        strSQL &= IIf(paymentRow("primaryAmount") > 0, ", primaryAmount = '" & decPayemtAmt & "'", ", secondaryAmount = '" & decPayemtAmt & "'")
+                                        strSQL &= " where recid=" & intLastPaymentRecid
+                                        g_IO_Execute_SQL(strSQL, False)
 
-                                    'Pull Claim Information
-                                    ' 1/3/2017 CS added pull of claim type & procedure date so we can see if this is a primary claim being paid 
-                                    ' claim procedure date = actually the claim filed to insurance date should only ever happen once as a month.
-                                    ' and if so see if we need to process a secondary claim for the same procedure date now that primary has paid
-                                    Dim tblClaimInfo As DataTable = g_IO_Execute_SQL(" Select procedure_amount, procedure_date from claims where claimnumber = '" & pmtDetail("paymentId") & "'", False)
-                                    If tblClaimInfo.Rows.Count = 1 Then
-                                        '11/29/2016 CS Need to specify contract id, bc ChartNumber can be on more than 1 contract
-                                        'AttachClaimPayments(row("ChartNumber"), row("ClaimNumber"), 0, intLastPaymentRecid)
-                                        AttachClaimPayments(paymentRow("Contract_RECID"), pmtDetail("paymentId"), 0, intLastPaymentRecid)
-                                        '01.11.17 cpb/cfs - comment this out -- ask Rodney about fixing view to find secondary claims that need to be processed.
-                                        '------if not then perhaps this can just write to a file logging primary ins payments.
-                                        'If paymentRow("primaryAmount") > 0 Then
-                                        '    ' 01/29/2016 CS Automatically create a Secondary Insurance Claim when the Primary Insurance payment received
-                                        '    ' 11/29/2016 CS make sure this contract has secondary insurance, with an open balance
-                                        '    strSQL = "select SecondaryRemainingBalance from contracts where recid = '" & paymentRow("Contract_RECID") & "' and SecondaryRemainingBalance > 0"
-                                        '    Dim tblSecInsurance As DataTable = g_IO_Execute_SQL(strSQL, False)
-                                        '    If tblSecInsurance.Rows.Count > 0 Then
-                                        '        ' set procedure date from claim that was just paid
-                                        '        Dim dteProcedureDate As String = tblClaimInfo.Rows(0)("procedure_date")
-                                        '        ' 11/11/16 Make sure we do not already have a secondary claim processed for this procedure date (may have been done manually)
-                                        '        strSQL = "select ClaimNumber From Claims where contracts_recid = '" & paymentRow("Contract_RECID") & "' And procedure_date = '" & dteProcedureDate & "' and type = 1"
-                                        '        Dim tblSecClaim As DataTable = g_IO_Execute_SQL(strSQL, False)
-                                        '        If tblSecClaim.Rows.Count = 0 Then
-                                        '            Dim tblClaims As DataTable = CreateInsuranceClaims(pmtDetail("ChartNumber"), False, "Secondary", dteProcedureDate)
-                                        '            If tblClaims.Rows.Count > 0 Then
-                                        '                ' email insurance distribution group that a claim has been processed and needs to be printed
-                                        '                Dim strEmailTo As String = IIf(IsNothing(ConfigurationManager.AppSettings("emailAutomatedClaimTo")), "", ConfigurationManager.AppSettings("emailAutomatedClaimTo"))
-                                        '                Dim strEmailMessage As String = "A Secondary insurance claim was processed as the result of receiving payment from Primary insurance provider & no secondary claim found matching that procedure date." & vbCrLf
-                                        '                strEmailMessage &= " Insurance Provider: " & tblClaims.Rows(0)("insurance_name") & vbCrLf
-                                        '                strEmailMessage &= " Patient Chart #: " & tblClaims.Rows(0)("chartNumber") & vbCrLf
-                                        '                strEmailMessage &= " Claim No: " & tblClaims.Rows(0)("claimNumber") & vbCrLf
-                                        '                strEmailMessage &= " Procedure Date: " & dteProcedureDate & vbCrLf
-                                        '                strEmailMessage &= " Contact your software vendor for assistance if you feel this email was sent in error. "
-                                        '                g_sendEmail(strEmailTo, "Secondary Claim Processed via Payment Entry", strEmailMessage)
-                                        '            End If
-                                        '        End If
-                                        '    End If
-                                        'End If
+                                        'Pull Claim Information
+                                        ' 1/3/2017 CS added pull of claim type & procedure date so we can see if this is a primary claim being paid 
+                                        ' claim procedure date = actually the claim filed to insurance date should only ever happen once as a month.
+                                        ' and if so see if we need to process a secondary claim for the same procedure date now that primary has paid
+                                        Dim tblClaimInfo As DataTable = g_IO_Execute_SQL(" Select procedure_amount, procedure_date from claims where claimnumber = '" & pmtDetail("paymentId") & "'", False)
+                                        If tblClaimInfo.Rows.Count = 1 Then
+                                            '11/29/2016 CS Need to specify contract id, bc ChartNumber can be on more than 1 contract
+                                            'AttachClaimPayments(row("ChartNumber"), row("ClaimNumber"), 0, intLastPaymentRecid)
+                                            AttachClaimPayments(paymentRow("Contract_RECID"), pmtDetail("paymentId"), 0, intLastPaymentRecid)
+                                            '01.11.17 cpb/cfs - comment this out -- ask Rodney about fixing view to find secondary claims that need to be processed.
+                                            '------if not then perhaps this can just write to a file logging primary ins payments.
+                                            'If paymentRow("primaryAmount") > 0 Then
+                                            '    ' 01/29/2016 CS Automatically create a Secondary Insurance Claim when the Primary Insurance payment received
+                                            '    ' 11/29/2016 CS make sure this contract has secondary insurance, with an open balance
+                                            '    strSQL = "select SecondaryRemainingBalance from contracts where recid = '" & paymentRow("Contract_RECID") & "' and SecondaryRemainingBalance > 0"
+                                            '    Dim tblSecInsurance As DataTable = g_IO_Execute_SQL(strSQL, False)
+                                            '    If tblSecInsurance.Rows.Count > 0 Then
+                                            '        ' set procedure date from claim that was just paid
+                                            '        Dim dteProcedureDate As String = tblClaimInfo.Rows(0)("procedure_date")
+                                            '        ' 11/11/16 Make sure we do not already have a secondary claim processed for this procedure date (may have been done manually)
+                                            '        strSQL = "select ClaimNumber From Claims where contracts_recid = '" & paymentRow("Contract_RECID") & "' And procedure_date = '" & dteProcedureDate & "' and type = 1"
+                                            '        Dim tblSecClaim As DataTable = g_IO_Execute_SQL(strSQL, False)
+                                            '        If tblSecClaim.Rows.Count = 0 Then
+                                            '            Dim tblClaims As DataTable = CreateInsuranceClaims(pmtDetail("ChartNumber"), False, "Secondary", dteProcedureDate)
+                                            '            If tblClaims.Rows.Count > 0 Then
+                                            '                ' email insurance distribution group that a claim has been processed and needs to be printed
+                                            '                Dim strEmailTo As String = IIf(IsNothing(ConfigurationManager.AppSettings("emailAutomatedClaimTo")), "", ConfigurationManager.AppSettings("emailAutomatedClaimTo"))
+                                            '                Dim strEmailMessage As String = "A Secondary insurance claim was processed as the result of receiving payment from Primary insurance provider & no secondary claim found matching that procedure date." & vbCrLf
+                                            '                strEmailMessage &= " Insurance Provider: " & tblClaims.Rows(0)("insurance_name") & vbCrLf
+                                            '                strEmailMessage &= " Patient Chart #: " & tblClaims.Rows(0)("chartNumber") & vbCrLf
+                                            '                strEmailMessage &= " Claim No: " & tblClaims.Rows(0)("claimNumber") & vbCrLf
+                                            '                strEmailMessage &= " Procedure Date: " & dteProcedureDate & vbCrLf
+                                            '                strEmailMessage &= " Contact your software vendor for assistance if you feel this email was sent in error. "
+                                            '                g_sendEmail(strEmailTo, "Secondary Claim Processed via Payment Entry", strEmailMessage)
+                                            '            End If
+                                            '        End If
+                                            '    End If
+                                            'End If
 
+                                        End If
                                     End If
+
+
+                                    ' remove the temp record just processed; remove while processing so if any new are added, we only remove what we processed.
+                                    strSQL = "Delete From PaymentsTempDetail Where recid ='" & pmtDetail("recid") & "'"
+                                    g_IO_Execute_SQL(strSQL, False)
+                                Next
+                            Else
+                                ' 3/1/17 no payment amount, must just be a comment -- move to live payment file.
+                                g_PostPendingData(strTempTable, "Payments", "recid=" & (paymentRow("recid")), "PaymentPosting.aspx", False)
+                                intLastPaymentRecid = g_IO_GetLastRecId()
+                                If intOrigPaymentRecid = -1 Then
+                                    intOrigPaymentRecid = intLastPaymentRecid
                                 End If
-
-
-                                ' remove the temp record just processed; remove while processing so if any new are added, we only remove what we processed.
-                                strSQL = "Delete From PaymentsTempDetail Where recid ='" & pmtDetail("recid") & "'"
+                                strSQL = "update Payments set " &
+                                        ", orig_payment = '" & decOriginalPaymentAmt & "'" &
+                                        ", BaseRecid = " & intOrigPaymentRecid
+                                strSQL &= " where recid=" & intLastPaymentRecid
                                 g_IO_Execute_SQL(strSQL, False)
-                            Next
-
+                            End If
                         End If
 
                         ' remove payments temp all detail record are processed or patient payment is processed
