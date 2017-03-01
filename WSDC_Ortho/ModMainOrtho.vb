@@ -755,7 +755,7 @@ Module ModMainOrtho
                     g_IO_Execute_SQL(strSQL, False)
                 Else
                     'reopen the invoice and adjust payment made
-                    g_IO_Execute_SQL("update invoices set status = 'O', current_due = current_due + " & rowPayment("applytocurrentinvoice") & ", Total_Due = Total_Due + " & rowPayment("applytocurrentinvoice") & " + " & rowPayment("applyToPastDue") & ", AmountPaid = AmountPaid - " & rowPayment("applytocurrentinvoice") & " - " & rowPayment("applyToPastDue") & " where recid = " & rowPayment("invoices_recid"), False)
+                    g_IO_Execute_SQL("update invoices set status = 'O', AmountPaid = AmountPaid - " & rowPayment("applytocurrentinvoice") & " - " & rowPayment("applyToPastDue") & " where recid = " & rowPayment("invoices_recid"), False)
                 End If
                 ' set Apply To quantity's to reversed amounts
                 rowPayment("PatientAmount") = 0 - rowPayment("PatientAmount")
@@ -830,11 +830,12 @@ Module ModMainOrtho
                     g_IO_Execute_SQL("update payments set ClaimNumber = -99 where recid = " & rowPayment("recid"), False)
                 ElseIf rowPayment("ClaimNumber") = "-99" Then
                     ' this is a payment that was applied to the insurance account balance, so add the amount back to their balance
-                    strSQL = "update contracts set " & rowPayment("PaymentSelection").Replace("Amount", "") & "RemainingBalance = " & rowPayment("PaymentSelection").Replace("Amount", "") & "RemainingBalance + " & rowPayment("PatientAmount") & " where recid = '" & rowPayment("contract_recid") & "'"
+                    strSQL = "update contracts set " & rowPayment("PaymentSelection").Replace("Amount", "") & "RemainingBalance = " & rowPayment("PaymentSelection").Replace("Amount", "") & "RemainingBalance + " & rowPayment("PaymentSelection") & " where recid = '" & rowPayment("contract_recid") & "'"
                     g_IO_Execute_SQL(strSQL, False)
                 Else
                     'reopen the claim and adjust payment made
                     If OriginalPaymentType = "14" Then
+                        ' this is a claim closed manually by user, just need to reset status (amount paid not updated when closing out claims)                    
                         g_IO_Execute_SQL("update claims set status = 'O' where ClaimNumber = " & rowPayment("claimNumber"), False)
                     Else
                         g_IO_Execute_SQL("update claims set status = 'O', AmountPaid = AmountPaid - " & rowPayment("applytoclaim") & " where ClaimNumber = " & rowPayment("claimNumber"), False)

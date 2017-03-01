@@ -122,7 +122,8 @@
                                 g_PostPendingData(strTempTable, "Payments", "recid=" & (paymentRow("recid")), "PaymentPosting.aspx", False)
                                 intLastPaymentRecid = g_IO_GetLastRecId()
                                 If intOrigPaymentRecid = -1 Then
-                                    intOrigPaymentRecid = intLastPaymentRecid   '2.14.17 cpb setting base recid wrong? intOrigPaymentRecid
+                                    '2.14.17 cpb setting base recid wrong? intOrigPaymentRecid
+                                    intOrigPaymentRecid = intLastPaymentRecid
                                 End If
                                 strSQL = "Update Payments set PatientAmount = '" & decApplyToPrinciple & "'" &
                                     ", orig_payment = '" & paymentRow("PatientAmount") & "'" &
@@ -161,6 +162,8 @@
                             Dim decOriginalPaymentAmt As Decimal = paymentRow("PrimaryAmount") + paymentRow("SecondaryAmount")
                             ' 3/1/17 check for a payment amount - if zero, must just be a comment and there will not be any detail records
                             If decPaymentAmt > 0 Then
+
+
                                 ' get details for this payment and post payments from details
                                 strSQL = "Select * From paymentsTempDetail Where paymentsTempRecId = '" & paymentRow("recid") & "'"
                                 tblPaymentTempDetail = g_IO_Execute_SQL(strSQL, False)
@@ -211,9 +214,9 @@
                                         Dim strSQLContract As String = ""
                                         decPaymentAmt = pmtDetail("paymentAmount")
                                         strSQL = "Update Payments Set " &
-                                                "orig_payment = '" & decOriginalPaymentAmt & "'" &
-                                                ", BaseRecid = " & intOrigPaymentRecid &
-                                                ", ClaimNumber = '-99'"
+                                    "orig_payment = '" & decOriginalPaymentAmt & "'" &
+                                    ", BaseRecid = " & intOrigPaymentRecid &
+                                    ", ClaimNumber = '-99'"
                                         strSQLContract = "Update Contracts Set "
                                         If pmtDetail("paymentId") = "PrimaryBalance" Then
                                             ' 01.10.17 cpb - do not need to update amount fields, they are already set and paymentid does not control who supplied the payment, just where it is applied
@@ -234,13 +237,12 @@
                                         ' must have a specific claim number
                                         ' 11/2/16 payment amount is only amount paying to this specific claim
                                         Dim decPayemtAmt As Decimal = pmtDetail("paymentAmount")
-
-                                        ' 2.10.17 must fix cliam number from detail file, main payment file contains summary
+                                        ' 2.10.17 must fix claim number from detail file, main payment file contains summary
                                         strSQL = "update Payments set " &
                                         "ApplyToClaim = '" & decPayemtAmt & "'" &
+                                        ", ClaimNumber = '" & pmtDetail("paymentId") & "'" &
                                         ", orig_payment = '" & decOriginalPaymentAmt & "'" &
-                                        ", BaseRecid = " & intOrigPaymentRecid &
-                                        ", ClaimNumber = '" & pmtDetail("paymentId") & "'"
+                                        ", BaseRecid = " & intOrigPaymentRecid
                                         strSQL &= IIf(paymentRow("primaryAmount") > 0, ", primaryAmount = '" & decPayemtAmt & "'", ", secondaryAmount = '" & decPayemtAmt & "'")
                                         strSQL &= " where recid=" & intLastPaymentRecid
                                         g_IO_Execute_SQL(strSQL, False)
@@ -300,7 +302,7 @@
                                     intOrigPaymentRecid = intLastPaymentRecid
                                 End If
                                 strSQL = "update Payments set " &
-                                        ", orig_payment = '" & decOriginalPaymentAmt & "'" &
+                                        "orig_payment = '" & decOriginalPaymentAmt & "'" &
                                         ", BaseRecid = " & intOrigPaymentRecid
                                 strSQL &= " where recid=" & intLastPaymentRecid
                                 g_IO_Execute_SQL(strSQL, False)

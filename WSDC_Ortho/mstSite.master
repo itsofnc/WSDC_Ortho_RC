@@ -33,10 +33,8 @@
     <link href="Content/css/site.css" rel="stylesheet" />
 
     <!--Datepicker-->
-    <link href="Content/bootstrap-datetimepicker.css" rel="stylesheet" />
-    <link href="Content/bootstrap-validator.min.css" rel="stylesheet" />
+    <link href="Common/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="Common/datepicker/css/datepicker.css" rel="stylesheet" />
-    <link href="Scripts/datepicker/css/datepicker.css" rel="stylesheet" /> 
 
     <style><asp:Literal ID="litNavCustomBrand" runat="server"></asp:Literal></style>
     <asp:Literal ID="Literal1" runat="server"></asp:Literal>

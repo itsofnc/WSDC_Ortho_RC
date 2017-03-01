@@ -16,11 +16,10 @@
     <script src="Content/tableSorter/jquery.tablesorter.min.js"></script>
     <script src="Content/tableSorter/jquery.tablesorter.widgets.js"></script>
 
-    <link href="Content/bootstrap-datetimepicker.css" rel="stylesheet" />
-    <link href="Content/bootstrap-validator.min.css" rel="stylesheet" />
-    <!--Datepicker-->
+
+    <!--Datepicker-->    
+    <link href="Common/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="Common/datepicker/css/datepicker.css" rel="stylesheet" />
-    <link href="Scripts/datepicker/css/datepicker.css" rel="stylesheet" /> CCC
 
     <!--form validation css-->
     <link href="Common/formValidation/css/formValidation.min.css" rel="stylesheet" />
