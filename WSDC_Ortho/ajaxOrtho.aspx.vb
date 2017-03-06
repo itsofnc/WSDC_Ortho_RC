@@ -161,7 +161,7 @@
                             Dim strSQLWhere As String = ""
                             Dim decOriginalPaymentAmt As Decimal = paymentRow("PrimaryAmount") + paymentRow("SecondaryAmount")
                             ' 3/1/17 check for a payment amount - if zero, must just be a comment and there will not be any detail records
-                            If decPaymentAmt > 0 Then
+                            If decOriginalPaymentAmt > 0 Then
 
 
                                 ' get details for this payment and post payments from details
@@ -288,7 +288,6 @@
 
                                         End If
                                     End If
-
 
                                     ' remove the temp record just processed; remove while processing so if any new are added, we only remove what we processed.
                                     strSQL = "Delete From PaymentsTempDetail Where recid ='" & pmtDetail("recid") & "'"
