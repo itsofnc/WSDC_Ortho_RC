@@ -122,8 +122,8 @@
                 Dim strSQL As String = "Select Comments from contracts where recid = " & txtContract_RECID.Text
                 Dim tblContract As DataTable = g_IO_Execute_SQL(strSQL, False)
                 If tblContract.Rows.Count > 0 Then
-                    Dim strComments As String = Format(Date.Now, "MM/dd/yyyy") & " " & Session("user_name") & ": $ " & txtNSF.Text.Replace("'", "''") & " NSF Fee invoiced to patient." & vbCrLf & vbCrLf & tblContract.Rows(0)("Comments")
-                    strSQL = "UPDATE Contracts SET Comments = '" & strComments & "' WHERE recid = " & txtContract_RECID.Text
+                    Dim strComments As String = Format(Date.Now, "MM/dd/yyyy") & " " & Session("user_name") & ": $ " & txtNSF.Text.Replace("'", "''") & " NSF Fee invoiced to patient." & vbCrLf & vbCrLf
+                    strSQL = "UPDATE Contracts SET Comments = '" & strComments & "' + Comments WHERE recid = " & txtContract_RECID.Text
                     g_IO_Execute_SQL(strSQL, False)
                 End If
                 ' end of mod 6/8/15

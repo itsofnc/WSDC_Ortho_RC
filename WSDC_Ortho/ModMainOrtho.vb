@@ -1194,8 +1194,13 @@ Module ModMainOrtho
         Dim rptReport = New rptInvoice
         Dim strMinDocumentNumber As String = ""
         Dim strMaxDocumentNumber As String = ""
-        If IsDate(InvoiceDate) Then
-        Else
+
+        ' 3/8/2017 CS This test fails. if no InvoiceDate sent in the system defaults this parameter to '1/1/0001 12:00:00 AM'!!
+        'If IsDate(InvoiceDate) Then
+        'Else
+        '    InvoiceDate = Date.Now
+        'End If
+        If Format(InvoiceDate, "MM/dd/yyyy") = "01/01/0001" Then
             InvoiceDate = Date.Now
         End If
 
@@ -1204,7 +1209,7 @@ Module ModMainOrtho
         ' build the Select clause to tack to the table and where clause just built  (add some fields that will be needed to print the invoice
         ' 10/7/16 CS Added new field to invoices, doctors_vw, and need to populate it from the contract
         strSQL = "SELECT recid, PrimaryInsurancePlans_vw, SecondaryInsurancePlans_vw, PatientNumber, PatientFirstPay, ChartNumber, Doctors_vw " &
-                ",CONVERT(VARCHAR(10), contractdate,101) as ContractDate, '' as InvoiceNo, Account_ID as account_no, cast('" & Format(InvoiceDate, "yyyy-MM-dd") & " 00:00:00' as datetime) as bill_date " &
+                ",CONVERT(VARCHAR(10), contractdate,101) as ContractDate, '' as InvoiceNo, Account_ID as account_no, '" & Format(InvoiceDate, "MM/dd/yyyy") & "' as bill_date " &
                 ",'Payment due on receipt of invoice.' as terms" &
                 ",'' as name" &
                 ",' ' as co_Name" &
