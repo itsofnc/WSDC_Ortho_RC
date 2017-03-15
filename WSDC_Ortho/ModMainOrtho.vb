@@ -421,47 +421,48 @@ Module ModMainOrtho
                 decOverpaymentAmount = 0
                 decPaymentAmount = rowPayment("ApplyToClaim")
 
-                If decPaymentAmount >= decClaimAmtNeeded Then
-                    ' payment is satisfied
-                    decOverpaymentAmount = decPaymentAmount - decClaimAmtNeeded  ' this is the amount that will be posted to a sister payment record about to be created and tied to this payment record
-                    ' 12/2/15 allow full amount to show as amount 'paid' on claim, even when payment is more than needed
-                    'decPaymentAmount = decClaimAmtNeeded  ' reduce the payment amount on this payment record to the amount that will be posted to this claim and tie this payment to this claim
-                    ' 12/15/16 CS Not sure why we removed this code last year, and set amount paid to the full claim amount??
-                    ' but we do need to set the payment amount to what is actually being applied to the claim with this payment, not the full claim amount
-                    'decClaimAmtPaid = rowClaims("procedure_amount")
-                    decPaymentAmount = decClaimAmtNeeded
-                    '12/15/16 CS update total amount paid on claim (not sure why this wasn't being set at this point in the logic??)
-                    decClaimAmtPaid += decPaymentAmount
-                    strClaimStatus = "C"
-                Else
-                    ' Claim is partially paid by this payment
-                    strClaimStatus = "O"
-                    'update amount paid
-                    decClaimAmtPaid += decPaymentAmount
-                End If
+                ' 3/15/17 CS If this claim has been paid in full, decClaimAmountNeeded updated below as payment is applied, then do not continue looping through any other payments
+                If decClaimAmtNeeded > 0 Then
+                    If decPaymentAmount >= decClaimAmtNeeded Then
+                        ' payment is satisfied
+                        decOverpaymentAmount = decPaymentAmount - decClaimAmtNeeded  ' this is the amount that will be posted to a sister payment record about to be created and tied to this payment record
+                        ' 12/2/15 allow full amount to show as amount 'paid' on claim, even when payment is more than needed
+                        'decPaymentAmount = decClaimAmtNeeded  ' reduce the payment amount on this payment record to the amount that will be posted to this claim and tie this payment to this claim
+                        ' 12/15/16 CS Not sure why we removed this code last year, and set amount paid to the full claim amount??
+                        ' but we do need to set the payment amount to what is actually being applied to the claim with this payment, not the full claim amount
+                        'decClaimAmtPaid = rowClaims("procedure_amount")
+                        decPaymentAmount = decClaimAmtNeeded
+                        '12/15/16 CS update total amount paid on claim (not sure why this wasn't being set at this point in the logic??)
+                        decClaimAmtPaid += decPaymentAmount
+                        strClaimStatus = "C"
+                    Else
+                        ' Claim is partially paid by this payment
+                        strClaimStatus = "O"
+                        'update amount paid
+                        decClaimAmtPaid += decPaymentAmount
+                    End If
 
-
-                g_IO_Execute_SQL("Update payments set claimnumber = '" & rowClaims("ClaimNumber") & "',ApplyToClaim= " & decPaymentAmount &
+                    g_IO_Execute_SQL("Update payments set claimnumber = '" & rowClaims("ClaimNumber") & "',ApplyToClaim= " & decPaymentAmount &
                                  "," & rowPayment("PaymentSelection") & "= " & decPaymentAmount &
                                  " where recid = " & rowPayment("recid"), False)
 
-                ' 11/16/15 CS Added code to close claim with an adjustment if under paid by $5.00
-                Dim decPaymentDifference = decClaimAmtNeeded - decClaimAmtPaid
-                If decClaimAmtNeeded > decClaimAmtPaid And decPaymentDifference <= 5.0 Then
-                    strClaimStatus = "C"
-                    ' close claim
-                    Dim strSQL As String = "update claims set" &
+                    ' 11/16/15 CS Added code to close claim with an adjustment if under paid by $5.00
+                    Dim decPaymentDifference = decClaimAmtNeeded - decClaimAmtPaid
+                    If decClaimAmtNeeded > decClaimAmtPaid And decPaymentDifference <= 5.0 Then
+                        strClaimStatus = "C"
+                        ' close claim
+                        Dim strSQL As String = "update claims set" &
                         " ClosedDate='" & Date.Now() & "'" &
                         ", ClosedReason='Insurance paid less than expected (auto-closed).'" &
                         " where claimNumber='" & rowClaims("ClaimNumber") & "'"
-                    g_IO_Execute_SQL(strSQL, False)
+                        g_IO_Execute_SQL(strSQL, False)
 
-                    ' create a payment record for an adjustment to close out the claim
-                    ' 10/7/16 CS New Field Doctors_vw
-                    ' 11/29/16 CS All dollar amounts on this adj record need to be set to decPaymentDifference,
-                    ' 2/10/17 CS Use admin userid for adjustment record (throws off balances on their user specific daily reports)
-                    Dim intLastPaymentRecid As Integer = -1
-                    strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, ApplyToClaim, " &
+                        ' create a payment record for an adjustment to close out the claim
+                        ' 10/7/16 CS New Field Doctors_vw
+                        ' 11/29/16 CS All dollar amounts on this adj record need to be set to decPaymentDifference,
+                        ' 2/10/17 CS Use admin userid for adjustment record (throws off balances on their user specific daily reports)
+                        Dim intLastPaymentRecid As Integer = -1
+                        strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, ApplyToClaim, " &
                             "PaymentType, PaymentReference, Contract_recid, Invoices_recid, claimNumber, baserecid, PaymentSelection, orig_Payment, " &
                             "Comments, PayerName,PaymentFor, Doctors_vw)" &
                             " values (" &
@@ -486,35 +487,35 @@ Module ModMainOrtho
                             rowPayment("Doctors_vw") &
                             ")"
 
-                    g_IO_Execute_SQL(strSQL, False)
+                        g_IO_Execute_SQL(strSQL, False)
 
-                    ' update BaseRECID on payment record just created
-                    intLastPaymentRecid = g_IO_GetLastRecId()
-                    strSQL = "update Payments set BaseRecid = " & intLastPaymentRecid & " where recid=" & intLastPaymentRecid
+                        ' update BaseRECID on payment record just created
+                        intLastPaymentRecid = g_IO_GetLastRecId()
+                        strSQL = "update Payments set BaseRecid = " & intLastPaymentRecid & " where recid=" & intLastPaymentRecid
 
-                    g_IO_Execute_SQL(strSQL, False)
-                Else
-                    ' 12/15/16 CS Need to reduce claim amount needed so that when possibly loop to another payment found, it will handle the amount that is NOW remaining after this payment above just posted to the claim...
-                    decClaimAmtNeeded -= decClaimAmtPaid
-                    If decClaimAmtNeeded < 0 Then
-                        decClaimAmtNeeded = 0
+                        g_IO_Execute_SQL(strSQL, False)
+                    Else
+                        ' 12/15/16 CS Need to reduce claim amount needed so that when possibly loop to another payment found, it will handle the amount that is NOW remaining after this payment above just posted to the claim...
+                        decClaimAmtNeeded -= decClaimAmtPaid
+                        If decClaimAmtNeeded < 0 Then
+                            decClaimAmtNeeded = 0
+                        End If
                     End If
-                End If
 
 
-                If decOverpaymentAmount > 0 Then
-                    ' 12/2/15 CS If overpaid, apply overpayment to remaining balance left to bill out
-                    ' 2/10/17 CS apply to balance if $5 of less, apply to balance, otherwise leave as open credit 
-                    ' (scenario today where insurance paid for 3 months and needed to generate those 3 claims and let the payment split amount them and pay them in full)
-                    If decOverpaymentAmount <= 5.0 Then
-                        Dim InsType As String = IIf(ClaimType = 0, "PrimaryRemainingBalance", "SecondaryRemainingBalance")
-                        '11/29/16 CS need to use contract recid not chart number, multiple contracts per chart number now
-                        'g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where chartNumber = '" & rowClaims("ChartNumber") & "'", False)
-                        g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where recid = '" & rowClaims("contracts_recid") & "'", False)
+                    If decOverpaymentAmount > 0 Then
+                        ' 12/2/15 CS If overpaid, apply overpayment to remaining balance left to bill out
+                        ' 2/10/17 CS apply to balance if $5 of less, apply to balance, otherwise leave as open credit 
+                        ' (scenario today where insurance paid for 3 months and needed to generate those 3 claims and let the payment split amount them and pay them in full)
+                        If decOverpaymentAmount <= 5.0 Then
+                            Dim InsType As String = IIf(ClaimType = 0, "PrimaryRemainingBalance", "SecondaryRemainingBalance")
+                            '11/29/16 CS need to use contract recid not chart number, multiple contracts per chart number now
+                            'g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where chartNumber = '" & rowClaims("ChartNumber") & "'", False)
+                            g_IO_Execute_SQL("update contracts set " & InsType & " = " & InsType & " - " & decOverpaymentAmount & " where recid = '" & rowClaims("contracts_recid") & "'", False)
 
-                        ' 10/7/16 CS Added new field doctors_vw and put it in this section even tho commented out, just in cas it gets implemented again in the future??
-                        ' 11/1116 CS overpayment made, create a new payment record with the overage to be posted to principle 
-                        Dim strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, " &
+                            ' 10/7/16 CS Added new field doctors_vw and put it in this section even tho commented out, just in cas it gets implemented again in the future??
+                            ' 11/1116 CS overpayment made, create a new payment record with the overage to be posted to principle 
+                            Dim strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, " &
                                     "PaymentType, PaymentReference, Contract_recid, Invoices_recid, claimNumber, baserecid, PaymentSelection, orig_Payment, " &
                                     "Comments, PayerName,PaymentFor, Doctors_vw)" &
                                     " values (" &
@@ -537,10 +538,10 @@ Module ModMainOrtho
                                     "'" & rowPayment("PaymentFor").replace("'", "''") & "'," &
                                     rowPayment("doctors_vw") &
                                     ")"
-                        g_IO_Execute_SQL(strSQL, False)
-                    Else
-                        ' create an overpayment/credit payments records for the remaining payment to be open to apply to another claim
-                        Dim strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, " &
+                            g_IO_Execute_SQL(strSQL, False)
+                        Else
+                            ' create an overpayment/credit payments records for the remaining payment to be open to apply to another claim
+                            Dim strSQL = "insert into payments (DatePosted, sys_users_recid, patientNumber, ChartNumber, PrimaryAmount, SecondaryAmount, " &
                                     "PaymentType, PaymentReference, Contract_recid, Invoices_recid, claimNumber, ApplyToClaim, baserecid, PaymentSelection, orig_Payment, " &
                                     "Comments, PayerName,PaymentFor, Doctors_vw)" &
                                     " values (" &
@@ -564,12 +565,17 @@ Module ModMainOrtho
                                     "'" & rowPayment("PaymentFor").replace("'", "''") & "'," &
                                     rowPayment("doctors_vw") &
                                     ")"
-                        g_IO_Execute_SQL(strSQL, False)
+                            g_IO_Execute_SQL(strSQL, False)
+                        End If
+
                     End If
+
+                    g_IO_Execute_SQL("update claims set status = '" & strClaimStatus & "', AmountPaid = " & decClaimAmtPaid & " where claimnumber = '" & rowClaims("ClaimNumber") & "'", False)
 
                 End If
 
-                g_IO_Execute_SQL("update claims set status = '" & strClaimStatus & "', AmountPaid = " & decClaimAmtPaid & " where claimnumber = '" & rowClaims("ClaimNumber") & "'", False)
+
+
 
             Next
 
